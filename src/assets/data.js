@@ -1,0 +1,237 @@
+import {
+  Upload,
+  Shield,
+  Share2,
+  Lock,
+  Clock,
+  Cloud,
+  FileUp,
+  Users,
+  Globe,
+  Activity,
+} from "lucide-react";
+
+// ─── Features ────────────────────────────────────────────────────────────────
+export const features = [
+  {
+    icon: Upload,
+    iconColor: "text-blue-500",
+    title: "Fast File Upload",
+    description:
+      "Upload files instantly with drag-and-drop support and resumable uploads.",
+  },
+  {
+    icon: Shield,
+    iconColor: "text-green-500",
+    title: "Secure Storage",
+    description:
+      "All files are encrypted during upload and securely stored in the cloud.",
+  },
+  {
+    icon: Share2,
+    iconColor: "text-purple-500",
+    title: "Easy File Sharing",
+    description:
+      "Share files securely using public or private links with expiration dates.",
+  },
+  {
+    icon: Lock,
+    iconColor: "text-red-500",
+    title: "Access Control",
+    description:
+      "Protect files with passwords, permissions, and download restrictions.",
+  },
+  {
+    icon: Clock,
+    iconColor: "text-yellow-500",
+    title: "Version History",
+    description:
+      "Track previous versions of files and restore them anytime.",
+  },
+  {
+    icon: Cloud,
+    iconColor: "text-cyan-500",
+    title: "Cloud Backup",
+    description:
+      "Automatic backup ensures your important files are always safe.",
+  },
+];
+
+// ─── Pricing Plans ───────────────────────────────────────────────────────────
+export const pricingPlans = [
+  {
+    name: "Free",
+    price: "0",
+    period: "forever",
+    description: "Perfect for personal use",
+    features: [
+      "5 GB Storage",
+      "100 File Uploads",
+      "Basic Sharing",
+      "7 Days File Retention",
+      "Community Support",
+    ],
+    cta: "Get Started",
+    highlighted: false,
+  },
+  {
+    name: "Pro",
+    price: "499",
+    period: "month",
+    description: "For professionals",
+    features: [
+      "100 GB Storage",
+      "Unlimited Uploads",
+      "Advanced Sharing",
+      "Password Protected Links",
+      "Priority Email Support",
+      "Analytics Dashboard",
+    ],
+    cta: "Go Pro",
+    highlighted: true,
+  },
+  {
+    name: "Business",
+    price: "1499",
+    period: "month",
+    description: "For teams & companies",
+    features: [
+      "1 TB Storage",
+      "Unlimited Uploads",
+      "Team Collaboration",
+      "Unlimited File Retention",
+      "Role Based Access",
+      "24×7 Premium Support",
+    ],
+    cta: "Contact Sales",
+    highlighted: false,
+  },
+];
+
+// ─── Testimonials ────────────────────────────────────────────────────────────
+// Using initials instead of external image URLs so nothing ever 404s.
+export const testimonials = [
+  {
+    name: "Rahul Mehta",
+    initials: "RM",
+    role: "Software Engineer",
+    company: "Infosys",
+    quote:
+      "The upload speed and secure sharing links have made collaboration with my clients effortless.",
+    rating: 5,
+  },
+  {
+    name: "Emily Watson",
+    initials: "EW",
+    role: "UI/UX Designer",
+    company: "Freelancer",
+    quote:
+      "I share design assets daily. Password-protected links give me complete confidence.",
+    rating: 5,
+  },
+  {
+    name: "Michael Chen",
+    initials: "MC",
+    role: "Product Manager",
+    company: "TechNova",
+    quote:
+      "Managing documents across multiple teams has become much easier using this platform.",
+    rating: 5,
+  },
+  {
+    name: "Priya Sharma",
+    initials: "PS",
+    role: "Project Manager",
+    company: "TCS",
+    quote:
+      "The team folders and version history save us hours every week.",
+    rating: 4,
+  },
+];
+
+// ─── FAQs ────────────────────────────────────────────────────────────────────
+export const faqs = [
+  {
+    question: "Is my data secure?",
+    answer:
+      "Yes. Every uploaded file is encrypted during transfer and securely stored using industry-standard encryption.",
+  },
+  {
+    question: "Can I share files without creating an account?",
+    answer:
+      "Public sharing is available, but creating an account provides better control and security for your files.",
+  },
+  {
+    question: "Can I password protect shared links?",
+    answer:
+      "Yes. Pro and Business plans support password-protected links with optional expiration dates.",
+  },
+  {
+    question: "What is the maximum upload size?",
+    answer:
+      "Free users can upload files up to 2 GB. Pro plan supports up to 10 GB and Business plan supports up to 50 GB per file.",
+  },
+  {
+    question: "How does version history work?",
+    answer:
+      "Every time you upload a new version of a file, the previous version is saved. You can view, compare, and restore older versions anytime.",
+  },
+  {
+    question: "Can I cancel my subscription anytime?",
+    answer:
+      "Absolutely. You can cancel or downgrade your plan at any time from your account settings. No hidden charges.",
+  },
+];
+
+// ─── Stats (Hero / Landing) ─────────────────────────────────────────────────
+export const stats = [
+  {
+    value: "1M+",
+    label: "Files Uploaded",
+    icon: FileUp,
+  },
+  {
+    value: "150K+",
+    label: "Active Users",
+    icon: Users,
+  },
+  {
+    value: "99.99%",
+    label: "Uptime",
+    icon: Activity,
+  },
+  {
+    value: "40+",
+    label: "Countries",
+    icon: Globe,
+  },
+];
+
+// ─── Navigation Links ───────────────────────────────────────────────────────
+export const navLinks = [
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Testimonials", href: "#testimonials" },
+  { label: "FAQ", href: "#faq" },
+];
+
+// ─── Footer Links ───────────────────────────────────────────────────────────
+export const footerLinks = {
+  product: [
+    { label: "Features", href: "#features" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "FAQ", href: "#faq" },
+    { label: "Changelog", href: "#" },
+  ],
+  company: [
+    { label: "About Us", href: "#" },
+    { label: "Blog", href: "#" },
+    { label: "Careers", href: "#" },
+    { label: "Contact", href: "#" },
+  ],
+  legal: [
+    { label: "Privacy Policy", href: "#" },
+    { label: "Terms of Service", href: "#" },
+    { label: "Cookie Policy", href: "#" },
+  ],
+};
