@@ -11,7 +11,7 @@ const Landing = () => {
             {/*Hero section*/}
             <HeroSection/>
             {/*Features section*/}
-            <FeaturesSection/>
+            <FeaturesSection feaures={features}/>
             {/*Pricing section*/}
             <PricingSection/>
             {/*Testimonials section*/}
