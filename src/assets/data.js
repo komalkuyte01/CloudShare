@@ -15,45 +15,39 @@ import {
 export const features = [
   {
     icon: Upload,
-    iconColor: "text-blue-500",
-    title: "Fast File Upload",
+    title: "Easy File Upload",
     description:
-      "Upload files instantly with drag-and-drop support and resumable uploads.",
+      "Quickly upload your files with our intuitive drag-and-drop interface.",
   },
   {
     icon: Shield,
-    iconColor: "text-green-500",
     title: "Secure Storage",
     description:
-      "All files are encrypted during upload and securely stored in the cloud.",
+      "Your files are encrypted and stored securely in our cloud infrastructure.",
   },
   {
     icon: Share2,
-    iconColor: "text-purple-500",
-    title: "Easy File Sharing",
+    title: "Simple Sharing",
     description:
-      "Share files securely using public or private links with expiration dates.",
+      "Share files with anyone using secure links that you control.",
   },
   {
     icon: Lock,
-    iconColor: "text-red-500",
-    title: "Access Control",
+    title: "Flexible Credits",
     description:
-      "Protect files with passwords, permissions, and download restrictions.",
+      "Pay only for what you use with our credit-based system.",
   },
   {
     icon: Clock,
-    iconColor: "text-yellow-500",
-    title: "Version History",
+    title: "File Management",
     description:
-      "Track previous versions of files and restore them anytime.",
+      "Organize, preview, and manage your files from any device.",
   },
   {
     icon: Cloud,
-    iconColor: "text-cyan-500",
-    title: "Cloud Backup",
+    title: "Transaction History",
     description:
-      "Automatic backup ensures your important files are always safe.",
+      "Keep track of all your credit purchases and usage.",
   },
 ];
 
