@@ -14,37 +14,43 @@ import {
 // ─── Features ────────────────────────────────────────────────────────────────
 export const features = [
   {
-    icon: Upload,
+    iconName: "ArrowUpCircle",
+    iconColor: "text-blue-500",
     title: "Easy File Upload",
     description:
       "Quickly upload your files with our intuitive drag-and-drop interface.",
   },
   {
-    icon: Shield,
+    iconName: "Shield",
+    iconColor: "text-green-500",
     title: "Secure Storage",
     description:
       "Your files are encrypted and stored securely in our cloud infrastructure.",
   },
   {
-    icon: Share2,
+    iconName: "Share2",
+    iconColor: "text-purple-500",
     title: "Simple Sharing",
     description:
       "Share files with anyone using secure links that you control.",
   },
   {
-    icon: Lock,
+    iconName: "CreditCard",
+    iconColor: "text-red-500",
     title: "Flexible Credits",
     description:
       "Pay only for what you use with our credit-based system.",
   },
   {
-    icon: Clock,
+    iconName: "FileText",
+    iconColor: "text-yellow-500",
     title: "File Management",
     description:
       "Organize, preview, and manage your files from any device.",
   },
   {
-    icon: Cloud,
+    iconName: "Clock",
+    iconColor: "text-cyan-500",
     title: "Transaction History",
     description:
       "Keep track of all your credit purchases and usage.",

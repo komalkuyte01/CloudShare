@@ -21,7 +21,7 @@ const HeroSection = () => {
                     </h1>
 
 
-                    <p className="mt-5 max-w-3xl mx-auto text-base text-gray-500 sm:text-lg md:text-xl">
+                    <p className="mt-5 max-w-3xl text-center mx-auto text-base text-gray-500 sm:text-lg md:text-xl">
                         Upload, manage, and share your files securely. Accessible anywhere, anytime.
                     </p>
 

@@ -8,7 +8,7 @@ import { features } from "../assets/data";
 
 const Landing = () => {
     return (
-        <div className="landing-page bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="landing-page bg-gradient-to-b from-gray-50 to-gray-100 ">
             {/*Hero section*/}
             <HeroSection/>
             {/*Features section*/}
