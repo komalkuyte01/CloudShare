@@ -37,8 +37,8 @@ const FeaturesSection = ({ features }) => {
                 <div className="mt-16">
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
                         {features.map((feature, index) =>(
-                                <div key={index} className="pt-6 border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
-                                    <div className="flow-root bg-gray-50 rounded-lg px-4 pb-8">
+                                <div key={index} className="pt-6 border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col">
+                                    <div className="flow-root bg-gray-50 rounded-lg px-4 pb-8 flex-1">
                                         <div className="-mt-6">
                                             {/* Icon Container */}
                                             <div className="inline-flex items-center justify-center p-2 bg-white rounded-md shadow-lg">

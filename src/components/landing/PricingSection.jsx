@@ -39,7 +39,7 @@ const PricingSection = ({ pricingPlans }) => {
                                   {plan.features.map((feature,featureIndex) => (
                                     <li key={featureIndex} className="flex items-start">
                                         <div className="flex-shrink-0">
-                                            <Check className="h-6 w-6 text-green-500"/>
+                                            <Check className="h-5 w-5 text-purple-500"/>
                                         
                                         </div>
                                         <p className="ml-3 text-base text-gray-700">{feature}</p>
@@ -47,7 +47,9 @@ const PricingSection = ({ pricingPlans }) => {
                                   ))}
                                </ul>
                                <div className="rounded-md shadow">
-                                
+                                   <button className={`w-full flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md ${plan.highlighted ? 'text-white bg-purple-500 hover:bg-purple-600' : 'text-purple-600 bg-white hover:bg-gray-50 border-purple-500'} transition-colors duration-300`}>
+                                     {plan.cta}
+                                    </button>
                                </div>
                             </div>
                         </div>
