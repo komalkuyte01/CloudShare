@@ -38,7 +38,7 @@ const HeroSection = () => {
                             </button>
 
 
-                            <button className="rounded-xl px-10 py-4 text-lg font-semibold text-white bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                            <button className="rounded-xl px-10 py-4 text-lg font-semibold text-white bg-gray-500 hover:bg-gray-300 border border-white/10 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                                 Sign in
                             </button>
 

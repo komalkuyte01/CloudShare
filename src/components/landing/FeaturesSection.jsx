@@ -60,9 +60,9 @@ const FeaturesSection = ({ features }) => {
                                         </div>
                                     </div>
                                 </div>
-                        ))}
-                    </div>
-                </div>
+                            ))}
+                       </div>
+                   </div>
 
             </div>
         </div>
