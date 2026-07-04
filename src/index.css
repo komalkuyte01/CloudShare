@@ -77,3 +77,27 @@ button {
 .add-btn-fill {
     @apply text-white bg-purple-600 hover:bg-purple-700 transition-colors duration-200 rounded-lg px-4 py-2;
 }
+
+/* ── Feature Row Group Scroll Animations ── */
+.feature-row {
+    opacity: 0;
+    transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
+}
+
+/* Row 1: entire group starts off-screen to the left */
+.feature-row.slide-left {
+    transform: translateX(-50px);
+}
+
+/* Row 2: entire group starts off-screen to the right */
+.feature-row.slide-right {
+    transform: translateX(50px);
+}
+
+/* When the row enters the viewport: slide smoothly into place */
+.feature-row.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+}
