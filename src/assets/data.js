@@ -49,9 +49,9 @@ export const features = [
       "Organize, preview, and manage your files from any device.",
   },
   {
-    iconName: "Activity",
+    iconName: "Clock",
     iconColor: "text-cyan-500",
-    title: "Activity Logs",
+    title: "Transaction History",
     description:
       "Keep track of all your file uploads, downloads, and sharing activities.",
   },

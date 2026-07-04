@@ -1,4 +1,4 @@
-import {FileText, Wallet, ArrowUpCircle, Shield, Share2, CreditCard, Clock, Activity} from 'lucide-react';
+import {FileText, Wallet, ArrowUpCircle, Shield, Share2, CreditCard, Clock, Activity, Watch} from 'lucide-react';
 const FeaturesSection = ({ features }) => {
     const renderIcon = (iconName, iconColor) => {
        const iconProps = {size: 25, className: iconColor};
@@ -17,6 +17,8 @@ const FeaturesSection = ({ features }) => {
                      return <Clock {...iconProps} />;
                 case 'Activity':
                      return <Activity {...iconProps} />;
+                case 'History':
+                     return <Watch {...iconProps} />;
                default:
                      return <FileText {...iconProps} />;
              }
