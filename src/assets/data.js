@@ -49,11 +49,11 @@ export const features = [
       "Organize, preview, and manage your files from any device.",
   },
   {
-    iconName: "Clock",
+    iconName: "Activity",
     iconColor: "text-cyan-500",
-    title: "Transaction History",
+    title: "Activity Logs",
     description:
-      "Keep track of all your credit purchases and usage.",
+      "Keep track of all your file uploads, downloads, and sharing activities.",
   },
 ];
 
