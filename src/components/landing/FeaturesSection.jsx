@@ -77,21 +77,21 @@ const FeaturesSection = ({ features }) => {
     );
 
     return (
-        <div className="py-24 bg-transparent flex justify-center relative overflow-x-hidden">
+        <div className="py-12 sm:py-16 lg:py-24 bg-transparent flex justify-center relative overflow-x-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2 relative z-10 w-full">
 
                 {/* Header */}
                 <div className="text-center">
-                    <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl tracking-tight">
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl tracking-tight">
                         Everything you need for the file sharing
                     </h2>
-                    <p className="mt-4 max-w-7xl mx-auto text-lg text-gray-600 dark:text-gray-400 text-center font-light">
+                    <p className="mt-4 max-w-7xl mx-auto text-base sm:text-lg text-gray-600 dark:text-gray-400 text-center font-light px-2">
                         CloudShare provides all the tools you need to manage your digital content
                     </p>
                 </div>
 
                 {/* Feature Cards */}
-                <div className="mt-16 flex flex-col gap-8">
+                <div className="mt-10 sm:mt-16 flex flex-col gap-8">
 
                     {/* Row 1: slides in from the LEFT as a group */}
                     <div
