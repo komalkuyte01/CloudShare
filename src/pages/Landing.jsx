@@ -1,7 +1,7 @@
 import HeroSection from "../components/landing/HeroSection";
 import FeaturesSection from "../components/landing/FeaturesSection";
 import HowItWorksSection from "../components/landing/HowItWorksSection";
-import PricingSection from "../components/landing/PricingSection";;
+import PricingSection from "../components/landing/PricingSection";
 import FooterSection from "../components/landing/FooterSection";
 import ThemeToggle from "../components/ThemeToggle";
 import { features, pricingPlans, testimonials, faqs } from "../assets/data";

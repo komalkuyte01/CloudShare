@@ -15,7 +15,7 @@ const PricingSection = ({ pricingPlans }) => {
                 </div>
 
                 {/* Pricing Cards */}
-                <div className="mt-10 sm:mt-16 space-y-6 sm:space-y-8 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-8 lg:items-center">
+                <div className="mt-10 sm:mt-16 space-y-6 sm:space-y-8 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-8 lg:items-stretch">
                     {pricingPlans.map((plan, index) => (
                         <div
                             key={index}
@@ -25,7 +25,13 @@ const PricingSection = ({ pricingPlans }) => {
                                     : 'border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10'
                                 }`}
                         >
-                            <div className={`px-6 py-8 ${plan.highlighted ? 'bg-purple-50 dark:bg-purple-900/20' : ''}`}>
+                            {/* Purple top accent stripe on highlighted card */}
+                            {plan.highlighted && (
+                                <div className="h-1 w-full bg-gradient-to-r from-purple-500 to-violet-600 shrink-0" />
+                            )}
+
+                            {/* Card Header */}
+                            <div className={`px-6 ${plan.highlighted ? 'py-8 bg-purple-50 dark:bg-purple-900/20' : 'py-5'}`}>
                                 <div className="flex justify-between items-center">
                                     <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
                                         {plan.name}
@@ -36,36 +42,53 @@ const PricingSection = ({ pricingPlans }) => {
                                         </span>
                                     )}
                                 </div>
+
                                 <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 font-light">
                                     {plan.description}
                                 </p>
-                                <p className="mt-8 text-4xl font-extrabold text-gray-900 dark:text-white">
-                                    ₹{plan.price}
-                                </p>
+
+                                <div className={`flex items-baseline gap-1 ${plan.highlighted ? 'mt-8' : 'mt-6'}`}>
+                                    <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
+                                        ₹{plan.price}
+                                    </span>
+                                    {plan.period && plan.period !== 'forever' && (
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">/{plan.period}</span>
+                                    )}
+                                    {plan.period === 'forever' && (
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">free forever</span>
+                                    )}
+                                </div>
                             </div>
-                            <div className="px-6 pt-6 pb-8 flex-1 flex flex-col justify-between space-y-6 border-t border-gray-100 dark:border-white/10">
-                               <ul className="space-y-4">
-                                  {plan.features.map((feature, featureIndex) => (
-                                    <li key={featureIndex} className="flex items-start">
-                                        <div className="flex-shrink-0">
-                                            <Check className="h-5 w-5 text-cyan-600 dark:text-cyan-400"/>
-                                        </div>
-                                        <p className="ml-3 text-base text-gray-700 dark:text-gray-300 font-light">{feature}</p>
-                                    </li>
-                                  ))}
-                               </ul>
-                               <div className="rounded-xl shadow-lg mt-6">
-                                   <button className={`w-full flex items-center justify-center px-5 py-4 border border-transparent text-base font-semibold rounded-xl transition-all duration-300 min-h-[44px] ${plan.highlighted ? 'text-white bg-purple-600 hover:bg-purple-700 shadow-md' : 'text-gray-900 dark:text-white bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 border border-gray-200 dark:border-white/20'}`}>
-                                     {plan.cta}
-                                    </button>
-                               </div>
+
+                            {/* Features + CTA */}
+                            <div className={`px-6 flex-1 flex flex-col justify-between gap-6 border-t border-gray-100 dark:border-white/10 ${plan.highlighted ? 'pt-6 pb-8' : 'pt-5 pb-6'}`}>
+                                <ul className="space-y-3">
+                                    {plan.features.map((feature, featureIndex) => (
+                                        <li key={featureIndex} className="flex items-start gap-3">
+                                            <Check className="h-5 w-5 mt-0.5 shrink-0 text-purple-600 dark:text-purple-400" />
+                                            <span className="text-sm text-gray-700 dark:text-gray-300 font-light leading-snug">
+                                                {feature}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <button
+                                    className={`w-full flex items-center justify-center px-5 py-3.5 text-base font-semibold rounded-xl transition-all duration-200 min-h-[44px]
+                                        ${plan.highlighted
+                                            ? 'text-white bg-purple-600 hover:bg-purple-700 shadow-md shadow-purple-500/30'
+                                            : 'text-gray-900 dark:text-white bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 border border-gray-200 dark:border-white/20'
+                                        }`}
+                                >
+                                    {plan.cta}
+                                </button>
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
         </div>
-    )
+    );
+};
 
-}
 export default PricingSection;
