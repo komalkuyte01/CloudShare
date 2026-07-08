@@ -23,8 +23,7 @@ const PricingSection = ({ pricingPlans }) => {
                                 ${plan.highlighted
                                     ? 'border-2 border-purple-600 dark:border-purple-500 shadow-lg lg:scale-105 bg-white dark:bg-gray-800'
                                     : 'border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10'
-                                }`}
-                        >
+                                }`}>
                             {/* Purple top accent stripe on highlighted card */}
                             {plan.highlighted && (
                                 <div className="h-1 w-full bg-gradient-to-r from-purple-500 to-violet-600 shrink-0" />

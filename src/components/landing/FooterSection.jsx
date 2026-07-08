@@ -49,7 +49,7 @@ const FooterSection = () => {
     ];
 
     return (
-        <footer className="relative bg-gray-950 text-gray-300 overflow-hidden">
+        <footer className="relative bg-gray-100 dark:bg-gray-950 text-gray-700 dark:text-gray-300 overflow-hidden">
 
             {/* Top gradient glow */}
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/60 to-transparent" />
@@ -58,10 +58,10 @@ const FooterSection = () => {
             <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-14 pb-8">
 
                 {/* Main Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12 pb-10 border-b border-gray-800">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-12 pb-10 border-b border-gray-200 dark:border-gray-800">
 
                     {/* Brand Column */}
-                    <div className="lg:col-span-2 flex flex-col gap-4">
+                    <div className="col-span-2 md:col-span-3 lg:col-span-2 flex flex-col items-center text-center sm:items-start sm:text-left gap-4">
 
                         {/* Logo */}
                         <div className="flex items-center gap-2.5">
@@ -73,10 +73,11 @@ const FooterSection = () => {
                                     <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
                                 </svg>
                             </div>
-                            <span className="text-xl font-bold text-white tracking-tight">CloudShare</span>
+                            <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">CloudShare</span>
                         </div>
 
-                        <p className="text-sm leading-relaxed text-gray-400 max-w-xs">
+                        {/* Description — larger & darker on mobile for readability */}
+                        <p className="text-sm sm:text-sm leading-relaxed text-gray-600 dark:text-gray-400 max-w-xs max-sm:text-[13px] max-sm:text-gray-700 max-sm:dark:text-gray-300">
                             Secure file storage and sharing for individuals and teams.
                             Fast, private, and always accessible.
                         </p>
@@ -88,7 +89,7 @@ const FooterSection = () => {
                                     key={label}
                                     href={href}
                                     aria-label={label}
-                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-800/80 border border-gray-700 text-gray-400 hover:text-purple-400 hover:border-purple-500/60 hover:bg-purple-500/10 transition-all duration-200"
+                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200/80 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:border-purple-500/60 hover:bg-purple-500/10 transition-all duration-200"
                                 >
                                     {icon}
                                 </a>
@@ -98,16 +99,16 @@ const FooterSection = () => {
 
                     {/* Link Columns */}
                     {Object.entries(footerLinks).map(([section, links]) => (
-                        <div key={section} className="flex flex-col gap-4">
-                            <h4 className="text-xs font-semibold text-white uppercase tracking-widest">
+                        <div key={section} className="flex flex-col gap-3 sm:gap-4">
+                            <h4 className="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-widest">
                                 {section}
                             </h4>
-                            <ul className="flex flex-col gap-2.5">
+                            <ul className="flex flex-col gap-2 sm:gap-2.5">
                                 {links.map(({ label, href }) => (
                                     <li key={label}>
                                         <a
                                             href={href}
-                                            className="text-sm text-gray-400 hover:text-gray-200 transition-colors duration-150"
+                                            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-150 max-sm:text-[13px] max-sm:text-gray-700 max-sm:dark:text-gray-300"
                                         >
                                             {label}
                                         </a>
@@ -120,8 +121,8 @@ const FooterSection = () => {
 
                 {/* Bottom Bar */}
                 <div className="pt-6">
-                    <p className="text-center text-xs text-gray-400 dark:text-gray-500">
-                        © {new Date().getFullYear()} CloudShare, Inc. All rights reserved.
+                    <p className="text-center text-xs text-gray-500 dark:text-gray-500 max-sm:text-[11px] max-sm:text-gray-600 max-sm:dark:text-gray-400">
+                        © {new Date().getFullYear()} CloudShare. All rights reserved.
                     </p>
                 </div>
             </div>

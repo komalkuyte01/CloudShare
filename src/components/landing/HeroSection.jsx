@@ -1,6 +1,6 @@
 import { assets } from "../../assets/assets";
 
-const HeroSection = () => {
+const HeroSection = ({openSignIn, openSignUp}) => {
     return (
         <div className="landing-page-content relative lg:min-h-screen flex lg:items-center justify-center overflow-hidden">
 
@@ -28,11 +28,15 @@ const HeroSection = () => {
 
                         <div className="flex flex-row gap-3 lg:gap-5">
 
-                            <button className="w-38 lg:w-48 rounded-xl px-5 py-2 text-sm lg:px-10 lg:py-4 lg:text-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 shadow-md hover:-translate-y-1 cursor-pointer min-h-[44px]">
+                            <button 
+                               onClick={() => openSignUp()}
+                               className="w-38 lg:w-48 rounded-xl px-5 py-2 text-sm lg:px-10 lg:py-4 lg:text-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 shadow-md hover:-translate-y-1 cursor-pointer min-h-[44px]">
                                 Get Started
                             </button>
 
-                            <button className="w-38 lg:w-48 rounded-xl px-5 py-2 text-sm lg:px-10 lg:py-4 lg:text-lg font-semibold text-gray-800 dark:text-white bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 shadow-sm cursor-pointer min-h-[44px]">
+                            <button 
+                                onClick={() => openSignIn()}
+                                className="w-38 lg:w-48 rounded-xl px-5 py-2 text-sm lg:px-10 lg:py-4 lg:text-lg font-semibold text-gray-800 dark:text-white bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 shadow-sm cursor-pointer min-h-[44px]">
                                 Sign in
                             </button>
 
