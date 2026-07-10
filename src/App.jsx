@@ -33,9 +33,37 @@ const App = () => {
                         </SignedOut>
                     </>
                 } />
-                <Route path="/my-files" element={<MyFiles />} />
-                <Route path="/subscription" element={<Subscription />} />
-                <Route path="/transaction" element={<Transaction />} />
+                <Route path="/my-files" element={
+                    <>
+                        <SignedIn>
+                            <MyFiles />
+                        </SignedIn>
+                        <SignedOut>
+                            <RedirectToSignIn />
+                        </SignedOut>
+                    </>
+                    } />
+                <Route path="/subscription" element={
+                    <>
+                        <SignedIn>
+                            <Subscription />
+                        </SignedIn>
+                        <SignedOut>
+                            <RedirectToSignIn />
+                        </SignedOut>
+                    </>
+                     } />
+                <Route path="/transaction" element={
+                    <>
+                        <SignedIn>
+                            <Transaction />
+                        </SignedIn>
+                        <SignedOut>
+                            <RedirectToSignIn />
+                        </SignedOut>
+                    </>
+                } />
+                <Route path="/*" element={<RedirectToSignIn/>}/>
             </Routes>
         </BrowserRouter>
     );

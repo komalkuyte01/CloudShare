@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 
-const PricingSection = ({ pricingPlans }) => {
+const PricingSection = ({ pricingPlans, openSignUp }) => {
     return (
         <div className="py-12 sm:py-16 lg:py-24 bg-transparent relative">
 
@@ -73,6 +73,7 @@ const PricingSection = ({ pricingPlans }) => {
                                 </ul>
 
                                 <button
+                                    onClick={() => openSignUp()}
                                     className={`w-full flex items-center justify-center px-5 py-3.5 text-base font-semibold rounded-xl transition-all duration-200 min-h-[44px]
                                         ${plan.highlighted
                                             ? 'text-white bg-purple-600 hover:bg-purple-700 shadow-md shadow-purple-500/30'
