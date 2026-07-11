@@ -1,28 +1,26 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# ========================
+# CloudShare Monorepo
+# Root-level .gitignore
+# ========================
 
-node_modules
-dist
-dist-ssr
-*.local
-AI_GUIDE/
-.env
-.env.*
-!.env.example
+# OS generated files
+.DS_Store
+Thumbs.db
 
-# Editor directories and files
+# Editor / IDE directories
+.idea/
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# AI Guide (internal reference)
+AI_GUIDE/
