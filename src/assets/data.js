@@ -1,10 +1,4 @@
 import {
-  Upload,
-  Shield,
-  Share2,
-  Lock,
-  Clock,
-  Cloud,
   FileUp,
   Users,
   Globe,

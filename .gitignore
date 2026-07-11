@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 AI_GUIDE/
+.env
+.env.*
 
 # Editor directories and files
 .vscode/*

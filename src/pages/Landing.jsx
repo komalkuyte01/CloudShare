@@ -26,11 +26,17 @@ const Landing = () => {
             {/*Hero section*/}
             <HeroSection openSignIn={openSignIn} openSignUp={openSignUp}/>
             {/*Features section*/}
-            <FeaturesSection features={features}/>
+            <div id="features">
+                <FeaturesSection features={features}/>
+            </div>
             {/*How It Works section*/}
-            <HowItWorksSection/>
+            <div id="how-it-works">
+                <HowItWorksSection/>
+            </div>
             {/*Pricing section*/}
-            <PricingSection pricingPlans={pricingPlans} openSignUp={openSignUp} />
+            <div id="pricing">
+                <PricingSection pricingPlans={pricingPlans} openSignUp={openSignUp} />
+            </div>
             {/*Footer section*/}
             <FooterSection/>
         </div>

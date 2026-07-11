@@ -6,7 +6,18 @@ import Upload from "./pages/Upload";
 import MyFiles from "./pages/MyFiles";
 import Subscription from "./pages/Subscription";
 import Transaction from "./pages/Transaction";
+import PublicFileView from "./pages/PublicFileView";
 import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
+
+const NotFound = () => (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-[#030712] text-gray-900 dark:text-gray-100">
+        <h1 className="text-6xl font-extrabold text-purple-600 dark:text-purple-400">404</h1>
+        <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">Page not found</p>
+        <a href="/" className="mt-6 px-6 py-3 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition-colors duration-200">
+            Go Home
+        </a>
+    </div>
+);
 
 const App = () => {
     return (
@@ -63,7 +74,8 @@ const App = () => {
                         </SignedOut>
                     </>
                 } />
-                <Route path="/*" element={<RedirectToSignIn/>}/>
+                <Route path="/file/:id" element={<PublicFileView />} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
     );

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import {FileText, Wallet, ArrowUpCircle, Shield, Share2, CreditCard, Clock, Activity, Watch} from 'lucide-react';
+import {FileText, ArrowUpCircle, Shield, Share2, CreditCard, Clock, Activity, Watch} from 'lucide-react';
 
 const FeaturesSection = ({ features }) => {
     const row1Ref = useRef(null);
