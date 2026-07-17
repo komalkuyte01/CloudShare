@@ -1,11 +1,11 @@
 package com.cloudshare.repository;
 
-import com.cloudshare.document.ProfileDocument;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.cloudshare.entity.Profile;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ProfileRepository extends MongoRepository<ProfileDocument, String> {
-    Optional<ProfileDocument> findByEmail(String email);
+public interface ProfileRepository extends JpaRepository<Profile, Long> {
+    Optional<Profile> findByEmail(String email);
 
 }

@@ -12,7 +12,7 @@ import java.time.Instant;
 @Builder
 
 public class ProfileDTO {
-    private String id;
+    private Long id;
     private String clerkId;
     private String firstName;
     private String lastName;
