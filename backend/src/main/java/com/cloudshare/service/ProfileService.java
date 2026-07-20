@@ -49,4 +49,23 @@ public class ProfileService {
                 .createdAt(profile.getCreatedAt())
                 .build();
     }
+
+    public ProfileDTO updateProfile(ProfileDTO profileDTO){
+        ProfileDocument exisitingProfile = profileRepository.findByClerkId(profileDTO.getClerkId());
+        if(existingProfile != null) {
+            if (profileDTO.getEmail() != null && !profileDTO.getEmail().isEmpty()) {
+                existingProfile.setEmail(profileDTO.getEmail());
+            }
+            if (profileDTO.getFirstName() != null && !profileDTO.getFirstName().isEmpty()) {
+                existingProfile.setFirstName(profileDTO.getFirstName());
+            }
+            if (profileDTO.getLastName() != null && !profileDTO.getLastName().isEmpty()) {
+                existingProfile.setLastName(profileDTO.getLastName());
+            }
+            if (profileDTO.getPhotoUrl() != null && !profileDTO.getPhotoUrl().isEmpty()) {
+                existingProfile.setPhotoUrl(profileDTO.getPhotoUrl());
+            }
+            profileRepository.save(exisitingProfile);
+        }
+    }
 }

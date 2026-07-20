@@ -10,4 +10,5 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     Optional<Profile> findByUser(User user);
 
+    ProfileDocument findByClerkId(String clerkId);
 }
