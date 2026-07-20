@@ -17,7 +17,7 @@ public class ProfileService {
 
     public ProfileDTO createProfile(ProfileDTO profileDTO) {
 
-        // Find existing user by Clerk ID
+        // Find existing user by Clerk ID or create a new one
         User user = userRepository.findByClerkId(profileDTO.getClerkId())
                 .orElseGet(() -> {
                     User newUser = User.builder()
@@ -50,22 +50,47 @@ public class ProfileService {
                 .build();
     }
 
-    public ProfileDTO updateProfile(ProfileDTO profileDTO){
-        ProfileDocument exisitingProfile = profileRepository.findByClerkId(profileDTO.getClerkId());
-        if(existingProfile != null) {
-            if (profileDTO.getEmail() != null && !profileDTO.getEmail().isEmpty()) {
-                existingProfile.setEmail(profileDTO.getEmail());
-            }
-            if (profileDTO.getFirstName() != null && !profileDTO.getFirstName().isEmpty()) {
-                existingProfile.setFirstName(profileDTO.getFirstName());
-            }
-            if (profileDTO.getLastName() != null && !profileDTO.getLastName().isEmpty()) {
-                existingProfile.setLastName(profileDTO.getLastName());
-            }
-            if (profileDTO.getPhotoUrl() != null && !profileDTO.getPhotoUrl().isEmpty()) {
-                existingProfile.setPhotoUrl(profileDTO.getPhotoUrl());
-            }
-            profileRepository.save(exisitingProfile);
+    public ProfileDTO updateProfile(ProfileDTO profileDTO) {
+
+        // Find user by Clerk ID
+        User user = userRepository.findByClerkId(profileDTO.getClerkId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Find profile by user
+        Profile existingProfile = profileRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        // Update user email
+        if (profileDTO.getEmail() != null && !profileDTO.getEmail().isBlank()) {
+            user.setEmail(profileDTO.getEmail());
         }
+
+        // Update profile fields
+        if (profileDTO.getFirstName() != null && !profileDTO.getFirstName().isBlank()) {
+            existingProfile.setFirstName(profileDTO.getFirstName());
+        }
+
+        if (profileDTO.getLastName() != null && !profileDTO.getLastName().isBlank()) {
+            existingProfile.setLastName(profileDTO.getLastName());
+        }
+
+        if (profileDTO.getPhotoUrl() != null && !profileDTO.getPhotoUrl().isBlank()) {
+            existingProfile.setPhotoUrl(profileDTO.getPhotoUrl());
+        }
+
+        // Save updates
+        userRepository.save(user);
+        existingProfile = profileRepository.save(existingProfile);
+
+        return ProfileDTO.builder()
+                .id(existingProfile.getId())
+                .clerkId(user.getClerkId())
+                .email(user.getEmail())
+                .firstName(existingProfile.getFirstName())
+                .lastName(existingProfile.getLastName())
+                .photoUrl(existingProfile.getPhotoUrl())
+                .credits(existingProfile.getCredits())
+                .createdAt(existingProfile.getCreatedAt())
+                .build();
     }
 }
