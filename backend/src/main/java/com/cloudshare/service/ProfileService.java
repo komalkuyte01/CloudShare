@@ -93,4 +93,18 @@ public class ProfileService {
                 .createdAt(existingProfile.getCreatedAt())
                 .build();
     }
+    public boolean existsByClerkId(String clerkId) {
+        return profileRepository.existsByClerkId(clerkId);
+    }
+    public void deleteProfile(String clerkId) {
+        User user = userRepository.findByClerkId(clerkId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Profile profile = profileRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        profileRepository.delete(profile);
+        userRepository.delete(user);
+
+    }
 }

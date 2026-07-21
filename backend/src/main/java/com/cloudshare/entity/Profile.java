@@ -35,7 +35,7 @@ public class Profile {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @PrePersist
+    @PrePersist // automatically set field before saving to database
     public void prePersist() {
         createdAt = Instant.now();
     }
