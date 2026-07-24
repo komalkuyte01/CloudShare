@@ -10,12 +10,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.util.Base64;
+import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -65,7 +70,8 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
 
             // Decode JWT header
             String headerJson = new String(
-                    Base64.getUrlDecoder().decode(chunks[0])
+                    Base64.getUrlDecoder().decode(chunks[0]),
+                    StandardCharsets.UTF_8
             );
 
             ObjectMapper mapper = new ObjectMapper();
@@ -84,26 +90,40 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
 
             PublicKey publicKey = jwksProvider.getPublicKey(kid);
 
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(publicKey)
-                    .setAllowedClockSkewSeconds(60)
+            Claims claims = Jwts.parser()
+                    .verifyWith((java.security.interfaces.RSAPublicKey) publicKey)
+                    .clockSkewSeconds(60)
                     .requireIssuer(clerkIssuer)
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .parseSignedClaims(token)
+                    .getPayload();
 
             String clerkId = claims.getSubject();
 
-            // TODO: Set authenticated user in SecurityContext
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(
+                            clerkId,
+                            null,
+                            Collections.singletonList(
+                                    new SimpleGrantedAuthority("ROLE_ADMIN")
+                            )
+                    );
+
+            SecurityContextHolder
+                    .getContext()
+                    .setAuthentication(authenticationToken);
 
         } catch (Exception e) {
+
             response.sendError(
-                    HttpServletResponse.SC_UNAUTHORIZED,
+                    HttpServletResponse.SC_FORBIDDEN,
                     "Invalid or expired JWT token"
             );
+
             return;
         }
 
+        // Continue filter chain only once
         filterChain.doFilter(request, response);
     }
 }

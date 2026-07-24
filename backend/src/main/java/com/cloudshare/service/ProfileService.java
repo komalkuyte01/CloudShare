@@ -94,7 +94,7 @@ public class ProfileService {
                 .build();
     }
     public boolean existsByClerkId(String clerkId) {
-        return profileRepository.existsByClerkId(clerkId);
+        return profileRepository.existsByUserClerkId(clerkId);
     }
     public void deleteProfile(String clerkId) {
         User user = userRepository.findByClerkId(clerkId)
