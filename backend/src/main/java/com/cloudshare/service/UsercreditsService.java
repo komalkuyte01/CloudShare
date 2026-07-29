@@ -1,26 +1,23 @@
 package com.cloudshare.service;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import com.cloudshare.entity.Profile;
+import com.cloudshare.repository.ProfileRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@Data
-@AllArgsConstructor
-@Builder
+@RequiredArgsConstructor
 public class UserCreditsService {
 
-    private final UserCreditRepository userCreditRepository;
+    private final ProfileRepository profileRepository;
 
-    public UserCredits createInitialCredits(String clerkId) {
-
-        UserCredits userCredits = UserCredits.builder()
-                .clerkId(clerkId)
-                .credits(5)
-                .plan("BASIC")
-                .build();
-
-        return userCreditRepository.save(userCredits);
+    /**
+     * Adds initial credits (5) to the profile identified by clerkId.
+     * This is now backed by the credits field on the Profile entity
+     * instead of a separate UserCredits entity that doesn't exist.
+     */
+    public void addInitialCredits(Profile profile, int credits) {
+        profile.setCredits(credits);
+        profileRepository.save(profile);
     }
 }

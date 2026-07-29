@@ -53,7 +53,7 @@ const App = () => {
                             <RedirectToSignIn />
                         </SignedOut>
                     </>
-                    } />
+                } />
                 <Route path="/subscription" element={
                     <>
                         <SignedIn>
@@ -63,7 +63,7 @@ const App = () => {
                             <RedirectToSignIn />
                         </SignedOut>
                     </>
-                     } />
+                } />
                 <Route path="/transaction" element={
                     <>
                         <SignedIn>

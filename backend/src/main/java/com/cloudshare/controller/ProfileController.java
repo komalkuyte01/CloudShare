@@ -17,9 +17,18 @@ public class ProfileController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerProfile(@Valid @RequestBody ProfileDTO profileDTO) {
-        HttpStatus status = profileService.existsByClerkId(profileDTO.getClerkId()) ? HttpStatus.OK : HttpStatus.CREATED;
+        boolean exists = profileService.existsByClerkId(profileDTO.getClerkId());
 
-        ProfileDTO savedProfile = profileService.createProfile(profileDTO);
+        ProfileDTO savedProfile;
+        HttpStatus status;
+
+        if (exists) {
+            savedProfile = profileService.updateProfile(profileDTO);
+            status = HttpStatus.OK;
+        } else {
+            savedProfile = profileService.createProfile(profileDTO);
+            status = HttpStatus.CREATED;
+        }
 
         return ResponseEntity.status(status).body(savedProfile);
     }

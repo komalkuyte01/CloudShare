@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-   @RestControllerAdvice
-    public class GlobalExceptionHandler{
+@RestControllerAdvice
+public class GlobalExceptionHandler {
 
-        @ExceptionHandler(DuplicateKeyException.class)
-        public ResponseEntity<?> handleDuplicateKeyException(DuplicateKeyException ex){
-             Map<String,Object> data = new HashMap<>();
-             data.put("status",HttpStatus.CONFLICT);
-             data.put("message", ex.getMessage());
-             return ResponseEntity.status(HttpStatus.CONFLICT).body(data);
-   }
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ResponseEntity<?> handleDuplicateKeyException(DuplicateKeyException ex) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("status", HttpStatus.CONFLICT);
+        data.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(data);
+    }
 }
