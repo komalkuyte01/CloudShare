@@ -1,23 +1,30 @@
 package com.cloudshare.service;
 
-import com.cloudshare.entity.Profile;
-import com.cloudshare.repository.ProfileRepository;
+import com.cloudshare.document.UserCredits;
+import com.cloudshare.repository.UserCreditsRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserCreditsService {
 
-    private final ProfileRepository profileRepository;
+    private final UserCreditsRepository userCreditsRepository;
 
-    /**
-     * Adds initial credits (5) to the profile identified by clerkId.
-     * This is now backed by the credits field on the Profile entity
-     * instead of a separate UserCredits entity that doesn't exist.
-     */
-    public void addInitialCredits(Profile profile, int credits) {
-        profile.setCredits(credits);
-        profileRepository.save(profile);
+    public UserCredits createInitialCredits(String clerkId) {
+        // Avoid duplicate credits for the same user
+        if (userCreditsRepository.existsByCreditId(clerkId)) {
+            log.info("Credits already exist for clerkId: {}", clerkId);
+            return userCreditsRepository.findByCreditId(clerkId).orElse(null);
+        }
+
+        UserCredits userCredits = UserCredits.builder()
+                .creditId(clerkId)
+                .credits(5)
+                .plan("BASIC")
+                .build();
+        return userCreditsRepository.save(userCredits);
     }
 }

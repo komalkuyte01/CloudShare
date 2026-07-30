@@ -2,6 +2,7 @@ package com.cloudshare.controller;
 
 import com.cloudshare.dto.ProfileDTO;
 import com.cloudshare.service.ProfileService;
+import com.cloudshare.service.UserCreditsService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class ClerkWebhookController {
 
     private final ProfileService profileService;
     private final ObjectMapper objectMapper;
+    private final UserCreditsService userCreditsService;
 
     @Value("${clerk.webhook-secret}")
     private String webhookSecret;
@@ -90,6 +92,7 @@ public class ClerkWebhookController {
                 .build();
 
         profileService.createProfile(profileDTO);
+        userCreditsService.createInitialCredits(clerkId);
         log.info("Created profile for clerkId: {}", clerkId);
     }
 
