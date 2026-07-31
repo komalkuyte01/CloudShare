@@ -14,6 +14,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+
 import java.util.List;
 
 @Configuration
@@ -24,6 +26,15 @@ public class SecurityConfig {
 
     public SecurityConfig(ClerkJwtAuthFilter clerkJwtAuthFilter) {
         this.clerkJwtAuthFilter = clerkJwtAuthFilter;
+    }
+
+    @Bean
+    public FilterRegistrationBean<ClerkJwtAuthFilter> clerkJwtAuthFilterRegistration(
+            ClerkJwtAuthFilter filter) {
+        FilterRegistrationBean<ClerkJwtAuthFilter> registration =
+                new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     @Bean
