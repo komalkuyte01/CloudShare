@@ -39,7 +39,9 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         // Skip webhook requests
-        if (request.getRequestURI().contains("/webhooks")) {
+        String uri = request.getServletPath();
+
+        if (uri.startsWith("/webhooks")) {
             filterChain.doFilter(request, response);
             return;
         }
