@@ -39,9 +39,9 @@ public class ClerkWebhookController {
             @RequestHeader(value = "svix-timestamp", required = false) String svixTimestamp,
             @RequestHeader(value = "svix-signature", required = false) String svixSignature) {
 
-        System.out.println("======================================");
-        System.out.println("WEBHOOK RECEIVED");
-        System.out.println("======================================");
+        //System.out.println("======================================");
+        //System.out.println("WEBHOOK RECEIVED");
+        //System.out.println("======================================");
 
         // TEMPORARY: Skip signature verification
         // if (!verifyWebhookSignature(payload, svixId, svixTimestamp, svixSignature)) {

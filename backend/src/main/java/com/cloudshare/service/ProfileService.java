@@ -94,6 +94,7 @@ public class ProfileService {
                 .build();
     }
     public boolean existsByClerkId(String clerkId) {
+
         return profileRepository.existsByUserClerkId(clerkId);
     }
     public void deleteProfile(String clerkId) {
