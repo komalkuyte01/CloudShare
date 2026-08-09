@@ -1,6 +1,10 @@
+import DashboardLayout from "../layout/DashboardLayout.jsx";
+
 const Transaction = () => {
     return (
-        <div>Transaction</div>
+        <DashboardLayout activeMenu="Transactions">
+            <div>Transaction</div>
+        </DashboardLayout>
     )
 }
 export default Transaction;

@@ -1,30 +1,4 @@
-# ========================
-# CloudShare Monorepo
-# Root-level .gitignore
-# ========================
-
-# ------------------------
-# OS files
-# ------------------------
-.DS_Store
-Thumbs.db
-
-# ------------------------
-# IDE / Editor
-# ------------------------
-.idea/
-.vscode/*
-!.vscode/extensions.json
-*.iml
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# ------------------------
 # Logs
-# ------------------------
 logs
 *.log
 npm-debug.log*
@@ -33,43 +7,31 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# ------------------------
-# Environment files
-# ------------------------
-**/.env
-**/.env.*
-!**/.env.example
-
-# ------------------------
-# Local files
-# ------------------------
+# Node
+node_modules/
+dist/
+dist-ssr/
 *.local
 
-# ------------------------
-# AI documentation
-# ------------------------
+# Environment
+.env
+.env.*
+!.env.example
+
+# AI Guide
 AI_GUIDE/
 
-# ------------------------
-# Frontend (React + Vite)
-# ------------------------
-frontend/node_modules/
-frontend/dist/
-frontend/dist-ssr/
+# Maven / Java
+target/
+*.class
 
-# ------------------------
-# Backend (Spring Boot)
-# ------------------------
-backend/target/
-backend/src/main/resources/application-local.properties
-!backend/src/main/resources/application.properties.example
-
-# Maven Wrapper JAR (optional)
-# Uncomment if you don't want to track it
-# backend/.mvn/wrapper/maven-wrapper.jar
-
-# ------------------------
-# Temporary files
-# ------------------------
-*.tmp
-*.temp
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
