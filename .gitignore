@@ -7,19 +7,28 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Node
+node_modules/
+dist/
+dist-ssr/
 *.local
-AI_GUIDE/
+
+# Environment
 .env
 .env.*
 !.env.example
 
+# AI Guide
+AI_GUIDE/
+
+# Maven / Java
+target/
+*.class
+
 # Editor directories and files
-.vscode/*
+.vscode/
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
