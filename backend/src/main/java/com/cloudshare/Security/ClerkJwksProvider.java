@@ -11,8 +11,8 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class ClerkJwksProvider {
@@ -20,7 +20,7 @@ public class ClerkJwksProvider {
     @Value("${clerk.jwks-url}")
     private String jwksUrl;
 
-    private final Map<String, PublicKey> keyCache = new HashMap<>();
+    private final Map<String, PublicKey> keyCache = new ConcurrentHashMap<>();
 
     private long lastFetchTime = 0;
 

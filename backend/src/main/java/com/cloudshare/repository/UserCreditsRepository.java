@@ -1,6 +1,6 @@
 package com.cloudshare.repository;
 
-import com.cloudshare.document.UserCredits;
+import com.cloudshare.entity.UserCredits;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

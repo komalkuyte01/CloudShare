@@ -1,10 +1,11 @@
 package com.cloudshare.service;
 
-import com.cloudshare.document.UserCredits;
+import com.cloudshare.entity.UserCredits;
 import com.cloudshare.repository.UserCreditsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,6 +14,7 @@ public class UserCreditsService {
 
     private final UserCreditsRepository userCreditsRepository;
 
+    @Transactional
     public UserCredits createInitialCredits(String clerkId) {
         // Avoid duplicate credits for the same user
         if (userCreditsRepository.existsByCreditId(clerkId)) {
@@ -26,5 +28,12 @@ public class UserCreditsService {
                 .plan("BASIC")
                 .build();
         return userCreditsRepository.save(userCredits);
+    }
+
+    @Transactional
+    public void deleteCredits(String clerkId) {
+        userCreditsRepository.findByCreditId(clerkId)
+                .ifPresent(userCreditsRepository::delete);
+        log.info("Deleted credits for clerkId: {}", clerkId);
     }
 }

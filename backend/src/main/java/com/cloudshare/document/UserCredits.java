@@ -1,29 +1,10 @@
 package com.cloudshare.document;
 
-import jakarta.persistence.*;
-import lombok.*;
-
-@Entity
-@Table(name = "user_credits")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+/**
+ * NOTE: This class has been moved to com.cloudshare.entity.UserCredits
+ * as a proper JPA @Entity. This file is kept as a placeholder to avoid
+ * breaking the package structure. Do NOT add @Entity here.
+ */
 public class UserCredits {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "credit_id", nullable = false, unique = true)
-    private String creditId;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private Integer credits = 5;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private String plan = "BASIC";
+    // Moved to com.cloudshare.entity.UserCredits
 }

@@ -64,7 +64,7 @@ const App = () => {
                         </SignedOut>
                     </>
                 } />
-                <Route path="/transaction" element={
+                <Route path="/transactions" element={
                     <>
                         <SignedIn>
                             <Transaction />

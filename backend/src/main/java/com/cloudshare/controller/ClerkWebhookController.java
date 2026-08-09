@@ -39,16 +39,12 @@ public class ClerkWebhookController {
             @RequestHeader(value = "svix-timestamp", required = false) String svixTimestamp,
             @RequestHeader(value = "svix-signature", required = false) String svixSignature) {
 
-        //System.out.println("======================================");
-        //System.out.println("WEBHOOK RECEIVED");
-        //System.out.println("======================================");
-
-        // TEMPORARY: Skip signature verification
-        // if (!verifyWebhookSignature(payload, svixId, svixTimestamp, svixSignature)) {
-        //     log.warn("Webhook signature verification failed");
-        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-        //             .body(Map.of("error", "Invalid webhook signature"));
-        // }
+        // Verify webhook signature — protects against forged webhook calls
+        if (!verifyWebhookSignature(payload, svixId, svixTimestamp, svixSignature)) {
+            log.warn("Webhook signature verification failed for svix-id: {}", svixId);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid webhook signature"));
+        }
 
         try {
             JsonNode rootNode = objectMapper.readTree(payload);
@@ -97,7 +93,7 @@ public class ClerkWebhookController {
 
         profileService.createProfile(profileDTO);
         userCreditsService.createInitialCredits(clerkId);
-        log.info("Created profile for clerkId: {}", clerkId);
+        log.info("Created profile and credits for clerkId: {}", clerkId);
     }
 
     private void handleUserUpdated(JsonNode data) {
@@ -134,8 +130,10 @@ public class ClerkWebhookController {
             return;
         }
 
+        // Delete profile + user row first, then credits
         profileService.deleteProfile(clerkId);
-        log.info("Deleted profile for clerkId: {}", clerkId);
+        userCreditsService.deleteCredits(clerkId);
+        log.info("Deleted profile and credits for clerkId: {}", clerkId);
     }
 
     /**
@@ -169,17 +167,22 @@ public class ClerkWebhookController {
     private boolean verifyWebhookSignature(String payload, String svixId,
                                            String svixTimestamp, String svixSignature) {
         if (svixId == null || svixTimestamp == null || svixSignature == null) {
-            log.warn("Missing Svix headers");
+            log.warn("Missing Svix headers — rejecting webhook");
             return false;
         }
 
         try {
-            // Clerk webhook secrets are prefixed with "whsec_" when using Svix,
-            // but yours appears to be a raw Base64 key
-            String secret = webhookSecret;
+            // Clerk webhook secrets may be prefixed with "whsec_"
+            String secret = webhookSecret.trim();
             if (secret.startsWith("whsec_")) {
                 secret = secret.substring(6);
             }
+
+            // Add Base64 padding if missing (Java decoder requires length divisible by 4)
+            int remainder = secret.length() % 4;
+            if (remainder == 2) secret += "==";
+            else if (remainder == 3) secret += "=";
+
             byte[] secretBytes = Base64.getDecoder().decode(secret);
 
             // Build the signed content: "{svix-id}.{svix-timestamp}.{body}"
@@ -203,7 +206,7 @@ public class ClerkWebhookController {
                 }
             }
 
-            log.warn("No matching signature found");
+            log.warn("No matching signature found for svix-id: {}", svixId);
             return false;
 
         } catch (Exception e) {

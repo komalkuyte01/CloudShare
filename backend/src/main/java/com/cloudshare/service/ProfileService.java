@@ -7,6 +7,7 @@ import com.cloudshare.repository.ProfileRepository;
 import com.cloudshare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +16,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public ProfileDTO createProfile(ProfileDTO profileDTO) {
 
         // Find existing user by Clerk ID or create a new one
@@ -50,15 +52,16 @@ public class ProfileService {
                 .build();
     }
 
+    @Transactional
     public ProfileDTO updateProfile(ProfileDTO profileDTO) {
 
         // Find user by Clerk ID
         User user = userRepository.findByClerkId(profileDTO.getClerkId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found for clerkId: " + profileDTO.getClerkId()));
 
         // Find profile by user
         Profile existingProfile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new RuntimeException("Profile not found for user: " + user.getClerkId()));
 
         // Update user email
         if (profileDTO.getEmail() != null && !profileDTO.getEmail().isBlank()) {
@@ -93,19 +96,21 @@ public class ProfileService {
                 .createdAt(existingProfile.getCreatedAt())
                 .build();
     }
-    public boolean existsByClerkId(String clerkId) {
 
+    public boolean existsByClerkId(String clerkId) {
         return profileRepository.existsByUserClerkId(clerkId);
     }
+
+    @Transactional
     public void deleteProfile(String clerkId) {
         User user = userRepository.findByClerkId(clerkId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found for clerkId: " + clerkId));
 
         Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new RuntimeException("Profile not found for user: " + clerkId));
 
+        // Delete profile first (has FK to user), then delete user
         profileRepository.delete(profile);
         userRepository.delete(user);
-
     }
 }
