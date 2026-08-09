@@ -1,8 +1,8 @@
-import DashboardLayout from "../layout/dashboardLayout.jsx";
+import DashboardLayout from "../layout/DashboardLayout.jsx";
 
 const Dashboard = () => {
     return (
-        <DashboardLayout>
+        <DashboardLayout activeMenu="Dashboard" credits={5}>
             <div>
                 Dashboard Content
             </div>
