@@ -38,10 +38,11 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // Skip webhook requests
+        // Skip webhook requests and CORS preflight requests
         String uri = request.getServletPath();
 
-        if (uri.startsWith("/webhooks")) {
+        if (uri.startsWith("/webhooks")
+                || "OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -92,8 +93,17 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
 
             PublicKey publicKey = jwksProvider.getPublicKey(kid);
 
+            // Validate that the signing key is an RSA public key
+            if (!(publicKey instanceof java.security.interfaces.RSAPublicKey rsaPublicKey)) {
+                response.sendError(
+                        HttpServletResponse.SC_UNAUTHORIZED,
+                        "Unknown JWT signing key"
+                );
+                return;
+            }
+
             Claims claims = Jwts.parser()
-                    .verifyWith((java.security.interfaces.RSAPublicKey) publicKey)
+                    .verifyWith(rsaPublicKey)
                     .clockSkewSeconds(60)
                     .requireIssuer(clerkIssuer)
                     .build()
@@ -107,7 +117,7 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
                             clerkId,
                             null,
                             Collections.singletonList(
-                                    new SimpleGrantedAuthority("ROLE_ADMIN")
+                                    new SimpleGrantedAuthority("ROLE_USER")
                             )
                     );
 
@@ -116,12 +126,10 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
                     .setAuthentication(authenticationToken);
 
         } catch (Exception e) {
-
             response.sendError(
                     HttpServletResponse.SC_FORBIDDEN,
                     "Invalid or expired JWT token"
             );
-
             return;
         }
 

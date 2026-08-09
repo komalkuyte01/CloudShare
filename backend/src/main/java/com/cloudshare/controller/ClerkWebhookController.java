@@ -147,10 +147,12 @@ public class ClerkWebhookController {
         if (emailAddresses.isArray()) {
             for (JsonNode emailNode : emailAddresses) {
                 String id = emailNode.path("id").asText();
+
                 if (id.equals(primaryEmailId)) {
                     return emailNode.path("email_address").asText();
                 }
             }
+
             // Fallback: return the first email if primary not matched
             if (!emailAddresses.isEmpty()) {
                 return emailAddresses.get(0).path("email_address").asText();
@@ -164,41 +166,73 @@ public class ClerkWebhookController {
      * Verifies the Svix webhook signature sent by Clerk.
      * Uses HMAC-SHA256 with the signing secret to validate payload integrity.
      */
-    private boolean verifyWebhookSignature(String payload, String svixId,
-                                           String svixTimestamp, String svixSignature) {
+    private boolean verifyWebhookSignature(
+            String payload,
+            String svixId,
+            String svixTimestamp,
+            String svixSignature) {
+
         if (svixId == null || svixTimestamp == null || svixSignature == null) {
             log.warn("Missing Svix headers — rejecting webhook");
             return false;
         }
 
         try {
+            // Validate timestamp freshness to prevent replay attacks.
+            // Only accept webhooks within a 5-minute window.
+            long now = System.currentTimeMillis() / 1000;
+            long timestamp = Long.parseLong(svixTimestamp);
+
+            if (Math.abs(now - timestamp) > 300) {
+                log.warn(
+                        "Svix timestamp outside allowed tolerance (svix-id: {})",
+                        svixId
+                );
+                return false;
+            }
+
             // Clerk webhook secrets may be prefixed with "whsec_"
             String secret = webhookSecret.trim();
+
             if (secret.startsWith("whsec_")) {
                 secret = secret.substring(6);
             }
 
-            // Add Base64 padding if missing (Java decoder requires length divisible by 4)
+            // Add Base64 padding if missing
             int remainder = secret.length() % 4;
-            if (remainder == 2) secret += "==";
-            else if (remainder == 3) secret += "=";
+
+            if (remainder == 2) {
+                secret += "==";
+            } else if (remainder == 3) {
+                secret += "=";
+            }
 
             byte[] secretBytes = Base64.getDecoder().decode(secret);
 
-            // Build the signed content: "{svix-id}.{svix-timestamp}.{body}"
-            String signedContent = svixId + "." + svixTimestamp + "." + payload;
+            // Build the signed content:
+            // "{svix-id}.{svix-timestamp}.{body}"
+            String signedContent =
+                    svixId + "." + svixTimestamp + "." + payload;
 
             Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKeySpec = new SecretKeySpec(secretBytes, "HmacSHA256");
-            mac.init(secretKeySpec);
-            byte[] hash = mac.doFinal(signedContent.getBytes(StandardCharsets.UTF_8));
 
-            String computedSignature = "v1," + Base64.getEncoder().encodeToString(hash);
+            SecretKeySpec secretKeySpec =
+                    new SecretKeySpec(secretBytes, "HmacSHA256");
+
+            mac.init(secretKeySpec);
+
+            byte[] hash =
+                    mac.doFinal(signedContent.getBytes(StandardCharsets.UTF_8));
+
+            String computedSignature =
+                    "v1," + Base64.getEncoder().encodeToString(hash);
 
             // Svix may send multiple signatures separated by spaces
             String[] signatures = svixSignature.split(" ");
+
             for (String sig : signatures) {
                 String trimmed = sig.trim();
+
                 if (MessageDigest.isEqual(
                         computedSignature.getBytes(StandardCharsets.UTF_8),
                         trimmed.getBytes(StandardCharsets.UTF_8))) {
@@ -206,11 +240,26 @@ public class ClerkWebhookController {
                 }
             }
 
-            log.warn("No matching signature found for svix-id: {}", svixId);
+            log.warn(
+                    "No matching signature found for svix-id: {}",
+                    svixId
+            );
+
+            return false;
+
+        } catch (NumberFormatException e) {
+            log.warn(
+                    "Invalid Svix timestamp for svix-id: {}",
+                    svixId
+            );
             return false;
 
         } catch (Exception e) {
-            log.error("Signature verification error: {}", e.getMessage(), e);
+            log.error(
+                    "Signature verification error: {}",
+                    e.getMessage(),
+                    e
+            );
             return false;
         }
     }

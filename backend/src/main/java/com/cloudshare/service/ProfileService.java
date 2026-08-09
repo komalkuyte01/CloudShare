@@ -31,8 +31,16 @@ public class ProfileService {
                 });
 
         Profile profile = Profile.builder()
-                .firstName(profileDTO.getFirstName())
-                .lastName(profileDTO.getLastName())
+                .firstName(
+                        profileDTO.getFirstName() == null || profileDTO.getFirstName().isBlank()
+                                ? "User"
+                                : profileDTO.getFirstName().trim()
+                )
+                .lastName(
+                        profileDTO.getLastName() == null || profileDTO.getLastName().isBlank()
+                                ? ""
+                                : profileDTO.getLastName().trim()
+                )
                 .photoUrl(profileDTO.getPhotoUrl())
                 .credits(5)
                 .user(user)
@@ -57,11 +65,15 @@ public class ProfileService {
 
         // Find user by Clerk ID
         User user = userRepository.findByClerkId(profileDTO.getClerkId())
-                .orElseThrow(() -> new RuntimeException("User not found for clerkId: " + profileDTO.getClerkId()));
+                .orElseThrow(() -> new RuntimeException(
+                        "User not found for clerkId: " + profileDTO.getClerkId()
+                ));
 
         // Find profile by user
         Profile existingProfile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Profile not found for user: " + user.getClerkId()));
+                .orElseThrow(() -> new RuntimeException(
+                        "Profile not found for user: " + user.getClerkId()
+                ));
 
         // Update user email
         if (profileDTO.getEmail() != null && !profileDTO.getEmail().isBlank()) {
@@ -70,15 +82,15 @@ public class ProfileService {
 
         // Update profile fields
         if (profileDTO.getFirstName() != null && !profileDTO.getFirstName().isBlank()) {
-            existingProfile.setFirstName(profileDTO.getFirstName());
+            existingProfile.setFirstName(profileDTO.getFirstName().trim());
         }
 
         if (profileDTO.getLastName() != null && !profileDTO.getLastName().isBlank()) {
-            existingProfile.setLastName(profileDTO.getLastName());
+            existingProfile.setLastName(profileDTO.getLastName().trim());
         }
 
         if (profileDTO.getPhotoUrl() != null && !profileDTO.getPhotoUrl().isBlank()) {
-            existingProfile.setPhotoUrl(profileDTO.getPhotoUrl());
+            existingProfile.setPhotoUrl(profileDTO.getPhotoUrl().trim());
         }
 
         // Save updates
@@ -103,11 +115,16 @@ public class ProfileService {
 
     @Transactional
     public void deleteProfile(String clerkId) {
+
         User user = userRepository.findByClerkId(clerkId)
-                .orElseThrow(() -> new RuntimeException("User not found for clerkId: " + clerkId));
+                .orElseThrow(() -> new RuntimeException(
+                        "User not found for clerkId: " + clerkId
+                ));
 
         Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Profile not found for user: " + clerkId));
+                .orElseThrow(() -> new RuntimeException(
+                        "Profile not found for user: " + clerkId
+                ));
 
         // Delete profile first (has FK to user), then delete user
         profileRepository.delete(profile);
