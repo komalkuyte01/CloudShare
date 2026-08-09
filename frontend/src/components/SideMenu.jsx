@@ -19,8 +19,8 @@ const SideMenu = ({activeMenu}) => {
               {user?.fullName || ""}
           </h5>
          </div>
-            {SIDE_MENU_DATA.map((item, index) => (
-                <button key={`menu_${index}`}
+            {SIDE_MENU_DATA.map((item) => (
+                <button key={item.id}
                     className={`w-full flex items-center gap-4 text-[15px] py-3 px-6 rounded-lg mb-3 transition-all duration-200 cursor-pointer ${activeMenu === item.label ? "bg-purple-500 text-white font-medium shadow-md hover:bg-purple-600" : "text-gray-700 hover:bg-gray-100"}`}
                     onClick={() => navigate(item.path)}
                 >

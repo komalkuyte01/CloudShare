@@ -16,7 +16,14 @@ const Navbar = ({ activeMenu, credits }) => {
                 <div className="flex items-center gap-5">
 
                     <button
+                        type="button"
                         onClick={() => setOpenSideMenu(!openSideMenu)}
+                        aria-label={
+                            openSideMenu
+                                ? "Close side menu"
+                                : "Open side menu"
+                        }
+                        aria-expanded={openSideMenu}
                         className="block lg:hidden text-black hover:bg-gray-100 p-1 rounded transition-colors"
                     >
                         {openSideMenu ? (
@@ -31,6 +38,7 @@ const Navbar = ({ activeMenu, credits }) => {
                         className="flex items-center gap-2"
                     >
                         <Share2 className="text-blue-600" />
+
                         <span className="text-xl font-semibold text-gray-900">
                             CloudShare
                         </span>
@@ -41,6 +49,7 @@ const Navbar = ({ activeMenu, credits }) => {
                 {/* Right side - credits and user button */}
                 <SignedIn>
                     <div className="flex items-center gap-5">
+
                         <Link to="/subscription">
                             <CreditsDisplay credits={credits} />
                         </Link>
@@ -48,6 +57,7 @@ const Navbar = ({ activeMenu, credits }) => {
                         <div className="relative">
                             <UserButton />
                         </div>
+
                     </div>
                 </SignedIn>
 
@@ -56,8 +66,10 @@ const Navbar = ({ activeMenu, credits }) => {
             {/* Mobile side menu */}
             {openSideMenu && (
                 <div className="fixed top-[73px] left-0 right-0 bg-white border-b border-gray-200 lg:hidden z-20">
+
                     {/* Side menubar */}
                     <SideMenu activeMenu={activeMenu} />
+
                 </div>
             )}
         </div>
