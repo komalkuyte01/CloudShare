@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,8 +17,15 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerProfile(@Valid @RequestBody ProfileDTO profileDTO) {
-        boolean exists = profileService.existsByClerkId(profileDTO.getClerkId());
+    public ResponseEntity<?> registerProfile(
+            @Valid @RequestBody ProfileDTO profileDTO,
+            Authentication authentication) {
+
+        // Always use the clerkId from the verified JWT — never trust the request body
+        String clerkId = (String) authentication.getPrincipal();
+        profileDTO.setClerkId(clerkId);
+
+        boolean exists = profileService.existsByClerkId(clerkId);
 
         ProfileDTO savedProfile;
         HttpStatus status;

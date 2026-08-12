@@ -20,6 +20,7 @@ public class ClerkJwksProvider {
     @Value("${clerk.jwks-url}")
     private String jwksUrl;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<String, PublicKey> keyCache = new ConcurrentHashMap<>();
 
     private long lastFetchTime = 0;
@@ -27,8 +28,6 @@ public class ClerkJwksProvider {
     private static final long CACHE_TTL = 3600000;
 
     public PublicKey getPublicKey(String kid) throws Exception {
-
-        // long currentTime = System.currentTimeMillis();
 
         if (keyCache.containsKey(kid)
                 && System.currentTimeMillis() - lastFetchTime < CACHE_TTL) {
@@ -42,9 +41,7 @@ public class ClerkJwksProvider {
 
     private void refreshKeys() throws Exception {
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        JsonNode jwks = mapper.readTree(new URL(jwksUrl));
+        JsonNode jwks = objectMapper.readTree(new URL(jwksUrl));
 
         JsonNode keys = jwks.get("keys");
 

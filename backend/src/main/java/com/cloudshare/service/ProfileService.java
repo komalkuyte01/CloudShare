@@ -121,13 +121,7 @@ public class ProfileService {
                         "User not found for clerkId: " + clerkId
                 ));
 
-        Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException(
-                        "Profile not found for user: " + clerkId
-                ));
-
-        // Delete profile first (has FK to user), then delete user
-        profileRepository.delete(profile);
+        // CascadeType.ALL on User.profile handles profile deletion automatically
         userRepository.delete(user);
     }
 }

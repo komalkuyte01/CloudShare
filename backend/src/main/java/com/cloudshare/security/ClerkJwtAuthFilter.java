@@ -30,6 +30,7 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
     private String clerkIssuer;
 
     private final ClerkJwksProvider jwksProvider;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(
@@ -77,8 +78,7 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
                     StandardCharsets.UTF_8
             );
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode headerNode = mapper.readTree(headerJson);
+            JsonNode headerNode = objectMapper.readTree(headerJson);
 
             // Check if kid exists
             if (!headerNode.has("kid")) {
