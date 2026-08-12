@@ -1,6 +1,6 @@
 package com.cloudshare.config;
 
-import com.cloudshare.Security.ClerkJwtAuthFilter;
+import com.cloudshare.security.ClerkJwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
