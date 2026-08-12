@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserCreditsService {
 
     private final UserCreditsRepository userCreditsRepository;
+    private final ProfileService profileService;
 
     @Transactional
     public UserCredits createInitialCredits(String clerkId) {
@@ -32,8 +33,22 @@ public class UserCreditsService {
 
     @Transactional
     public void deleteCredits(String clerkId) {
-        userCreditsRepository.findByCreditId(clerkId)
-                .ifPresent(userCreditsRepository::delete);
+        userCreditsRepository.findByCreditId(clerkId).ifPresent(userCreditsRepository::delete);
         log.info("Deleted credits for clerkId: {}", clerkId);
+    }
+
+    public UserCredits getUserCredits(String clerkId) {
+
+        return userCreditsRepository.findByCreditId(clerkId)
+                .orElseGet(() -> createInitialCredits(clerkId));
+    }
+
+    public UserCredits getUserCreditsById() {
+        String clerkId = profileService.getCurrentProfile().getClerkId();
+        return getUserCredits(clerkId);
+    }
+   public boolean hasEnoughCredits(int requiredCredits) {
+       UserCredits userCredits = getUserCreditsById();
+        return userCredits.getCredits() >= requiredCredits;
     }
 }

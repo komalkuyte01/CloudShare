@@ -6,6 +6,8 @@ import com.cloudshare.entity.User;
 import com.cloudshare.repository.ProfileRepository;
 import com.cloudshare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,5 +125,33 @@ public class ProfileService {
 
         // CascadeType.ALL on User.profile handles profile deletion automatically
         userRepository.delete(user);
+    }
+
+    public ProfileDTO getCurrentProfile() {
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            throw new UsernameNotFoundException("User not authenticated");
+        }
+
+        String clerkId = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Profile profile = profileRepository.findByUserClerkId(clerkId)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "Profile not found for clerkId: " + clerkId
+                ));
+
+        User user = profile.getUser();
+
+        return ProfileDTO.builder()
+                .id(profile.getId())
+                .clerkId(user.getClerkId())
+                .email(user.getEmail())
+                .firstName(profile.getFirstName())
+                .lastName(profile.getLastName())
+                .photoUrl(profile.getPhotoUrl())
+                .credits(profile.getCredits())
+                .createdAt(profile.getCreatedAt())
+                .build();
     }
 }
