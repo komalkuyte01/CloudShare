@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
@@ -7,7 +8,45 @@ import MyFiles from "./pages/MyFiles";
 import Subscription from "./pages/Subscription";
 import Transaction from "./pages/Transaction";
 import PublicFileView from "./pages/PublicFileView";
-import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
+import { RedirectToSignIn, SignedIn, SignedOut, useUser, useAuth } from "@clerk/clerk-react";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080/api/v1.0";
+
+// Syncs the current Clerk user into the database as soon as they sign in.
+// Acts as a reliable fallback when Clerk webhooks are not delivered (e.g., local dev).
+const UserSync = () => {
+    const { isSignedIn, user } = useUser();
+    const { getToken } = useAuth();
+
+    useEffect(() => {
+        if (!isSignedIn || !user) return;
+
+        const syncUser = async () => {
+            try {
+                const token = await getToken();
+                await fetch(`${BACKEND_URL}/profiles/register`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        email: user.primaryEmailAddress?.emailAddress || "",
+                        firstName: user.firstName || "",
+                        lastName: user.lastName || "",
+                        photoUrl: user.imageUrl || "",
+                    }),
+                });
+            } catch (err) {
+                console.error("Failed to sync user to DB:", err);
+            }
+        };
+
+        syncUser();
+    }, [isSignedIn, user]);
+
+    return null;
+};
 
 const NotFound = () => (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-[#030712] text-gray-900 dark:text-gray-100">
@@ -22,6 +61,7 @@ const NotFound = () => (
 const App = () => {
     return (
         <BrowserRouter>
+            <UserSync />
             <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/dashboard" element={

@@ -2,6 +2,7 @@ package com.cloudshare.controller;
 
 import com.cloudshare.dto.ProfileDTO;
 import com.cloudshare.service.ProfileService;
+import com.cloudshare.service.UserCreditsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final UserCreditsService userCreditsService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerProfile(
@@ -35,9 +37,17 @@ public class ProfileController {
             status = HttpStatus.OK;
         } else {
             savedProfile = profileService.createProfile(profileDTO);
+            // Init credits for users who missed the webhook
+            userCreditsService.createInitialCredits(clerkId);
             status = HttpStatus.CREATED;
         }
 
         return ResponseEntity.status(status).body(savedProfile);
     }
-}
+
+    @GetMapping("/me")
+    public ResponseEntity<ProfileDTO> getCurrentProfile(Authentication authentication) {
+        ProfileDTO profile = profileService.getCurrentProfile();
+        return ResponseEntity.ok(profile);
+    }
+}

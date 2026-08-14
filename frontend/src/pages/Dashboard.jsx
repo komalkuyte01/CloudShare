@@ -1,7 +1,9 @@
+import { useEffect } from "react";
+import { useAuth } from "@clerk/clerk-react";
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 
 const Dashboard = () => {
-    const { getToken, GetToken } = useAuth();
+    const { getToken } = useAuth();
     useEffect(() => {
         const displayToken = async () => {
             const token = await getToken();
