@@ -51,8 +51,9 @@ public class UserCreditsService {
        UserCredits userCredits = getUserCreditsById();
         return userCredits.getCredits() >= requiredCredits;
     }
+    @Transactional
     public UserCredits consumeCredit() {
-        UserCredits userCredits = getUserCredit();
+        UserCredits userCredits = getUserCreditsById();
         if (userCredits.getCredits() <= 0) {
             return null;
         }

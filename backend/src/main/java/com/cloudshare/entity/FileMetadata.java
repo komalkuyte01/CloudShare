@@ -55,19 +55,14 @@ public class FileMetadata {
     )
     private String fileType;
 
-    /**
-     * File size in bytes.
-     */
+    /*** File size in bytes.*/
     @Column(
             name = "file_size",
             nullable = false
     )
     private Long fileSize;
 
-    /**
-     * Unique key/path used to locate the file
-     * in the actual storage system (e.g. AWS S3).
-     */
+    /*** Unique key/path used to locate the file in the actual storage system (e.g. AWS S3).*/
     @Column(
             name = "storage_key",
             nullable = false,
@@ -76,11 +71,7 @@ public class FileMetadata {
     )
     private String storageKey;
 
-    /**
-     * Controls whether the file is publicly accessible.
-     * false = private
-     * true  = public
-     */
+    /**Controls whether the file is publicly accessible.false = private true  = public*/
     @Builder.Default
     @Column(
             name = "is_public",
@@ -88,9 +79,7 @@ public class FileMetadata {
     )
     private Boolean isPublic = false;
 
-    /**
-     * Time when the file was uploaded.
-     */
+    /**Time when the file was uploaded.*/
     @Column(
             name = "uploaded_at",
             nullable = false,
@@ -98,9 +87,7 @@ public class FileMetadata {
     )
     private Instant uploadedAt;
 
-    /**
-     * Owner of the file.
-     */
+    /**Owner of the file.*/
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "user_id",
