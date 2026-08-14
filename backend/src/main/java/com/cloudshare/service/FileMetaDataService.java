@@ -43,26 +43,13 @@ public class FileMetaDataService {
 
         for (MultipartFile file : files) {
 
-            String originalFileName = StringUtils.cleanPath(
-                    file.getOriginalFilename()
-            );
-
-            String extension = StringUtils.getFilenameExtension(originalFileName);
-
-            String fileName = UUID.randomUUID()
-                    + (extension != null ? "." + extension : "");
-
+            String fileName = UUID.randomUUID() +"."+ StringUtils.getFilenameExtension(file.getOriginalFilename());
             Path targetLocation = uploadPath.resolve(fileName);
-
-            Files.copy(
-                    file.getInputStream(),
-                    targetLocation,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             FileMetadata fileMetadata = FileMetadata.builder()
                     .fileLocation(targetLocation.toString())
-                    .fileName(originalFileName)
+                    .fileName(fileName)
                     .fileType(file.getContentType())
                     .clerkId(currentProfile.getClerkId())
                     .fileSize(file.getSize())
@@ -70,6 +57,8 @@ public class FileMetaDataService {
                     .uploadedAt(java.time.Instant.now())
                     .storageKey(fileName)
                     .build();
+
+            userCreditsService.consumeCredit();
 
             FileMetadata savedFile =
                     fileMetaDataRepository.save(fileMetadata);
