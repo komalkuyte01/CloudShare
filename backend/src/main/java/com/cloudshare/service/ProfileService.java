@@ -119,7 +119,7 @@ public class ProfileService {
     public void deleteProfile(String clerkId) {
 
         User user = userRepository.findByClerkId(clerkId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new UsernameNotFoundException(
                         "User not found for clerkId: " + clerkId
                 ));
 

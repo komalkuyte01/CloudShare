@@ -28,8 +28,7 @@ public class SecurityConfig {
     public FilterRegistrationBean<ClerkJwtAuthFilter> clerkJwtAuthFilterRegistration(
             ClerkJwtAuthFilter filter) {
 
-        FilterRegistrationBean<ClerkJwtAuthFilter> registration =
-                new FilterRegistrationBean<>(filter);
+        FilterRegistrationBean<ClerkJwtAuthFilter> registration = new FilterRegistrationBean<>(filter);
 
         registration.setEnabled(false);
         return registration;

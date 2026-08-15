@@ -13,10 +13,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-/**
- * Syncs all Clerk users into the local database using the Clerk Management API.
- * Useful when webhooks miss events (e.g., during local dev with tunnels).
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
