@@ -6,10 +6,7 @@ import com.cloudshare.service.FileMetaDataService;
 import com.cloudshare.service.UserCreditsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,5 +30,16 @@ public class FileController {
         response.put("files", list);
         response.put("remainingCredits", finalCredits.getCredits());
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/my")
+    public ResponseEntity<?> getFilesForCurrentUser() {
+      List<FileMetaDataDTO> files = fileMetaDataService.getFiles();
+      return ResponseEntity.ok(files);
+    }
+
+    @GetMapping("/public/{id}")
+    public ResponseEntity<?> getPublicFile(@PathVariable Long id) {
+        FileMetaDataDTO file = fileMetaDataService.getPublicFile(id);
+        return ResponseEntity.ok(file);
     }
 }

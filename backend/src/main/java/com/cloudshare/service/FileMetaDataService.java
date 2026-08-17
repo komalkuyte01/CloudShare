@@ -1,8 +1,11 @@
 package com.cloudshare.service;
 
 import com.cloudshare.dto.FileMetaDataDTO;
+import com.cloudshare.dto.ProfileDTO;
 import com.cloudshare.entity.FileMetadata;
+import com.cloudshare.entity.User;
 import com.cloudshare.repository.FileMetadataRepository;
+import com.cloudshare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -14,7 +17,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,39 +27,70 @@ public class FileMetaDataService {
 
     private final UserCreditsService userCreditsService;
     private final FileMetadataRepository fileMetadataRepository;
+    private final ProfileService profileService;
+    private final UserRepository userRepository;
 
     public List<FileMetaDataDTO> uploadFiles(MultipartFile[] files) throws IOException {
 
         List<FileMetaDataDTO> fileMetaDataList = new ArrayList<>();
 
+        // Check if user has enough credits
         if (!userCreditsService.hasEnoughCredits(files.length)) {
             throw new RuntimeException("Not enough credits to upload files.");
         }
 
+        // Get current user
+        ProfileDTO currentProfile = profileService.getCurrentProfile();
+
+        User user = userRepository.findByClerkId(currentProfile.getClerkId())
+                .orElseThrow(() -> new RuntimeException(
+                        "User not found for clerkId: " + currentProfile.getClerkId()
+                ));
+
+        // Create uploads directory
         Path uploadPath = Path.of("uploads")
                 .toAbsolutePath()
                 .normalize();
 
         Files.createDirectories(uploadPath);
 
+        // Upload each file
         for (MultipartFile file : files) {
 
-            String fileName = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(file.getOriginalFilename());
-            Path targetLocation = uploadPath.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            String extension = StringUtils.getFilenameExtension(
+                    file.getOriginalFilename()
+            );
 
+            String fileName = UUID.randomUUID()
+                    + (extension != null ? "." + extension : "");
+
+            Path targetLocation = uploadPath.resolve(fileName);
+
+            // Save actual file
+            Files.copy(
+                    file.getInputStream(),
+                    targetLocation,
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
+            // Create metadata
             FileMetadata fileMetadata = FileMetadata.builder()
                     .fileName(fileName)
                     .fileType(file.getContentType())
                     .fileSize(file.getSize())
                     .isPublic(false)
                     .storageKey(fileName)
+                    .user(user)
                     .build();
 
+            // Consume credit
             userCreditsService.consumeCredit();
 
-            FileMetadata savedFile = fileMetadataRepository.save(fileMetadata);
+            // Save metadata
+            FileMetadata savedFile =
+                    fileMetadataRepository.save(fileMetadata);
 
+            // Convert Entity to DTO
             fileMetaDataList.add(mapToDTO(savedFile));
         }
 
@@ -73,4 +109,39 @@ public class FileMetaDataService {
                 .storageKey(fileMetadata.getStorageKey())
                 .build();
     }
-}
+
+    public List<FileMetaDataDTO> getFiles() {
+
+        // Get current logged-in profile
+        ProfileDTO currentProfile = profileService.getCurrentProfile();
+
+        // Find User using Clerk ID
+        User user = userRepository.findByClerkId(currentProfile.getClerkId())
+                .orElseThrow(() -> new RuntimeException(
+                        "User not found for clerkId: "
+                                + currentProfile.getClerkId()
+                ));
+
+        // Find files belonging to this user
+        List<FileMetadata> files = fileMetadataRepository.findByUser(user);
+
+        // Convert Entity list to DTO list
+        return files.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public FileMetaDataDTO getPublicFile(Long id) {
+
+        Optional<FileMetadata> fileOptional = fileMetadataRepository.findById(id);
+
+        if (fileOptional.isEmpty() || !fileOptional.get().getIsPublic()) {
+
+            throw new RuntimeException("Unable to get the file");
+        }
+
+        FileMetadata document = fileOptional.get();
+
+        return mapToDTO(document);
+    }
+}
