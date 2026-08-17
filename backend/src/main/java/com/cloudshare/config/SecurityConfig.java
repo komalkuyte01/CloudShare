@@ -44,7 +44,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/webhooks/**", "/files/public/**").permitAll()
+                        .requestMatchers("/webhooks/**", "/files/public/**","/files/download/**").permitAll()
                         .anyRequest().authenticated()
                 )
 

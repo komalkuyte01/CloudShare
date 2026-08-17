@@ -42,7 +42,9 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
         // Skip webhook requests and CORS preflight requests
         //String uri = request.getServletPath();
 
-        if (request.getResultURI().contains("/webhooks") || request.getResultURI().contains("/files/public")) {
+        if (request.getRequestURI().contains("/webhooks")
+                || request.getRequestURI().contains("/public")
+                || request.getRequestURI().contains("/download")) {
             filterChain.doFilter(request, response);
             return;
         }

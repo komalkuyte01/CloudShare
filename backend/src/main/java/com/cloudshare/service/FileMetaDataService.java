@@ -144,4 +144,8 @@ public class FileMetaDataService {
 
         return mapToDTO(document);
     }
+    public FileMetaDataDTO getDownloadableFile(Long id) {
+        FileMetaDataDTO file = fileMetadataRepository.findById(id).orElseThrow(() -> new RuntimeException("File not found"));
+        return mapToDTO(file);
+    }
 }

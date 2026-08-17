@@ -5,11 +5,17 @@ import com.cloudshare.entity.UserCredits;
 import com.cloudshare.service.FileMetaDataService;
 import com.cloudshare.service.UserCreditsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,5 +47,22 @@ public class FileController {
     public ResponseEntity<?> getPublicFile(@PathVariable Long id) {
         FileMetaDataDTO file = fileMetaDataService.getPublicFile(id);
         return ResponseEntity.ok(file);
+    }
+    @GetMapping("/download/{id}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long id) {
+
+        FileMetaDataDTO downloadableFile = fileMetaDataService.getDownloadableFile(id);
+
+        Path path = Path.of("uploads")
+                .toAbsolutePath()
+                .normalize()
+                .resolve(downloadableFile.getStorageKey());
+
+        Resource resource = new UrlResource(path.toUri());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloadableFile.getFileName() + "\"")
+                .body(resource);
     }
 }
