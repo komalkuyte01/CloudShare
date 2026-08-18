@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -132,20 +133,38 @@ public class FileMetaDataService {
     }
 
     public FileMetaDataDTO getPublicFile(Long id) {
-
         Optional<FileMetadata> fileOptional = fileMetadataRepository.findById(id);
-
         if (fileOptional.isEmpty() || !fileOptional.get().getIsPublic()) {
-
             throw new RuntimeException("Unable to get the file");
         }
-
         FileMetadata document = fileOptional.get();
-
         return mapToDTO(document);
     }
     public FileMetaDataDTO getDownloadableFile(Long id) {
-        FileMetaDataDTO file = fileMetadataRepository.findById(id).orElseThrow(() -> new RuntimeException("File not found"));
+        FileMetadata file = fileMetadataRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("File not found"));
         return mapToDTO(file);
     }
+
+    public void deleteFile(Long id) {
+        try {
+            ProfileDTO currentProfile = profileService.getCurrentProfile();
+            FileMetadata file = fileMetadataRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("File not found"));
+
+            if (!file.getUser().getClerkId().equals(currentProfile.getClerkId())) {
+                throw new RuntimeException("File does not belong to current user");
+            }
+
+            Path filePath = Path.of("uploads")
+                    .toAbsolutePath()
+                    .normalize()
+                    .resolve(file.getStorageKey());
+            Files.deleteIfExists(filePath);
+            fileMetadataRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting file: " + e.getMessage());
+        }
+    }
+
 }

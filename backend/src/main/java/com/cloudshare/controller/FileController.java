@@ -50,19 +50,32 @@ public class FileController {
     }
     @GetMapping("/download/{id}")
     public ResponseEntity<Resource> downloadFile(@PathVariable Long id) {
+        try {
+            FileMetaDataDTO downloadableFile = fileMetaDataService.getDownloadableFile(id);
 
-        FileMetaDataDTO downloadableFile = fileMetaDataService.getDownloadableFile(id);
+            Path path = Path.of("uploads")
+                    .toAbsolutePath()
+                    .normalize()
+                    .resolve(downloadableFile.getStorageKey());
 
-        Path path = Path.of("uploads")
-                .toAbsolutePath()
-                .normalize()
-                .resolve(downloadableFile.getStorageKey());
+            Resource resource = new UrlResource(path.toUri());
 
-        Resource resource = new UrlResource(path.toUri());
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloadableFile.getFileName() + "\"")
-                .body(resource);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloadableFile.getFileName() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            throw new RuntimeException("Error downloading file: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteFile(@PathVariable Long id) {
+        fileMetaDataService.deleteFile(id);
+        return ResponseEntity.noContent().build();
     }
 }
