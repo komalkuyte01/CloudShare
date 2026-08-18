@@ -39,9 +39,13 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // Skip webhook requests and CORS preflight requests
-        //String uri = request.getServletPath();
+        // Skip CORS preflight requests
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        // Skip webhook requests and public endpoints
         if (request.getRequestURI().contains("/webhooks")
                 || request.getRequestURI().contains("/public")
                 || request.getRequestURI().contains("/download")) {
@@ -105,7 +109,7 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
 
             Claims claims = Jwts.parser()
                     .verifyWith(rsaPublicKey)
-                    .clockSkewSeconds(60)
+                    .clockSkewSeconds(300)
                     .requireIssuer(clerkIssuer)
                     .build()
                     .parseSignedClaims(token)
@@ -127,13 +131,16 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
                     .setAuthentication(authenticationToken);
 
         } catch (Exception e) {
+            e.printStackTrace();
+
             response.sendError(
                     HttpServletResponse.SC_FORBIDDEN,
-                    "Invalid or expired JWT token"
+                    "JWT Error: " + e.getMessage()
             );
             return;
         }
 
+        
         // Continue filter chain only once
         filterChain.doFilter(request, response);
     }
