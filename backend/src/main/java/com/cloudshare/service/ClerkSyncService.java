@@ -25,6 +25,9 @@ public class ClerkSyncService {
     @Value("${clerk.secret-key:}")
     private String clerkSecretKey;
 
+    @Value("${clerk.api-url:https://api.clerk.com/v1}")
+    private String clerkApiUrl;
+
     /**
      * Fetches all users from Clerk API and upserts them into the database.
      *
@@ -34,7 +37,9 @@ public class ClerkSyncService {
 
         if (clerkSecretKey == null || clerkSecretKey.isBlank()) {
             throw new IllegalStateException(
-                    "CLERK_SECRET_KEY not configured. Add it to application-local.properties."
+                    "clerk.secret-key is not configured. " +
+                            "Set CLERK_SECRET_KEY as an environment variable " +
+                            "or define clerk.secret-key in application.properties (not committed)."
             );
         }
 
@@ -42,7 +47,7 @@ public class ClerkSyncService {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(
-                        "https://api.clerk.com/v1/users?limit=100&order_by=-created_at"
+                        clerkApiUrl + "/users?limit=100&order_by=-created_at"
                 ))
                 .header("Authorization", "Bearer " + clerkSecretKey)
                 .header("Content-Type", "application/json")

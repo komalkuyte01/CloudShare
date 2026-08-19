@@ -19,16 +19,27 @@ import lombok.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //automatic numbering
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(
+            name = "clerk_id",
+            nullable = false,
+            unique = true
+    )
     private String clerkId;
 
-    @Column(nullable = false, unique = true)
+    @Column(
+            name = "email",
+            nullable = false,
+            unique = true
+    )
     private String email;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY) // only imp info will load
-    // property will apply to all
+    @OneToOne(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
     private Profile profile;
 }

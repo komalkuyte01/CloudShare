@@ -71,17 +71,29 @@ public class FileMetaDataService {
                     StandardCopyOption.REPLACE_EXISTING
             );
 
+            // Get file type safely
+            String fileType = file.getContentType();
+
+            if (fileType == null) {
+                fileType = "application/octet-stream";
+            }
+
             // Create metadata
             FileMetadata fileMetadata = FileMetadata.builder()
-                    .fileName(fileName)
-                    .fileType(file.getContentType())
+                    // Original filename shown to the user
+                    .fileName(file.getOriginalFilename())
+
+                    .fileType(fileType)
                     .fileSize(file.getSize())
                     .isPublic(false)
+
+                    // Generated filename used for physical storage
                     .storageKey(fileName)
+
                     .user(user)
                     .build();
 
-            // Consume credit
+            // Consume one credit
             userCreditsService.consumeCredit();
 
             // Save metadata
@@ -121,7 +133,8 @@ public class FileMetaDataService {
                 ));
 
         // Find files belonging to this user
-        List<FileMetadata> files = fileMetadataRepository.findByUser(user);
+        List<FileMetadata> files =
+                fileMetadataRepository.findByUser(user);
 
         // Convert Entity list to DTO list
         return files.stream()
@@ -130,54 +143,112 @@ public class FileMetaDataService {
     }
 
     public FileMetaDataDTO getPublicFile(Long id) {
+
         FileMetadata file = fileMetadataRepository.findById(id)
                 .filter(FileMetadata::getIsPublic)
-                .orElseThrow(() -> new RuntimeException("Unable to get the file"));
+                .orElseThrow(() ->
+                        new RuntimeException("Unable to get the file")
+                );
+
         return mapToDTO(file);
     }
+
     public FileMetaDataDTO getDownloadableFile(Long id) {
+
         FileMetadata file = fileMetadataRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("File not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("File not found")
+                );
+
+        // Public files can be downloaded by anyone
+        if (Boolean.TRUE.equals(file.getIsPublic())) {
+            return mapToDTO(file);
+        }
+
+        // Private files can only be downloaded by their owner
+        ProfileDTO currentProfile =
+                profileService.getCurrentProfile();
+
+        if (!file.getUser().getClerkId()
+                .equals(currentProfile.getClerkId())) {
+
+            throw new RuntimeException(
+                    "You do not have permission to download this file"
+            );
+        }
+
         return mapToDTO(file);
     }
 
     public void deleteFile(Long id) {
-        try {
-            ProfileDTO currentProfile = profileService.getCurrentProfile();
-            FileMetadata file = fileMetadataRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("File not found"));
 
-            if (!file.getUser().getClerkId().equals(currentProfile.getClerkId())) {
-                throw new RuntimeException("File does not belong to current user");
+        try {
+
+            ProfileDTO currentProfile =
+                    profileService.getCurrentProfile();
+
+            FileMetadata file =
+                    fileMetadataRepository.findById(id)
+                            .orElseThrow(() ->
+                                    new RuntimeException("File not found")
+                            );
+
+            // Only the owner can delete the file
+            if (!file.getUser().getClerkId()
+                    .equals(currentProfile.getClerkId())) {
+
+                throw new RuntimeException(
+                        "File does not belong to current user"
+                );
             }
 
+            // Delete actual file from uploads folder
             Path filePath = Path.of("uploads")
                     .toAbsolutePath()
                     .normalize()
                     .resolve(file.getStorageKey());
+
             Files.deleteIfExists(filePath);
+
+            // Delete metadata from database
             fileMetadataRepository.deleteById(id);
+
         } catch (Exception e) {
-            throw new RuntimeException("Error deleting file: " + e.getMessage());
+
+            throw new RuntimeException(
+                    "Error deleting file: " + e.getMessage()
+            );
         }
     }
 
-    public FileMetaDataDTO updateVisibility(Long id, Boolean isPublic) {
+    public FileMetaDataDTO updateVisibility(
+            Long id,
+            Boolean isPublic
+    ) {
 
-        ProfileDTO currentProfile = profileService.getCurrentProfile();
+        ProfileDTO currentProfile =
+                profileService.getCurrentProfile();
 
-        FileMetadata file = fileMetadataRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("File not found"));
+        FileMetadata file =
+                fileMetadataRepository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException("File not found")
+                        );
 
-        if (!file.getUser().getClerkId().equals(currentProfile.getClerkId())) {
-            throw new RuntimeException("You do not have permission to modify this file");
+        // Only the owner can change visibility
+        if (!file.getUser().getClerkId()
+                .equals(currentProfile.getClerkId())) {
+
+            throw new RuntimeException(
+                    "You do not have permission to modify this file"
+            );
         }
 
         file.setIsPublic(isPublic);
-        FileMetadata updatedFile = fileMetadataRepository.save(file);
+
+        FileMetadata updatedFile =
+                fileMetadataRepository.save(file);
 
         return mapToDTO(updatedFile);
     }
-
-
 }
