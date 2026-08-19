@@ -78,4 +78,21 @@ public class FileController {
         fileMetaDataService.deleteFile(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/visibility")
+    public ResponseEntity<?> updateVisibility(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> body) {
+
+        if (!body.containsKey("isPublic") || !(body.get("isPublic") instanceof Boolean)) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("message", "Request body must contain 'isPublic' as a boolean value")
+            );
+        }
+
+        Boolean isPublic = (Boolean) body.get("isPublic");
+        FileMetaDataDTO updatedFile = fileMetaDataService.updateVisibility(id, isPublic);
+
+        return ResponseEntity.ok(updatedFile);
+    }
 }

@@ -14,13 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -129,16 +126,14 @@ public class FileMetaDataService {
         // Convert Entity list to DTO list
         return files.stream()
                 .map(this::mapToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public FileMetaDataDTO getPublicFile(Long id) {
-        Optional<FileMetadata> fileOptional = fileMetadataRepository.findById(id);
-        if (fileOptional.isEmpty() || !fileOptional.get().getIsPublic()) {
-            throw new RuntimeException("Unable to get the file");
-        }
-        FileMetadata document = fileOptional.get();
-        return mapToDTO(document);
+        FileMetadata file = fileMetadataRepository.findById(id)
+                .filter(FileMetadata::getIsPublic)
+                .orElseThrow(() -> new RuntimeException("Unable to get the file"));
+        return mapToDTO(file);
     }
     public FileMetaDataDTO getDownloadableFile(Long id) {
         FileMetadata file = fileMetadataRepository.findById(id)
@@ -166,5 +161,23 @@ public class FileMetaDataService {
             throw new RuntimeException("Error deleting file: " + e.getMessage());
         }
     }
+
+    public FileMetaDataDTO updateVisibility(Long id, Boolean isPublic) {
+
+        ProfileDTO currentProfile = profileService.getCurrentProfile();
+
+        FileMetadata file = fileMetadataRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("File not found"));
+
+        if (!file.getUser().getClerkId().equals(currentProfile.getClerkId())) {
+            throw new RuntimeException("You do not have permission to modify this file");
+        }
+
+        file.setIsPublic(isPublic);
+        FileMetadata updatedFile = fileMetadataRepository.save(file);
+
+        return mapToDTO(updatedFile);
+    }
+
 
 }
