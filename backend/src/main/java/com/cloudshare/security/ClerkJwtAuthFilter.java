@@ -1,15 +1,19 @@
-package com.cloudshare.Security;
+package com.cloudshare.security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +25,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Map;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ClerkJwtAuthFilter extends OncePerRequestFilter {
@@ -30,44 +36,47 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
     private String clerkIssuer;
 
     private final ClerkJwksProvider jwksProvider;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // Skip webhook requests and CORS preflight requests
-        String uri = request.getServletPath();
+        // Skip CORS preflight requests
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        if (uri.startsWith("/webhooks")
-                || "OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        // Skip webhook requests and public endpoints
+        String uri = request.getRequestURI();
+        if (uri.contains("/webhooks")
+                || uri.contains("/public")
+                || uri.contains("/download")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String authHeader = request.getHeader("Authorization");
 
-        // Authorization header missing or invalid
+        // No Authorization header — let Spring Security's AuthenticationEntryPoint handle it
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.sendError(
-                    HttpServletResponse.SC_UNAUTHORIZED,
-                    "Authorization header missing or invalid"
-            );
+            log.debug("No Bearer token found for {} {}", request.getMethod(), uri);
+            filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            String token = authHeader.substring(7);
+            String token = authHeader.substring(7).trim();
 
             String[] chunks = token.split("\\.");
 
             if (chunks.length != 3) {
-                response.sendError(
-                        HttpServletResponse.SC_UNAUTHORIZED,
-                        "Invalid JWT token"
-                );
+                writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                        "Invalid JWT format — token must have 3 parts", uri);
                 return;
             }
 
@@ -77,15 +86,12 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
                     StandardCharsets.UTF_8
             );
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode headerNode = mapper.readTree(headerJson);
+            JsonNode headerNode = objectMapper.readTree(headerJson);
 
             // Check if kid exists
             if (!headerNode.has("kid")) {
-                response.sendError(
-                        HttpServletResponse.SC_UNAUTHORIZED,
-                        "Token header is missing kid"
-                );
+                writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                        "Token header is missing 'kid' claim", uri);
                 return;
             }
 
@@ -95,22 +101,22 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
 
             // Validate that the signing key is an RSA public key
             if (!(publicKey instanceof java.security.interfaces.RSAPublicKey rsaPublicKey)) {
-                response.sendError(
-                        HttpServletResponse.SC_UNAUTHORIZED,
-                        "Unknown JWT signing key"
-                );
+                writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                        "Unsupported JWT signing key type", uri);
                 return;
             }
 
             Claims claims = Jwts.parser()
                     .verifyWith(rsaPublicKey)
-                    .clockSkewSeconds(60)
+                    .clockSkewSeconds(300)
                     .requireIssuer(clerkIssuer)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
 
             String clerkId = claims.getSubject();
+
+            log.debug("JWT authenticated user: {}", clerkId);
 
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(
@@ -125,15 +131,48 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
                     .getContext()
                     .setAuthentication(authenticationToken);
 
+        } catch (ExpiredJwtException e) {
+            log.warn("JWT expired for {} {} — token expired at {}",
+                    request.getMethod(), uri, e.getClaims().getExpiration());
+
+            writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    "JWT token has expired. Please refresh your session.", uri);
+            return;
+
         } catch (Exception e) {
-            response.sendError(
-                    HttpServletResponse.SC_FORBIDDEN,
-                    "Invalid or expired JWT token"
-            );
+            log.error("JWT authentication failed for {} {}: {}",
+                    request.getMethod(), uri, e.getMessage(), e);
+
+            writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    "JWT authentication failed: " + e.getMessage(), uri);
             return;
         }
 
         // Continue filter chain only once
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * Writes a JSON error response directly to the output stream.
+     * Using sendError() can cause Spring Security to overwrite the status
+     * code (e.g., turning 401 into 403), so we write the response manually.
+     */
+    private void writeErrorResponse(
+            HttpServletResponse response,
+            int status,
+            String message,
+            String path
+    ) throws IOException {
+        response.setStatus(status);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        Map<String, Object> body = Map.of(
+                "status", status,
+                "error", status == 401 ? "Unauthorized" : "Forbidden",
+                "message", message,
+                "path", path
+        );
+
+        objectMapper.writeValue(response.getOutputStream(), body);
     }
 }

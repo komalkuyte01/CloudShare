@@ -1,0 +1,43 @@
+spring.application.name=cloudshare
+
+server.servlet.context-path=/api/v1.0
+
+spring.profiles.active=local
+
+# ============================================================
+# PostgreSQL
+# ============================================================
+spring.datasource.url=jdbc:postgresql://localhost:5432/cloudshare
+spring.datasource.username=postgres
+spring.datasource.password=YOUR_DB_PASSWORD
+
+# JDBC Driver
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# ============================================================
+# JPA / Hibernate
+# ============================================================
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+
+# ============================================================
+# Spring Security
+# ============================================================
+spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+# ============================================================
+# Clerk (get these from https://dashboard.clerk.com)
+# ============================================================
+clerk.issuer=https://YOUR_CLERK_INSTANCE.clerk.accounts.dev
+clerk.jwks-url=https://YOUR_CLERK_INSTANCE.clerk.accounts.dev/.well-known/jwks.json
+clerk.secret-key=sk_test_YOUR_CLERK_SECRET_KEY
+clerk.webhook-secret=YOUR_CLERK_WEBHOOK_SECRET
+clerk.webhook-verify=false
+
+# ============================================================
+# File Upload
+# ============================================================
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=25MB

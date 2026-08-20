@@ -2,10 +2,12 @@ package com.cloudshare.controller;
 
 import com.cloudshare.dto.ProfileDTO;
 import com.cloudshare.service.ProfileService;
+import com.cloudshare.service.UserCreditsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,10 +16,18 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final UserCreditsService userCreditsService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerProfile(@Valid @RequestBody ProfileDTO profileDTO) {
-        boolean exists = profileService.existsByClerkId(profileDTO.getClerkId());
+    public ResponseEntity<?> registerProfile(
+            @Valid @RequestBody ProfileDTO profileDTO,
+            Authentication authentication) {
+
+        // Always use the clerkId from the verified JWT — never trust the request body
+        String clerkId = (String) authentication.getPrincipal();
+        profileDTO.setClerkId(clerkId);
+
+        boolean exists = profileService.existsByClerkId(clerkId);
 
         ProfileDTO savedProfile;
         HttpStatus status;
@@ -27,9 +37,17 @@ public class ProfileController {
             status = HttpStatus.OK;
         } else {
             savedProfile = profileService.createProfile(profileDTO);
+            // Init credits for users who missed the webhook
+            userCreditsService.createInitialCredits(clerkId);
             status = HttpStatus.CREATED;
         }
 
         return ResponseEntity.status(status).body(savedProfile);
     }
-}
+
+    @GetMapping("/me")
+    public ResponseEntity<ProfileDTO> getCurrentProfile(Authentication authentication) {
+        ProfileDTO profile = profileService.getCurrentProfile();
+        return ResponseEntity.ok(profile);
+    }
+}

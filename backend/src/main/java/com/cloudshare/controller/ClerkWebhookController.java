@@ -32,6 +32,9 @@ public class ClerkWebhookController {
     @Value("${clerk.webhook-secret}")
     private String webhookSecret;
 
+    @Value("${clerk.webhook-verify:true}")
+    private boolean webhookVerify;
+
     @PostMapping("/clerk")
     public ResponseEntity<Map<String, String>> handleClerkWebhook(
             @RequestBody String payload,
@@ -39,11 +42,15 @@ public class ClerkWebhookController {
             @RequestHeader(value = "svix-timestamp", required = false) String svixTimestamp,
             @RequestHeader(value = "svix-signature", required = false) String svixSignature) {
 
-        // Verify webhook signature — protects against forged webhook calls
-        if (!verifyWebhookSignature(payload, svixId, svixTimestamp, svixSignature)) {
-            log.warn("Webhook signature verification failed for svix-id: {}", svixId);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Invalid webhook signature"));
+        // Verify webhook signature — skip in local dev (clerk.webhook-verify=false)
+        if (webhookVerify) {
+            if (!verifyWebhookSignature(payload, svixId, svixTimestamp, svixSignature)) {
+                log.warn("Webhook signature verification failed for svix-id: {}", svixId);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "Invalid webhook signature"));
+            }
+        } else {
+            log.info("Webhook signature verification SKIPPED (dev mode)");
         }
 
         try {

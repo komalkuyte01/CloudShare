@@ -27,7 +27,7 @@ public class Profile {
     private String photoUrl;
 
     @Builder.Default
-    private Integer credits = 0;
+    private Integer credits = 5;
 
     private Instant createdAt;
 

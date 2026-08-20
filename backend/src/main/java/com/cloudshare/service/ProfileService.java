@@ -6,6 +6,8 @@ import com.cloudshare.entity.User;
 import com.cloudshare.repository.ProfileRepository;
 import com.cloudshare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,17 +119,39 @@ public class ProfileService {
     public void deleteProfile(String clerkId) {
 
         User user = userRepository.findByClerkId(clerkId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new UsernameNotFoundException(
                         "User not found for clerkId: " + clerkId
                 ));
 
-        Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException(
-                        "Profile not found for user: " + clerkId
+        // CascadeType.ALL on User.profile handles profile deletion automatically
+        userRepository.delete(user);
+    }
+
+    public ProfileDTO getCurrentProfile() {
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            throw new UsernameNotFoundException("User not authenticated");
+        }
+
+        String clerkId = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Profile profile = profileRepository.findByUserClerkId(clerkId)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "Profile not found for clerkId: " + clerkId
                 ));
 
-        // Delete profile first (has FK to user), then delete user
-        profileRepository.delete(profile);
-        userRepository.delete(user);
+        User user = profile.getUser();
+
+        return ProfileDTO.builder()
+                .id(profile.getId())
+                .clerkId(user.getClerkId())
+                .email(user.getEmail())
+                .firstName(profile.getFirstName())
+                .lastName(profile.getLastName())
+                .photoUrl(profile.getPhotoUrl())
+                .credits(profile.getCredits())
+                .createdAt(profile.getCreatedAt())
+                .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.cloudshare.Security;
+package com.cloudshare.security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +20,7 @@ public class ClerkJwksProvider {
     @Value("${clerk.jwks-url}")
     private String jwksUrl;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<String, PublicKey> keyCache = new ConcurrentHashMap<>();
 
     private long lastFetchTime = 0;
@@ -28,8 +29,6 @@ public class ClerkJwksProvider {
 
     public PublicKey getPublicKey(String kid) throws Exception {
 
-        // long currentTime = System.currentTimeMillis();
-
         if (keyCache.containsKey(kid)
                 && System.currentTimeMillis() - lastFetchTime < CACHE_TTL) {
             return keyCache.get(kid);
@@ -37,14 +36,20 @@ public class ClerkJwksProvider {
 
         refreshKeys();
 
-        return keyCache.get(kid);
+        PublicKey publicKey = keyCache.get(kid);
+
+        if (publicKey == null) {
+            throw new IllegalArgumentException(
+                    "No public key found for kid: " + kid
+            );
+        }
+
+        return publicKey;
     }
 
     private void refreshKeys() throws Exception {
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        JsonNode jwks = mapper.readTree(new URL(jwksUrl));
+        JsonNode jwks = objectMapper.readTree(new URL(jwksUrl));
 
         JsonNode keys = jwks.get("keys");
 
