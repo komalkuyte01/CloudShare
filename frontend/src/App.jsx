@@ -9,12 +9,13 @@ import Subscription from "./pages/Subscription";
 import Transaction from "./pages/Transaction";
 import PublicFileView from "./pages/PublicFileView";
 
+
 import {
     RedirectToSignIn,
     SignedIn,
     SignedOut,
     useUser,
-    useAuth
+    useAuth,
 } from "@clerk/clerk-react";
 
 const BACKEND_URL =
@@ -48,10 +49,7 @@ const UserSync = () => {
                     }),
                 });
             } catch (err) {
-                console.error(
-                    "Failed to sync user to DB:",
-                    err
-                );
+                console.error("Failed to sync user to DB:", err);
             }
         };
 
@@ -86,7 +84,6 @@ const App = () => {
             <UserSync />
 
             <Routes>
-
                 <Route
                     path="/"
                     element={<Landing />}
@@ -176,7 +173,6 @@ const App = () => {
                     path="*"
                     element={<NotFound />}
                 />
-
             </Routes>
         </BrowserRouter>
     );
