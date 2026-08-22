@@ -1,15 +1,17 @@
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 import { useState, useEffect } from "react";
-import { List, Grid } from "lucide-react";
+import { List, Grid, File, Globe, Lock, Copy } from "lucide-react";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 
 const MyFiles = () => {
     const [files, setFiles] = useState([]);
     const [viewMode, setViewMode] = useState("list");
-
     const { getToken } = useAuth();
+    const navigate = useNavigate();
 
     const fetchFiles = async () => {
         try {
@@ -56,7 +58,7 @@ const MyFiles = () => {
                             className={`cursor-pointer transition-colors ${viewMode === "list"
                                 ? "text-blue-600"
                                 : "text-gray-400 hover:text-gray-600"
-                                }`}
+                            }`}
                         />
 
                         <Grid
@@ -65,14 +67,92 @@ const MyFiles = () => {
                             className={`cursor-pointer transition-colors ${viewMode === "grid"
                                 ? "text-blue-600"
                                 : "text-gray-400 hover:text-gray-600"
-                                }`}
-                        />
-
+                            }`}/>
                     </div>
                 </div>
+
                 {files.length === 0 ? (
-                    <div className=><div/>
-                ) : ()}
+                    <div className="bg-white rounded-lg shadow p-12 flex flex-col items-center justify-center">
+                        <File
+                            size ={60}
+                            className ="text-purple-300 mb-4"
+                        />
+                        <h3 className="text-xl font-medium text-gray-700 mb-2">
+                            No files uploaded yet
+                        </h3>
+                        <p className="text-gray-500 text-center max-w-md mb-6">
+                            Start uploading your files to see them listed here. You can upload document, images, and other files to share and manage them securely.
+                        </p>
+                        <button
+                            onClick = {() => navigate('/upload')}
+                            className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors">
+                            Go to Upload
+                        </button>
+                    </div>
+                ) : viewMode === "grid" ? (
+                    <div>Grid View</div>
+                ): (
+                    <div className="overflow-x-auto bg-white rounded-lg shadow">
+                        <table className="min-w-full">
+                            <thead className="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded At</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sharing</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                            {files.map((file) => (
+                                <tr key={file.id} className="hover:bg-gray-100">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                        <div className="flex items-center gap-2">
+                                            <File size={20} className="text-blue-600" />
+                                            {file.name}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        {(file.size / 1024).toFixed(1)} KB
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        {new Date(file.uploadedAt).toLocaleDateString()}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        <div className="flex items-center gap-4">
+                                            <button className="flex items-center gap-2 cursor-pointer group">
+                                                {file.public ? (
+                                                    <>
+                                                        <Globe size={16} className="text-green-500"/>
+                                                        <span className="group-hover:underline">Public</span>
+                                                    </>
+                                                ):(
+                                                    <>
+                                                        <Lock size={16} className="text-red-500"/>
+                                                        <span className="group-hover:underline">Private</span>
+                                                    </>
+                                                )}
+                                            </button>
+                                            {file.public && (
+                                                <button
+                                                    className="flex items-center gap-2 cursor-pointer group text-blue-600">
+                                                    <Copy size={16}/>
+                                                    <span className="group-hover:underline">Share Link</span>
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button className="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                                        <button className="text-green-600 hover:text-green-800 mr-2">Share</button>
+                                        <button className="text-red-600 hover:text-red-800">Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </DashboardLayout>
     );
