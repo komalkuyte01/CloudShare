@@ -8,6 +8,7 @@ const Dashboard = () => {
     useEffect(() => {
         const displayToken = async () => {
             const token = await getToken();
+            console.log(token);
         };
         displayToken();
     }, []);

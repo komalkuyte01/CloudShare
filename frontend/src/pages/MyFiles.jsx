@@ -25,12 +25,12 @@ const MyFiles = () => {
             );
 
             if (response.status === 200) {
-                setFiles(response.data.files || []);
+                setFiles(response.data);
             }
 
         } catch (error) {
             console.log("Error fetching files:", error);
-            console.error("Failed to fetch files. Please try again later.");
+            toast.error("Failed to fetch files. Please try again later.", error.message);
         }
     };
 
@@ -54,8 +54,8 @@ const MyFiles = () => {
                             onClick={() => setViewMode("list")}
                             size={24}
                             className={`cursor-pointer transition-colors ${viewMode === "list"
-                                    ? "text-blue-600"
-                                    : "text-gray-400 hover:text-gray-600"
+                                ? "text-blue-600"
+                                : "text-gray-400 hover:text-gray-600"
                                 }`}
                         />
 
@@ -63,14 +63,16 @@ const MyFiles = () => {
                             onClick={() => setViewMode("grid")}
                             size={24}
                             className={`cursor-pointer transition-colors ${viewMode === "grid"
-                                    ? "text-blue-600"
-                                    : "text-gray-400 hover:text-gray-600"
+                                ? "text-blue-600"
+                                : "text-gray-400 hover:text-gray-600"
                                 }`}
                         />
 
                     </div>
                 </div>
-
+                {files.length === 0 ? (
+                    <div className=><div/>
+                ) : ()}
             </div>
         </DashboardLayout>
     );

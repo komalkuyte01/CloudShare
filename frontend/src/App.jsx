@@ -8,7 +8,7 @@ import MyFiles from "./pages/MyFiles";
 import Subscription from "./pages/Subscription";
 import Transaction from "./pages/Transaction";
 import PublicFileView from "./pages/PublicFileView";
-
+import { Toaster } from "react-hot-toast";
 
 import {
     RedirectToSignIn,
@@ -17,6 +17,7 @@ import {
     useUser,
     useAuth,
 } from "@clerk/clerk-react";
+
 
 const BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL ||
@@ -81,7 +82,7 @@ const NotFound = () => (
 const App = () => {
     return (
         <BrowserRouter>
-            <UserSync />
+           <Toaster/>
 
             <Routes>
                 <Route
