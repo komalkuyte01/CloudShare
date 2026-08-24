@@ -38,8 +38,7 @@ const UserSync = () => {
                 await fetch(`${BACKEND_URL}/profiles/register`, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json", Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
                         email:

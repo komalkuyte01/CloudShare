@@ -59,8 +59,7 @@ class ErrorBoundary extends Component {
                                     href="https://dashboard.clerk.com"
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-indigo-400 hover:underline"
-                                >
+                                    className="text-indigo-400 hover:underline">
                                     dashboard.clerk.com
                                 </a>
                             </p>
