@@ -1,6 +1,7 @@
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 import { useState, useEffect } from "react";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
+import ShareLinkModal from "../components/LinkShareModal.jsx";
 import {
     List,
     Grid,
@@ -35,6 +36,11 @@ const MyFiles = () => {
         fileId: null
     });
 
+    const [shareModal, setShareModal] = useState({
+        isOpen: false,
+        file: null
+    });
+
     const getFileIcon = (file) => {
         const extension = file.fileName?.split('.').pop().toLowerCase() || "";
 
@@ -56,6 +62,7 @@ const MyFiles = () => {
 
         return <FileIcon size={24} className="text-purple-500" />
     }
+
     const fetchFiles = async () => {
         try {
             const token = await getToken();
@@ -141,6 +148,21 @@ const MyFiles = () => {
             fileId
         })
     }
+    /* Open share link modal */
+    const openShareModal = (file) => {
+        setShareModal({
+            isOpen: true,
+            file
+        });
+    };
+    /* Close share link modal */
+    const closeShareModal = () => {
+        setShareModal({
+            isOpen: false,
+            file: null
+        });
+    };
+
     /* Delete a file*/
     const handleDelete = async () => {
         const fileId = deleteConfirmation.fileId;
@@ -324,17 +346,15 @@ const MyFiles = () => {
                                                 </button>
 
                                                 {file.isPublic && (
-
                                                     <button
-                                                        className="flex items-center gap-2 cursor-pointer group text-blue-600">
-
+                                                        onClick={() => openShareModal(file)}
+                                                        className="flex items-center gap-2 cursor-pointer group text-blue-600"
+                                                    >
                                                         <Copy size={16} />
-
                                                         <span className="group-hover:underline">
                                                             Share Link
                                                         </span>
                                                     </button>
-
                                                 )}
                                             </div>
                                         </td>
@@ -408,6 +428,13 @@ const MyFiles = () => {
                     onConfirm={handleDelete}
                     confirmButtonClass="bg-red-600 hover:bg-red-700"
                 />
+                {/* Share link modal */}
+                {shareModal.isOpen && (
+                    <ShareLinkModal
+                        file={shareModal.file}
+                        onClose={closeShareModal}
+                    />
+                )}
             </div>
         </DashboardLayout>
     );
