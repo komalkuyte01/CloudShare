@@ -1,43 +1,15 @@
-import { useState, useEffect } from "react";
-import { useUser, useAuth } from "@clerk/clerk-react";
-import axios from "axios";
 import Navbar from "../components/Navbar.jsx";
 import SideMenu from "../components/SideMenu.jsx";
-import { apiEndpoints } from "../Util/apiEndpoints.js";
+import { useUser } from "@clerk/clerk-react";
+import useCreditsContext from "../context/UserCreditsContext.jsx";
 
-const DashboardLayout = ({ children, activeMenu, credits }) => {
+const DashboardLayout = ({ children, activeMenu }) => {
     const { user } = useUser();
-    const { getToken, isLoaded } = useAuth();
-    const [liveCredits, setLiveCredits] = useState(credits ?? 0);
-
-    useEffect(() => {
-        if (!isLoaded || !user) return;
-
-        const fetchCredits = async () => {
-            try {
-                const token = await getToken();
-                if (!token) return;
-
-                const response = await axios.get(apiEndpoints.PROFILE_ME, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                if (response.status === 200 && response.data && typeof response.data.credits === 'number') {
-                    setLiveCredits(response.data.credits);
-                }
-            } catch (error) {
-                console.error("Failed to fetch profile credits:", error);
-            }
-        };
-
-        fetchCredits();
-    }, [isLoaded, user, getToken]);
+    const { credits } = useCreditsContext() || { credits: 0 };
 
     return (
         <div>
-            <Navbar activeMenu={activeMenu} credits={liveCredits} />
+            <Navbar activeMenu={activeMenu} credits={credits} />
             {user && (
                 <div className="flex">
                     <div className="max-[1080px]:hidden">
@@ -50,4 +22,4 @@ const DashboardLayout = ({ children, activeMenu, credits }) => {
     )
 }
 
-export default DashboardLayout;
+export default DashboardLayout;

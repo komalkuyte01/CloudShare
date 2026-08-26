@@ -59,14 +59,13 @@ const Upload = () => {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'}});
 
-            if(response.data && response.data.remainingCredits !== undefined){
-                setCredits(response.data.remainingCredits);
-            }
             if(response.status === 200){
+                if(response.data && response.data.remainingCredits !== undefined){
+                    setCredits(response.data.remainingCredits);
+                }
                 setMessage("Files uploaded successfully");
                 setMessageType("success");
                 setFiles([]);
-                setCredits(response.data.credits);
             }else{
                 setMessage("Error uploading files");
                 setMessageType("error");
