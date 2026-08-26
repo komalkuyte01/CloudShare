@@ -48,9 +48,7 @@ public class FileMetaDataService {
                 ));
 
         // Create uploads directory
-        Path uploadPath = Path.of("uploads")
-                .toAbsolutePath()
-                .normalize();
+        Path uploadPath = com.cloudshare.util.StorageUtils.getUploadsPath();
 
         Files.createDirectories(uploadPath);
 
@@ -217,9 +215,7 @@ public class FileMetaDataService {
             }
 
             // Delete actual file from uploads folder
-            Path filePath = Path.of("uploads")
-                    .toAbsolutePath()
-                    .normalize()
+            Path filePath = com.cloudshare.util.StorageUtils.getUploadsPath()
                     .resolve(file.getStorageKey());
 
             Files.deleteIfExists(filePath);

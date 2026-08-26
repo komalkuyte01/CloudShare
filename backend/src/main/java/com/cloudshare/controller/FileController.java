@@ -52,9 +52,7 @@ public class FileController {
         try {
             FileMetaDataDTO downloadableFile = fileMetaDataService.getDownloadableFile(id);
 
-            Path path = Path.of("uploads")
-                    .toAbsolutePath()
-                    .normalize()
+            Path path = com.cloudshare.util.StorageUtils.getUploadsPath()
                     .resolve(downloadableFile.getStorageKey());
 
             Resource resource = new UrlResource(path.toUri());

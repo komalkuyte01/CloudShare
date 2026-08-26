@@ -114,20 +114,23 @@ const MyFiles = () => {
                 { headers, responseType: "blob" }
             );
 
-            // Create a blob URL
-            const url = window.URL.createObjectURL(response.data);
+            // Create a blob with explicit type
+            const blob = new Blob([response.data], { type: response.headers['content-type'] || 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
 
             // Create download link
             const link = document.createElement("a");
+            link.style.display = "none";
             link.href = url;
-            link.download = file.fileName;
-
+            link.setAttribute("download", file.fileName);
             document.body.appendChild(link);
             link.click();
 
-            // Cleanup
-            link.remove();
-            window.URL.revokeObjectURL(url);
+            // Delay cleanup so Brave has time to start the download
+            setTimeout(() => {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }, 1000);
 
         } catch (error) {
             console.error("Download failed:", error);
@@ -258,7 +261,12 @@ const MyFiles = () => {
                         {files.map((file) => (
                             <FileCard
                                 key={file.id}
-                                file={file} />
+                                file={file}
+                                onDelete={openDeleteConfirmation}
+                                onTogglePublic={togglePublic}
+                                onDownload={handleDownload}
+                                onShareLink={openShareModal}
+                            />
                         ))}
                     </div>
 
@@ -397,7 +405,7 @@ const MyFiles = () => {
                                                             title="View File"
                                                             target="_blank"
                                                             rel="noreferrer"
-                                                            className="text-gray-500 hover:text-blue-600">
+                                                            className="text-gray-500 hover:text-blue-600 eye-hover-bold">
                                                             <Eye size={18} />
                                                         </a>
 
