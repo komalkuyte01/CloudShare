@@ -50,7 +50,7 @@ const MyFiles = () => {
 
         return <FileIcon size={24} className="text-purple-500" />
     }
-
+ /* fetching files for logged in user */
     const fetchFiles = async () => {
         try {
             const token = await getToken();
@@ -72,6 +72,19 @@ const MyFiles = () => {
             toast.error("Failed to fetch files. Please try again later.");
         }
     };
+
+   /* Toggles the public/private status of file */
+    const togglePublic = async (fileToUpdate) => {
+    try{
+        const newVisibility = !fileToUpdate.isPublic;
+        const token = await getToken();
+        await axios.patch(`http://localhost:8080/api/v1.0/files/${fileToUpdate.id}/visibility`,{ isPublic:newVisibility},{headers: {Authorization: `Bearer ${token}`}});
+         setFiles(files.map(file => file.id === fileToUpdate.id ? {...file, isPublic: !file.isPublic} : file));
+    }catch(error){
+       console.error('Error toggling file status', error);
+       toast.error('Error toggling file status', error.message);
+      }
+    }
 
     useEffect(() => {
         fetchFiles();
@@ -191,26 +204,21 @@ const MyFiles = () => {
 
                                         {/* Size */}
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-
                                             {(file.fileSize / 1024).toFixed(1)} KB
-
                                         </td>
 
                                         {/* Uploaded At */}
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-
-                                            {new Date(
-                                                file.uploadedAt
-                                            ).toLocaleDateString()}
-
+                                            {new Date(file.uploadedAt).toLocaleDateString()}
                                         </td>
 
                                         {/* Sharing */}
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
 
                                             <div className="flex items-center gap-4">
-
-                                                <button className="flex items-center gap-2 cursor-pointer group">
+                                                <button
+                                                    onClick = {() => togglePublic(file)}
+                                                    className="flex items-center gap-2 cursor-pointer group">
 
                                                     {file.isPublic ? (
                                                         <>

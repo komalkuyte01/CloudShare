@@ -40,7 +40,7 @@ const FileCard = ({file}) => {
             onMouseLeave={() => setShowActions(false)}
             className="relative group overflow-hidden rounded-xl bg-white shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
 
-            {/* File preview area */}
+             {/*File preview area */}
             <div className="h-32 bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center p-4">
                 {getFileIcon(file)}
             </div>
