@@ -7,4 +7,6 @@ const BASE_URL = 'http://localhost:8080/api/v1.0';
     DOWNLOAD_FILES:(id) => `${BASE_URL}/files/download/${id}`,
     DELETE_FILES:(id) => `${BASE_URL}/files/${id}`,
     PROFILE_ME: `${BASE_URL}/profiles/me`,
+    UPLOAD_FILES: `${BASE_URL}/files/upload`,
+
 }
