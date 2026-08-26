@@ -1,5 +1,6 @@
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 import { useState, useEffect } from "react";
+import { apiEndpoints } from "../Util/apiEndpoints.js";
 import {
     List,
     Grid,
@@ -50,13 +51,13 @@ const MyFiles = () => {
 
         return <FileIcon size={24} className="text-purple-500" />
     }
- /* fetching files for logged in user */
+    /* fetching files for logged in user */
     const fetchFiles = async () => {
         try {
             const token = await getToken();
 
             const response = await axios.get(
-                "http://localhost:8080/api/v1.0/files/my",
+                apiEndpoints.FETCH_FILES,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -73,19 +74,53 @@ const MyFiles = () => {
         }
     };
 
-   /* Toggles the public/private status of file */
+    /* Toggles the public/private status of file */
     const togglePublic = async (fileToUpdate) => {
-    try{
-        const newVisibility = !fileToUpdate.isPublic;
-        const token = await getToken();
-        await axios.patch(`http://localhost:8080/api/v1.0/files/${fileToUpdate.id}/visibility`,{ isPublic:newVisibility},{headers: {Authorization: `Bearer ${token}`}});
-         setFiles(files.map(file => file.id === fileToUpdate.id ? {...file, isPublic: !file.isPublic} : file));
-    }catch(error){
-       console.error('Error toggling file status', error);
-       toast.error('Error toggling file status', error.message);
-      }
+        try {
+            const newVisibility = !fileToUpdate.isPublic;
+            const token = await getToken();
+            await axios.patch(apiEndpoints.TOGGLE_FILES(fileToUpdate.id), { isPublic: newVisibility }, { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' });
+            setFiles(files.map(file => file.id === fileToUpdate.id ? { ...file, isPublic: !file.isPublic } : file));
+        } catch (error) {
+            console.error('Error toggling file status', error);
+            toast.error('Error toggling file status', error.message);
+        }
     }
+    /* Handle file download */
+    const handleDownload = async (file) => {
+        try {
+            const token = await getToken();
 
+            const response = await axios.get(
+                apiEndpoints.DOWNLOAD_FILES(file.id),
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    responseType: "blob"
+                }
+            );
+
+            // Create a blob URL
+            const url = window.URL.createObjectURL(response.data);
+
+            // Create download link
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = file.fileName;
+
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup
+            link.remove();
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error("Download failed:", error);
+            toast.error("Error downloading file");
+        }
+    };
     useEffect(() => {
         fetchFiles();
     }, [getToken]);
@@ -107,8 +142,8 @@ const MyFiles = () => {
                             onClick={() => setViewMode("list")}
                             size={24}
                             className={`cursor-pointer transition-colors ${viewMode === "list"
-                                    ? "text-blue-600"
-                                    : "text-gray-400 hover:text-gray-600"
+                                ? "text-blue-600"
+                                : "text-gray-400 hover:text-gray-600"
                                 }`}
                         />
 
@@ -116,8 +151,8 @@ const MyFiles = () => {
                             onClick={() => setViewMode("grid")}
                             size={24}
                             className={`cursor-pointer transition-colors ${viewMode === "grid"
-                                    ? "text-blue-600"
-                                    : "text-gray-400 hover:text-gray-600"
+                                ? "text-blue-600"
+                                : "text-gray-400 hover:text-gray-600"
                                 }`}
                         />
 
@@ -217,7 +252,7 @@ const MyFiles = () => {
 
                                             <div className="flex items-center gap-4">
                                                 <button
-                                                    onClick = {() => togglePublic(file)}
+                                                    onClick={() => togglePublic(file)}
                                                     className="flex items-center gap-2 cursor-pointer group">
 
                                                     {file.isPublic ? (
@@ -269,6 +304,7 @@ const MyFiles = () => {
                                                 {/* Download */}
                                                 <div className="flex justify-start">
                                                     <button
+                                                        onClick={() => handleDownload(file)}
                                                         title="Download"
                                                         className="text-gray-500 hover:text-blue-600">
                                                         <Download size={18} />

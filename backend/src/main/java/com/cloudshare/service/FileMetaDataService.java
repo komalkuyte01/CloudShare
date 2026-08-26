@@ -29,7 +29,6 @@ public class FileMetaDataService {
     private final UserRepository userRepository;
 
     public List<FileMetaDataDTO> uploadFiles(MultipartFile[] files) throws IOException {
-
         List<FileMetaDataDTO> fileMetaDataList = new ArrayList<>();
 
         // Check if user has enough credits
