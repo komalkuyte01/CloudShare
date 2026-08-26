@@ -5,4 +5,5 @@ const BASE_URL = 'http://localhost:8080/api/v1.0';
     TOGGLE_FILES:(id) => `${BASE_URL}/files/${id}/visibility`,
     DOWNLOAD_FILES:(id) => `${BASE_URL}/files/download/${id}`,
     DELETE_FILES:(id) => `${BASE_URL}/files/${id}`,
+    PROFILE_ME: `${BASE_URL}/profiles/me`,
 }

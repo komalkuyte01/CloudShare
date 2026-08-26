@@ -28,7 +28,7 @@ const MyFiles = () => {
     const [files, setFiles] = useState([]);
     const [viewMode, setViewMode] = useState("list");
 
-    const { getToken } = useAuth();
+    const { getToken, isLoaded } = useAuth();
     const navigate = useNavigate();
     const [deleteConfirmation, setDeleteConfirmation] = useState({
         isOpen: false,
@@ -56,10 +56,15 @@ const MyFiles = () => {
 
         return <FileIcon size={24} className="text-purple-500" />
     }
-    /* fetching files for logged in user */
     const fetchFiles = async () => {
         try {
             const token = await getToken();
+            console.log("JWT Token in MyFiles:", token);
+
+            if (!token) {
+                console.error("No JWT token available");
+                return;
+            }
 
             const response = await axios.get(
                 apiEndpoints.FETCH_FILES,
@@ -95,10 +100,12 @@ const MyFiles = () => {
     const handleDownload = async (file) => {
         try {
             const token = await getToken();
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
             const response = await axios.get(
                 apiEndpoints.DOWNLOAD_FILES(file.id),
-                {headers: {Authorization: `Bearer ${token}`}, responseType: "blob"});
+                { headers, responseType: "blob" }
+            );
 
             // Create a blob URL
             const url = window.URL.createObjectURL(response.data);
@@ -155,8 +162,10 @@ const MyFiles = () => {
     }
 
     useEffect(() => {
-        fetchFiles();
-    }, [getToken]);
+        if (isLoaded) {
+            fetchFiles();
+        }
+    }, [isLoaded]);
 
     return (
         <DashboardLayout activeMenu="My Files">

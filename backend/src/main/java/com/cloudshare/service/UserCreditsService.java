@@ -25,7 +25,7 @@ public class UserCreditsService {
 
         UserCredits userCredits = UserCredits.builder()
                 .creditId(clerkId)
-                .credits(5)
+                .credits(10)
                 .plan("BASIC")
                 .build();
         return userCreditsRepository.save(userCredits);

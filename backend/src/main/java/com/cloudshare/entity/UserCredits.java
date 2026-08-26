@@ -21,7 +21,7 @@ public class UserCredits {
 
     @Column(nullable = false)
     @Builder.Default
-    private Integer credits = 5;
+    private Integer credits = 10;
 
     @Column(nullable = false)
     @Builder.Default
