@@ -4,9 +4,12 @@ import com.cloudshare.dto.FileMetaDataDTO;
 import com.cloudshare.dto.ProfileDTO;
 import com.cloudshare.entity.FileMetadata;
 import com.cloudshare.entity.User;
+import com.cloudshare.exception.AccessDeniedException;
+import com.cloudshare.exception.ResourceNotFoundException;
 import com.cloudshare.repository.FileMetadataRepository;
 import com.cloudshare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +43,7 @@ public class FileMetaDataService {
         ProfileDTO currentProfile = profileService.getCurrentProfile();
 
         User user = userRepository.findByClerkId(currentProfile.getClerkId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found for clerkId: " + currentProfile.getClerkId()
                 ));
 
@@ -126,7 +129,7 @@ public class FileMetaDataService {
 
         // Find User using Clerk ID
         User user = userRepository.findByClerkId(currentProfile.getClerkId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found for clerkId: "
                                 + currentProfile.getClerkId()
                 ));
@@ -146,7 +149,7 @@ public class FileMetaDataService {
         FileMetadata file = fileMetadataRepository.findById(id)
                 .filter(FileMetadata::getIsPublic)
                 .orElseThrow(() ->
-                        new RuntimeException("Unable to get the file")
+                        new ResourceNotFoundException("File not found or is not public")
                 );
 
         return mapToDTO(file);
@@ -156,7 +159,7 @@ public class FileMetaDataService {
 
         FileMetadata file = fileMetadataRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("File not found")
+                        new ResourceNotFoundException("File not found")
                 );
 
         // Public files can be downloaded by anyone
@@ -165,13 +168,25 @@ public class FileMetaDataService {
         }
 
         // Private files can only be downloaded by their owner
+        var authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
+
+            throw new AccessDeniedException(
+                    "You do not have permission to download this file"
+            );
+        }
+
         ProfileDTO currentProfile =
                 profileService.getCurrentProfile();
 
         if (!file.getUser().getClerkId()
                 .equals(currentProfile.getClerkId())) {
 
-            throw new RuntimeException(
+            throw new AccessDeniedException(
                     "You do not have permission to download this file"
             );
         }
@@ -189,14 +204,14 @@ public class FileMetaDataService {
             FileMetadata file =
                     fileMetadataRepository.findById(id)
                             .orElseThrow(() ->
-                                    new RuntimeException("File not found")
+                                    new ResourceNotFoundException("File not found")
                             );
 
             // Only the owner can delete the file
             if (!file.getUser().getClerkId()
                     .equals(currentProfile.getClerkId())) {
 
-                throw new RuntimeException(
+                throw new AccessDeniedException(
                         "File does not belong to current user"
                 );
             }
@@ -211,6 +226,10 @@ public class FileMetaDataService {
 
             // Delete metadata from database
             fileMetadataRepository.deleteById(id);
+
+        } catch (ResourceNotFoundException | AccessDeniedException e) {
+            // Re-throw custom exceptions so GlobalExceptionHandler maps them correctly
+            throw e;
 
         } catch (Exception e) {
 
@@ -231,14 +250,14 @@ public class FileMetaDataService {
         FileMetadata file =
                 fileMetadataRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("File not found")
+                                new ResourceNotFoundException("File not found")
                         );
 
         // Only the owner can change visibility
         if (!file.getUser().getClerkId()
                 .equals(currentProfile.getClerkId())) {
 
-            throw new RuntimeException(
+            throw new AccessDeniedException(
                     "You do not have permission to modify this file"
             );
         }

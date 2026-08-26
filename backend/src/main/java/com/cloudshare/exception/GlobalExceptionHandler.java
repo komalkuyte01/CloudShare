@@ -25,7 +25,29 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles business logic errors (e.g. "User not found") thrown as RuntimeException.
+     * Handles resource not found errors — returns 404 Not Found.
+     */
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleResourceNotFound(ResourceNotFoundException ex) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("status", HttpStatus.NOT_FOUND.value());
+        data.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(data);
+    }
+
+    /**
+     * Handles permission / access denied errors — returns 403 Forbidden.
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("status", HttpStatus.FORBIDDEN.value());
+        data.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(data);
+    }
+
+    /**
+     * Handles business logic errors (e.g. "Not enough credits") thrown as RuntimeException.
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntimeException(RuntimeException ex) {

@@ -54,8 +54,7 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
         // Skip webhook requests and public endpoints
         String uri = request.getRequestURI();
         if (uri.contains("/webhooks")
-                || uri.contains("/public")
-                || uri.contains("/download")) {
+                || uri.contains("/public")) {
             filterChain.doFilter(request, response);
             return;
         }
