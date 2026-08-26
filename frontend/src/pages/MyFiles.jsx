@@ -22,6 +22,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import FileCard from "../components/FileCard.jsx";
+import ConfirmationDialog from "../components/ConfirmationDialog.jsx";
 
 const MyFiles = () => {
     const [files, setFiles] = useState([]);
@@ -29,6 +30,10 @@ const MyFiles = () => {
 
     const { getToken } = useAuth();
     const navigate = useNavigate();
+    const [deleteConfirmation, setDeleteConfirmation] = useState({
+        isOpen: false,
+        fileId: null
+    });
 
     const getFileIcon = (file) => {
         const extension = file.fileName?.split('.').pop().toLowerCase() || "";
@@ -93,13 +98,7 @@ const MyFiles = () => {
 
             const response = await axios.get(
                 apiEndpoints.DOWNLOAD_FILES(file.id),
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-                    responseType: "blob"
-                }
-            );
+                {headers: {Authorization: `Bearer ${token}`}, responseType: "blob"});
 
             // Create a blob URL
             const url = window.URL.createObjectURL(response.data);
@@ -121,6 +120,40 @@ const MyFiles = () => {
             toast.error("Error downloading file");
         }
     };
+    /* Closes the delete confirmation*/
+    const closeDeleteConfirmation = () => {
+        setDeleteConfirmation({
+            isOpen : false,
+            fileId : null
+        })
+    }
+    /* Open the delete confirmation modal*/
+    const openDeleteConfirmation = (fileId) => {
+        setDeleteConfirmation({
+            isOpen : true,
+            fileId
+        })
+    }
+    /* Delete a file*/
+    const handleDelete = async () => {
+        const fileId = deleteConfirmation.fileId;
+        if(!fileId) return;
+
+        try{
+            const token = await getToken();
+            const response = await axios.delete(apiEndpoints.DELETE_FILES(fileId), {headers: {Authorization: `Bearer ${token}`} });
+            if(response.status === 204){
+               setFiles(files.filter((file) => file.id !== fileId));
+               closeDeleteConfirmation();
+            }else{
+                toast.error("Error deleting file");
+            }
+        }catch(error){
+            console.error("Error deleting file", error);
+            toast.error("Error deleting file", error.message);
+        }
+    }
+
     useEffect(() => {
         fetchFiles();
     }, [getToken]);
@@ -316,6 +349,8 @@ const MyFiles = () => {
                                                 <div className="flex justify-start">
 
                                                     <button
+                                                        onClick = {() => openDeleteConfirmation(file.id)}
+
                                                         title="Delete"
                                                         className="text-gray-500 hover:text-red-600">
                                                         <Trash2 size={18} />
@@ -353,7 +388,17 @@ const MyFiles = () => {
                         </table>
                     </div>
                 )}
-
+             {/* Delete confirmation dialog */}
+                <ConfirmationDialog
+                    isOpen={deleteConfirmation.isOpen}
+                    onClose={closeDeleteConfirmation}
+                    title="Delete File"
+                    message="Are you sure want to delete this file? This action cannot be undone."
+                    confirmText="Delete"
+                    cancelText="Cancel"
+                    onConfirm={handleDelete}
+                    confirmButtonClass="bg-red-600 hover:bg-red-700"
+                />
             </div>
         </DashboardLayout>
     );
