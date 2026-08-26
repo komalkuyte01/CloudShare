@@ -100,7 +100,7 @@ const MyFiles = () => {
             setFiles(files.map(file => file.id === fileToUpdate.id ? { ...file, isPublic: !file.isPublic } : file));
         } catch (error) {
             console.error('Error toggling file status', error);
-            toast.error('Error toggling file status', error.message);
+            toast.error(`Error toggling file status: ${error.message || error}`);
         }
     }
     /* Handle file download */
@@ -182,7 +182,7 @@ const MyFiles = () => {
             }
         }catch(error){
             console.error("Error deleting file", error);
-            toast.error("Error deleting file", error.message);
+            toast.error(`Error deleting file: ${error.message || error}`);
         }
     }
 

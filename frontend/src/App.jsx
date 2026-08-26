@@ -17,6 +17,7 @@ import {
     useUser,
     useAuth,
 } from "@clerk/clerk-react";
+import {UserCreditsProvider} from "./context/UserCreditsContext.jsx";
 
 
 const BACKEND_URL =
@@ -80,6 +81,7 @@ const NotFound = () => (
 
 const App = () => {
     return (
+        <UserCreditsProvider>
         <BrowserRouter>
            <Toaster/>
 
@@ -175,6 +177,7 @@ const App = () => {
                 />
             </Routes>
         </BrowserRouter>
+        </UserCreditsProvider>
     );
 };
 

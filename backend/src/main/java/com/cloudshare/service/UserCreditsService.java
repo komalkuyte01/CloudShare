@@ -38,7 +38,6 @@ public class UserCreditsService {
     }
 
     public UserCredits getUserCredits(String clerkId) {
-
         return userCreditsRepository.findByCreditId(clerkId)
                 .orElseGet(() -> createInitialCredits(clerkId));
     }

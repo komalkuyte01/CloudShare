@@ -11,6 +11,7 @@ import com.cloudshare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -192,46 +193,39 @@ public class FileMetaDataService {
         return mapToDTO(file);
     }
 
+    @Transactional
     public void deleteFile(Long id) {
 
+        ProfileDTO currentProfile =
+                profileService.getCurrentProfile();
+
+        FileMetadata file =
+                fileMetadataRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("File not found")
+                        );
+
+        // Only the owner can delete the file
+        if (!file.getUser().getClerkId()
+                .equals(currentProfile.getClerkId())) {
+
+            throw new AccessDeniedException(
+                    "File does not belong to current user"
+            );
+        }
+
+        // Delete metadata from database first
+        fileMetadataRepository.delete(file);
+        fileMetadataRepository.flush();
+
+        // Delete actual file from uploads folder after DB delete succeeds
         try {
-
-            ProfileDTO currentProfile =
-                    profileService.getCurrentProfile();
-
-            FileMetadata file =
-                    fileMetadataRepository.findById(id)
-                            .orElseThrow(() ->
-                                    new ResourceNotFoundException("File not found")
-                            );
-
-            // Only the owner can delete the file
-            if (!file.getUser().getClerkId()
-                    .equals(currentProfile.getClerkId())) {
-
-                throw new AccessDeniedException(
-                        "File does not belong to current user"
-                );
-            }
-
-            // Delete actual file from uploads folder
             Path filePath = com.cloudshare.util.StorageUtils.getUploadsPath()
                     .resolve(file.getStorageKey());
-
             Files.deleteIfExists(filePath);
-
-            // Delete metadata from database
-            fileMetadataRepository.deleteById(id);
-
-        } catch (ResourceNotFoundException | AccessDeniedException e) {
-            // Re-throw custom exceptions so GlobalExceptionHandler maps them correctly
-            throw e;
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(
-                    "Error deleting file: " + e.getMessage()
-            );
+        } catch (IOException e) {
+            // Log but don't fail — DB record is already deleted
+            System.err.println("Warning: Could not delete physical file: " + e.getMessage());
         }
     }
 
