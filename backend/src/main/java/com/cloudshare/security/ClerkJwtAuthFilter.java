@@ -54,8 +54,7 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
         // Skip webhook requests and public endpoints
         String uri = request.getRequestURI();
         if (uri.contains("/webhooks")
-                || uri.contains("/public")
-                || uri.contains("/download")) {
+                || uri.contains("/public")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -63,8 +62,11 @@ public class ClerkJwtAuthFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         // No Authorization header — let Spring Security's AuthenticationEntryPoint handle it
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.debug("No Bearer token found for {} {}", request.getMethod(), uri);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")
+                || authHeader.substring(7).trim().isEmpty()
+                || "null".equals(authHeader.substring(7).trim())
+                || "undefined".equals(authHeader.substring(7).trim())) {
+            log.debug("No valid Bearer token found for {} {}", request.getMethod(), uri);
             filterChain.doFilter(request, response);
             return;
         }

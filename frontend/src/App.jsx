@@ -8,14 +8,17 @@ import MyFiles from "./pages/MyFiles";
 import Subscription from "./pages/Subscription";
 import Transaction from "./pages/Transaction";
 import PublicFileView from "./pages/PublicFileView";
+import { Toaster } from "react-hot-toast";
 
 import {
     RedirectToSignIn,
     SignedIn,
     SignedOut,
     useUser,
-    useAuth
+    useAuth,
 } from "@clerk/clerk-react";
+import {UserCreditsProvider} from "./context/UserCreditsContext.jsx";
+
 
 const BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL ||
@@ -36,8 +39,7 @@ const UserSync = () => {
                 await fetch(`${BACKEND_URL}/profiles/register`, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json", Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
                         email:
@@ -48,10 +50,7 @@ const UserSync = () => {
                     }),
                 });
             } catch (err) {
-                console.error(
-                    "Failed to sync user to DB:",
-                    err
-                );
+                console.error("Failed to sync user to DB:", err);
             }
         };
 
@@ -82,11 +81,11 @@ const NotFound = () => (
 
 const App = () => {
     return (
+        <UserCreditsProvider>
         <BrowserRouter>
-            <UserSync />
+           <Toaster/>
 
             <Routes>
-
                 <Route
                     path="/"
                     element={<Landing />}
@@ -176,9 +175,9 @@ const App = () => {
                     path="*"
                     element={<NotFound />}
                 />
-
             </Routes>
         </BrowserRouter>
+        </UserCreditsProvider>
     );
 };
 

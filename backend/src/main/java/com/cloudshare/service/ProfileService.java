@@ -44,7 +44,7 @@ public class ProfileService {
                                 : profileDTO.getLastName().trim()
                 )
                 .photoUrl(profileDTO.getPhotoUrl())
-                .credits(5)
+                .credits(10)
                 .user(user)
                 .build();
 

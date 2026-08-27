@@ -37,3 +37,6 @@ target/
 *.njsproj
 *.sln
 *.sw?
+
+# User Uploads
+uploads/

@@ -101,3 +101,16 @@ button {
     opacity: 1;
     transform: translateX(0);
 }
+
+/* Bold eye icon always, and even bolder on hover */
+.eye-hover-bold svg {
+    stroke-width: 2.8px !important;
+    transition: stroke-width 0.2s ease-in-out, color 0.2s ease-in-out;
+    cursor: pointer;
+    color: #4b5563;
+}
+
+.eye-hover-bold:hover svg {
+    stroke-width: 3.5 px !important;
+    color: #374151;
+}

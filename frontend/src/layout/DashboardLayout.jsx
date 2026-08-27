@@ -1,22 +1,25 @@
-import {useUser} from "@clerk/clerk-react";
 import Navbar from "../components/Navbar.jsx";
 import SideMenu from "../components/SideMenu.jsx";
+import { useUser } from "@clerk/clerk-react";
+import useCreditsContext from "../context/UserCreditsContext.jsx";
 
-const DashboardLayout = ({children, activeMenu, credits = 0}) => {
-    const {user} = useUser();
+const DashboardLayout = ({ children, activeMenu }) => {
+    const { user } = useUser();
+    const { credits } = useCreditsContext() || { credits: 0 };
+
     return (
         <div>
-            <Navbar activeMenu={activeMenu} credits={credits}/>
+            <Navbar activeMenu={activeMenu} credits={credits} />
             {user && (
-               <div className="flex">
-                   <div className="max-[1080px]:hidden">
-                       <SideMenu activeMenu={activeMenu}/>
-                   </div>
-                   <div className="grow mx-5">{children}</div>
-               </div>
+                <div className="flex">
+                    <div className="max-[1080px]:hidden">
+                        <SideMenu activeMenu={activeMenu} />
+                    </div>
+                    <div className="grow mx-5">{children}</div>
+                </div>
             )}
         </div>
     )
 }
 
-export default DashboardLayout;
+export default DashboardLayout;

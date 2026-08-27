@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Share2 } from "lucide-react";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import SideMenu from "./SideMenu";
 import CreditsDisplay from "./CreditsDisplay";
+import useCreditsContext from "../context/UserCreditsContext.jsx";
 
 const Navbar = ({ activeMenu, credits }) => {
     const [openSideMenu, setOpenSideMenu] = useState(false);
+    const { fetchUserCredits } = useCreditsContext() || {};
 
+    useEffect(() => {
+        if (fetchUserCredits) {
+            fetchUserCredits();
+        }
+    }, [fetchUserCredits]);
     return (
         <div>
             <div className="flex items-center justify-between gap-5 bg-white border border-gray-200 px-6 py-4">

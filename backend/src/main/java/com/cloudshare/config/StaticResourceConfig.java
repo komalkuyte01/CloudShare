@@ -11,8 +11,7 @@ public class StaticResourceConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String uploadDir = Path.of("uploads")
-                .toAbsolutePath()
+        String uploadDir = com.cloudshare.util.StorageUtils.getUploadsPath()
                 .toString();
 
         registry.addResourceHandler("/uploads/**")

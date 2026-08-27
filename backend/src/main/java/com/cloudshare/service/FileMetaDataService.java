@@ -4,10 +4,14 @@ import com.cloudshare.dto.FileMetaDataDTO;
 import com.cloudshare.dto.ProfileDTO;
 import com.cloudshare.entity.FileMetadata;
 import com.cloudshare.entity.User;
+import com.cloudshare.exception.AccessDeniedException;
+import com.cloudshare.exception.ResourceNotFoundException;
 import com.cloudshare.repository.FileMetadataRepository;
 import com.cloudshare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +33,6 @@ public class FileMetaDataService {
     private final UserRepository userRepository;
 
     public List<FileMetaDataDTO> uploadFiles(MultipartFile[] files) throws IOException {
-
         List<FileMetaDataDTO> fileMetaDataList = new ArrayList<>();
 
         // Check if user has enough credits
@@ -41,14 +44,12 @@ public class FileMetaDataService {
         ProfileDTO currentProfile = profileService.getCurrentProfile();
 
         User user = userRepository.findByClerkId(currentProfile.getClerkId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found for clerkId: " + currentProfile.getClerkId()
                 ));
 
         // Create uploads directory
-        Path uploadPath = Path.of("uploads")
-                .toAbsolutePath()
-                .normalize();
+        Path uploadPath = com.cloudshare.util.StorageUtils.getUploadsPath();
 
         Files.createDirectories(uploadPath);
 
@@ -127,7 +128,7 @@ public class FileMetaDataService {
 
         // Find User using Clerk ID
         User user = userRepository.findByClerkId(currentProfile.getClerkId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found for clerkId: "
                                 + currentProfile.getClerkId()
                 ));
@@ -147,7 +148,7 @@ public class FileMetaDataService {
         FileMetadata file = fileMetadataRepository.findById(id)
                 .filter(FileMetadata::getIsPublic)
                 .orElseThrow(() ->
-                        new RuntimeException("Unable to get the file")
+                        new ResourceNotFoundException("File not found or is not public")
                 );
 
         return mapToDTO(file);
@@ -157,7 +158,7 @@ public class FileMetaDataService {
 
         FileMetadata file = fileMetadataRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("File not found")
+                        new ResourceNotFoundException("File not found")
                 );
 
         // Public files can be downloaded by anyone
@@ -166,13 +167,25 @@ public class FileMetaDataService {
         }
 
         // Private files can only be downloaded by their owner
+        var authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
+
+            throw new AccessDeniedException(
+                    "You do not have permission to download this file"
+            );
+        }
+
         ProfileDTO currentProfile =
                 profileService.getCurrentProfile();
 
         if (!file.getUser().getClerkId()
                 .equals(currentProfile.getClerkId())) {
 
-            throw new RuntimeException(
+            throw new AccessDeniedException(
                     "You do not have permission to download this file"
             );
         }
@@ -180,44 +193,39 @@ public class FileMetaDataService {
         return mapToDTO(file);
     }
 
+    @Transactional
     public void deleteFile(Long id) {
 
-        try {
+        ProfileDTO currentProfile =
+                profileService.getCurrentProfile();
 
-            ProfileDTO currentProfile =
-                    profileService.getCurrentProfile();
+        FileMetadata file =
+                fileMetadataRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("File not found")
+                        );
 
-            FileMetadata file =
-                    fileMetadataRepository.findById(id)
-                            .orElseThrow(() ->
-                                    new RuntimeException("File not found")
-                            );
+        // Only the owner can delete the file
+        if (!file.getUser().getClerkId()
+                .equals(currentProfile.getClerkId())) {
 
-            // Only the owner can delete the file
-            if (!file.getUser().getClerkId()
-                    .equals(currentProfile.getClerkId())) {
-
-                throw new RuntimeException(
-                        "File does not belong to current user"
-                );
-            }
-
-            // Delete actual file from uploads folder
-            Path filePath = Path.of("uploads")
-                    .toAbsolutePath()
-                    .normalize()
-                    .resolve(file.getStorageKey());
-
-            Files.deleteIfExists(filePath);
-
-            // Delete metadata from database
-            fileMetadataRepository.deleteById(id);
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(
-                    "Error deleting file: " + e.getMessage()
+            throw new AccessDeniedException(
+                    "File does not belong to current user"
             );
+        }
+
+        // Delete metadata from database first
+        fileMetadataRepository.delete(file);
+        fileMetadataRepository.flush();
+
+        // Delete actual file from uploads folder after DB delete succeeds
+        try {
+            Path filePath = com.cloudshare.util.StorageUtils.getUploadsPath()
+                    .resolve(file.getStorageKey());
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            // Log but don't fail — DB record is already deleted
+            System.err.println("Warning: Could not delete physical file: " + e.getMessage());
         }
     }
 
@@ -232,14 +240,14 @@ public class FileMetaDataService {
         FileMetadata file =
                 fileMetadataRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("File not found")
+                                new ResourceNotFoundException("File not found")
                         );
 
         // Only the owner can change visibility
         if (!file.getUser().getClerkId()
                 .equals(currentProfile.getClerkId())) {
 
-            throw new RuntimeException(
+            throw new AccessDeniedException(
                     "You do not have permission to modify this file"
             );
         }

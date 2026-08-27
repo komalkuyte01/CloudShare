@@ -8,12 +8,13 @@ const Dashboard = () => {
     useEffect(() => {
         const displayToken = async () => {
             const token = await getToken();
+            console.log(token);
         };
         displayToken();
     }, []);
 
     return (
-        <DashboardLayout activeMenu="Dashboard" credits={5}>
+        <DashboardLayout activeMenu="Dashboard">
             <div>
                 Dashboard Content
             </div>
