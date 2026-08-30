@@ -1,8 +1,10 @@
 package com.cloudshare.service;
 
 import com.cloudshare.dto.PaymentDTO;
+import com.cloudshare.dto.PaymentVerificationDTO;
 import com.cloudshare.dto.ProfileDTO;
 import com.cloudshare.entity.PaymentTransaction;
+import com.cloudshare.entity.Profile;
 import com.cloudshare.repository.PaymentTransactionRepository;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
@@ -83,6 +85,97 @@ public class PaymentService {
                     .success(false)
                     .message("Error creating order: " + e.getMessage())
                     .build();
+        }
+    }
+
+    public PaymentDTO verifyPayment(PaymentVerificationDTO request) {
+        try {
+            ProfileDTO currentProfile = profileService.getCurrentProfile();
+            String clerkId = currentProfile.getClerkId();
+
+            String data = request.getRazorpay_order_id() + "|" + request.getRazorpay_payment_id();
+            String signature = generateHmacSHA256Signature(data, razorpayKeySecret);
+
+            if (!signature.equals(request.getRazorpay_signature())) {
+                updateTransactionStatus(request.getRazorpay_order_id(), "FAILED", request.getRazorpay_payment_id(), null);
+                return PaymentDTO.builder()
+                        .success(false)
+                        .message("Payment verification failed: Invalid signature")
+                        .build();
+            }
+
+            int creditsToAdd = 0;
+            String plan = "Basic";
+
+            switch (request.getPlanId().toLowerCase()) {
+                case "premium":
+                    creditsToAdd = 500;
+                    plan = "PREMIUM";
+                    break;
+                case "ultimate":
+                    creditsToAdd = 5000;
+                    plan = "ULTIMATE";
+                    break;
+            }
+
+            if (creditsToAdd > 0) {
+                userCreditsService.addCredits(clerkId, creditsToAdd, plan);
+                updateTransactionStatus(request.getRazorpay_order_id(), "SUCCESS", request.getRazorpay_payment_id(), creditsToAdd);
+                return PaymentDTO.builder()
+                        .success(true)
+                        .message("Payment verified and credits added successfully")
+                        .credits(userCreditsService.getUserCredits(clerkId).getCredits())
+                        .build();
+            } else {
+                updateTransactionStatus(request.getRazorpay_order_id(), "FAILED", request.getRazorpay_payment_id(), null);
+                return PaymentDTO.builder()
+                        .success(false)
+                        .message("Payment verification failed: Invalid plan selected")
+                        .build();
+            }
+        } catch (Exception e) {
+            try {
+                updateTransactionStatus(request.getRazorpay_order_id(), "ERROR", request.getRazorpay_payment_id(), null);
+            } catch (Exception ex) {
+                // Ignore or log error updating transaction status
+            }
+            return PaymentDTO.builder()
+                    .success(false)
+                    .message("Error verifying payment: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    private void updateTransactionStatus(String razorpay_order_Id, String status, String razorPaymentId, Integer creditsToAdd) {
+        paymentTransactionRepository.findByOrderId(razorpay_order_Id)
+                .map(transaction -> {
+                    transaction.setStatus(status);
+                    transaction.setPaymentId(razorPaymentId);
+                    if (creditsToAdd != null) {
+                        transaction.setCreditsAdded(creditsToAdd);
+                    }
+                    return paymentTransactionRepository.save(transaction);
+                })
+                .orElseThrow(() -> new RuntimeException("Transaction not found for orderId: " + razorpay_order_Id));
+    }
+
+    private String generateHmacSHA256Signature(String data, String secret) {
+        try {
+            javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
+            javax.crypto.spec.SecretKeySpec secretKeySpec = new javax.crypto.spec.SecretKeySpec(secret.getBytes("UTF-8"), "HmacSHA256");
+            mac.init(secretKeySpec);
+            byte[] hashBytes = mac.doFinal(data.getBytes("UTF-8"));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating HMAC SHA256 signature: " + e.getMessage(), e);
         }
     }
 }

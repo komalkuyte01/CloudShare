@@ -1,6 +1,7 @@
 package com.cloudshare.controller;
 
 import com.cloudshare.dto.PaymentDTO;
+import com.cloudshare.dto.PaymentVerificationDTO;
 import com.cloudshare.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,16 @@ public class PaymentController {
         //call service method to create order
         PaymentDTO response = paymentService.createOrder(paymentDTO);
 
+        if(response.getSuccess()){
+            return ResponseEntity.ok(response);
+        }else{
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/verify-payment")
+    public ResponseEntity<?> verifyPayment(@RequestBody PaymentVerificationDTO request){
+        PaymentDTO response = paymentService.verifyPayment(request);
         if(response.getSuccess()){
             return ResponseEntity.ok(response);
         }else{

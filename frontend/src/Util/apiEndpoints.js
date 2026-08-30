@@ -8,5 +8,7 @@ const BASE_URL = 'http://localhost:8080/api/v1.0';
     DELETE_FILES:(id) => `${BASE_URL}/files/${id}`,
     PROFILE_ME: `${BASE_URL}/profiles/me`,
     UPLOAD_FILES: `${BASE_URL}/files/upload`,
+    CREATE_ORDER: `${BASE_URL}/payments/create-order`,
+    VERIFY_PAYMENT: `${BASE_URL}/payments/verify-payment`,
 
 }
