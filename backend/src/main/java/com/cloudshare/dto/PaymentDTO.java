@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor]
+@NoArgsConstructor
 @Builder
 public class PaymentDTO {
        private String planId;

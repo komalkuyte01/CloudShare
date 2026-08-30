@@ -1,6 +1,7 @@
 package com.cloudshare.controller;
 
 import com.cloudshare.dto.PaymentDTO;
+import com.cloudshare.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,13 @@ public class PaymentController {
     @PostMapping("/create-order")
     public ResponseEntity<?> createOrder(@RequestBody PaymentDTO paymentDTO){
         //call service method to create order
+        PaymentDTO response = paymentService.createOrder(paymentDTO);
 
+        if(response.getSuccess()){
+            return ResponseEntity.ok(response);
+        }else{
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }
 
