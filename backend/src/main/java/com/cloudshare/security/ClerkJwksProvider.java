@@ -49,7 +49,11 @@ public class ClerkJwksProvider {
 
     private void refreshKeys() throws Exception {
 
-        JsonNode jwks = objectMapper.readTree(new URL(jwksUrl));
+        java.net.URLConnection connection = java.net.URI.create(jwksUrl).toURL().openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
+        
+        JsonNode jwks = objectMapper.readTree(connection.getInputStream());
 
         JsonNode keys = jwks.get("keys");
 

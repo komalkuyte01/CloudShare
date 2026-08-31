@@ -59,4 +59,14 @@ public class UserCreditsService {
         userCredits.setCredits(userCredits.getCredits() - 1);
         return userCreditsRepository.save(userCredits);
     }
+
+    @Transactional
+    public UserCredits addCredits(String userId, Integer creditsToAdd, String plan) {
+        if (!userCreditsRepository.existsByCreditId(userId)) {
+            createInitialCredits(userId);
+        }
+        userCreditsRepository.addCreditsAtomically(userId, creditsToAdd, plan);
+        return userCreditsRepository.findByCreditId(userId).orElse(null);
+
+    }
 }

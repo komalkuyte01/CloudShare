@@ -84,6 +84,7 @@ const App = () => {
         <UserCreditsProvider>
         <BrowserRouter>
            <Toaster/>
+           <UserSync />
 
             <Routes>
                 <Route
@@ -167,7 +168,7 @@ const App = () => {
                 />
 
                 <Route
-                    path="/file/:id"
+                    path="/file/:fileId"
                     element={<PublicFileView />}
                 />
 
