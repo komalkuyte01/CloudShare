@@ -56,12 +56,15 @@ public class FileMetaDataService {
         // Upload each file
         for (MultipartFile file : files) {
 
-            String extension = StringUtils.getFilenameExtension(
+            String rawExtension = StringUtils.getFilenameExtension(
                     file.getOriginalFilename()
             );
+            
+            // Sanitize extension to ensure it only contains alphanumeric characters
+            String extension = rawExtension != null ? rawExtension.replaceAll("[^a-zA-Z0-9]", "") : null;
 
             String fileName = UUID.randomUUID()
-                    + (extension != null ? "." + extension : "");
+                    + (extension != null && !extension.isEmpty() ? "." + extension : "");
 
             Path targetLocation = uploadPath.resolve(fileName);
 
