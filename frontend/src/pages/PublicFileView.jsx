@@ -1,183 +1,210 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
-import { Download, FileText, Image, Video, Music, Archive, File, Loader2, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Download, File, Loader2, Share2, Copy, Info } from "lucide-react";
 import toast from "react-hot-toast";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
+import LinkShareModal from "../components/LinkShareModal.jsx";
 
 const PublicFileView = () => {
     const { fileId } = useParams();
     const [file, setFile] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [downloading, setDownloading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [shareModal, setShareModal] = useState({
+        isOpen: false,
+        link: "",
+    });
+    const { getToken } = useAuth();
 
     useEffect(() => {
-        const fetchPublicFile = async () => {
+        const getFile = async () => {
             try {
-                setLoading(true);
-                const response = await axios.get(apiEndpoints.GET_PUBLIC_FILE(fileId));
-                setFile(response.data);
+                setIsLoading(true);
+                // Re-added token fetching and authorization header
+                const token = await getToken();
+                const headers = token ? { Authorization: `Bearer ${token}` } : {};
+                const res = await axios.get(
+                    apiEndpoints.PUBLIC_FILE_VIEW(fileId),
+                    { headers }
+                );
+                setFile(res.data);
                 setError(null);
             } catch (err) {
-                console.error("Error fetching public file:", err);
-                setError("This file is not found, or it is no longer public.");
+                console.error("Error fetching file:", err);
+                setError("Could not retrieve file. The link may be invalid or the file may have been removed.");
             } finally {
-                setLoading(false);
+                setIsLoading(false);
             }
         };
-
-        if (fileId) {
-            fetchPublicFile();
-        }
-    }, [fileId]);
+        getFile();
+    }, [fileId, getToken]);
 
     const handleDownload = async () => {
-        if (!file) return;
         try {
-            setDownloading(true);
+            // This endpoint might also require a token depending on your backend setup
+            const token = await getToken();
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
             const response = await axios.get(
-                apiEndpoints.DOWNLOAD_FILES(file.id),
-                { responseType: "blob" }
+                `http://localhost:8080/api/v1.0/files/download/${fileId}`,
+                {
+                    headers,
+                    responseType: "blob",
+                }
             );
 
-            // Create a blob with explicit type
-            const blob = new Blob([response.data], {
-                type: response.headers["content-type"] || "application/octet-stream",
-            });
-            const url = window.URL.createObjectURL(blob);
-
-            // Create download link
+            const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
-            link.style.display = "none";
             link.href = url;
-            link.setAttribute("download", file.fileName);
+            link.setAttribute("download", file.fileName || file.name || "download");
             document.body.appendChild(link);
             link.click();
-
-            // Cleanup
-            setTimeout(() => {
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);
-            }, 1000);
-
-            toast.success("Download started!");
+            link.remove();
+            window.URL.revokeObjectURL(url);
         } catch (err) {
-            console.error("Download failed:", err);
-            toast.error("Error downloading file");
-        } finally {
-            setDownloading(false);
+            console.error("Download error:", err);
+            toast.error("Download failed");
         }
     };
 
-    const getFileIcon = (fileType) => {
-        if (!fileType) return <File className="w-16 h-16 text-purple-500" />;
-        const type = fileType.toLowerCase();
-        if (type.includes("image")) return <Image className="w-16 h-16 text-blue-500" />;
-        if (type.includes("video")) return <Video className="w-16 h-16 text-rose-500" />;
-        if (type.includes("audio")) return <Music className="w-16 h-16 text-emerald-500" />;
-        if (type.includes("pdf") || type.includes("word") || type.includes("text") || type.includes("document")) return <FileText className="w-16 h-16 text-amber-500" />;
-        if (type.includes("zip") || type.includes("rar") || type.includes("tar") || type.includes("compressed")) return <Archive className="w-16 h-16 text-indigo-500" />;
-        return <File className="w-16 h-16 text-purple-500" />;
+    const openShareModal = () => {
+        setShareModal({
+            isOpen: true,
+            link: window.location.href,
+        });
     };
 
-    const formatFileSize = (bytes) => {
-        if (!bytes || bytes === 0) return "0 Bytes";
-        const k = 1024;
-        const sizes = ["Bytes", "KB", "MB", "GB"];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    const closeShareModal = () => {
+        setShareModal({
+            isOpen: false,
+            link: "",
+        });
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-gray-700">
-                <Loader2 className="animate-spin text-purple-600 mb-4" size={40} />
-                <p className="text-lg font-medium">Loading file details...</p>
+            <div className="flex justify-center items-center h-screen bg-gray-50">
+                <p className="text-gray-600 font-medium">Loading file...</p>
             </div>
         );
     }
 
-    if (error || !file) {
+    if (error) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6 text-center">
-                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-md w-full">
-                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
-                        <AlertTriangle size={32} />
-                    </div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">File Access Error</h2>
-                    <p className="text-gray-500 mb-6">{error || "File not found"}</p>
-                    <a
-                        href="/dashboard"
-                        className="inline-block w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 shadow-md animate-none"
-                    >
-                        Go to Dashboard
-                    </a>
+            <div className="flex justify-center items-center h-screen bg-gray-50">
+                <div className="text-center p-8 bg-white rounded-lg shadow-md">
+                    <h2 className="text-xl font-semibold text-red-600">Error</h2>
+                    <p className="text-gray-600 mt-2">{error}</p>
                 </div>
             </div>
         );
     }
+
+    if (!file) return null;
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-tr from-purple-50 to-indigo-50 p-6">
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 max-w-md w-full transform transition-all duration-300 hover:scale-[1.01]">
-                {/* Header */}
-                <div className="flex items-center justify-center gap-2 mb-6">
-                    <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                        CloudShare Secure Link
-                    </span>
+        <div className="bg-gray-50 min-h-screen">
+            <header className="p-4 border-b bg-white">
+                <div className="container mx-auto flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        <Share2 className="text-blue-600" />
+                        <span className="font-bold text-xl text-gray-800">CloudShare</span>
+                    </div>
+                    <button
+                        onClick={openShareModal}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg cursor-pointer"
+                    >
+                        <Copy size={18} />
+                        Share Link
+                    </button>
                 </div>
+            </header>
 
-                {/* File Icon Container */}
-                <div className="w-28 h-28 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-purple-100 shadow-inner">
-                    {getFileIcon(file.fileType)}
-                </div>
+            <main className="container mx-auto p-4 md:p-8 flex justify-center">
+                <div className="w-full max-w-3xl">
+                    <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8 text-center">
+                        <div className="flex justify-center mb-4">
+                            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
+                                <File size={40} className="text-blue-500" />
+                            </div>
+                        </div>
 
-                {/* File Name & Info */}
-                <div className="text-center mb-8">
-                    <h2 className="text-xl font-extrabold text-gray-950 break-all leading-tight mb-2 px-2">
-                        {file.fileName}
-                    </h2>
-                    <div className="flex items-center justify-center gap-3 text-sm text-gray-500 font-medium mt-3">
-                        <span>{formatFileSize(file.fileSize)}</span>
-                        <span className="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-                        <span>{new Date(file.uploadedAt).toLocaleDateString()}</span>
+                        <h1 className="text-2xl font-semibold text-gray-800 break-words">
+                            {file.name || file.fileName}
+                        </h1>
+
+                        <p className="text-sm text-gray-500 mt-2">
+                            {((file.size || file.fileSize) / 1024).toFixed(2)} KB
+                            <span className="mx-2">&bull;</span>
+                            Shared on {new Date(file.uploadedAt).toLocaleDateString()}
+                        </p>
+
+                        <div className="my-6">
+                            <span className="inline-block bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded">
+                                {file.type || file.fileType || "File"}
+                            </span>
+                        </div>
+
+                        <div className="flex justify-center gap-4 my-8">
+                            <button
+                                onClick={handleDownload}
+                                className="flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded cursor-pointer transition-colors"
+                            >
+                                <Download size={18} />
+                                Download File
+                            </button>
+                        </div>
+
+                        {/* File Information Section */}
+                        <div className="border-t border-gray-200 pt-6 mt-8 text-left">
+                            <h3 className="text-lg font-bold text-gray-900 mb-4">File Information</h3>
+                            <div className="space-y-3 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500 font-medium">File Name:</span>
+                                    <span className="text-gray-800 font-semibold break-all text-right max-w-[70%]">
+                                        {file.fileName || file.name}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500 font-medium">File Type:</span>
+                                    <span className="text-gray-800 font-semibold text-right">
+                                        {file.fileType || file.type || "File"}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500 font-medium">File Size:</span>
+                                    <span className="text-gray-800 font-semibold text-right">
+                                        {((file.fileSize || file.size) / 1024).toFixed(2)} KB
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500 font-medium">Shared:</span>
+                                    <span className="text-gray-850 font-semibold text-right">
+                                        {new Date(file.uploadedAt).toLocaleDateString()}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Blue Info Alert Box */}
+                    <div className="mt-6 bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg flex items-center gap-3">
+                        <Info size={20} className="shrink-0" />
+                        <p className="text-sm text-left">
+                            This file has been shared publicly. Anyone with this link can view and download it.
+                        </p>
                     </div>
                 </div>
+            </main>
 
-                {/* Download Button */}
-                <button
-                    onClick={handleDownload}
-                    disabled={downloading}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-semibold py-3.5 px-6 rounded-xl transition duration-200 shadow-md flex items-center justify-center gap-2 cursor-pointer"
-                >
-                    {downloading ? (
-                        <>
-                            <Loader2 className="animate-spin" size={20} />
-                            <span>Downloading...</span>
-                        </>
-                    ) : (
-                        <>
-                            <Download size={20} />
-                            <span>Download File</span>
-                        </>
-                    )}
-                </button>
-
-                {/* Security Badge */}
-                <div className="flex items-center justify-center gap-1.5 text-xs text-green-600 font-semibold mt-6 bg-green-50/50 py-2 rounded-lg border border-green-100/50">
-                    <ShieldCheck size={16} />
-                    <span>Securely scanned & verified by CloudShare</span>
-                </div>
-            </div>
-
-            {/* Back link */}
-            <p className="mt-6 text-sm text-gray-500 font-medium">
-                Want to host files yourself?{" "}
-                <a href="/dashboard" className="text-purple-600 hover:text-purple-700 underline">
-                    Join CloudShare
-                </a>
-            </p>
+            <LinkShareModal
+                isOpen={shareModal.isOpen}
+                onClose={closeShareModal}
+                link={shareModal.link}
+                title="Share File"
+                file={file}
+            />
         </div>
     );
 };
