@@ -167,7 +167,7 @@ const App = () => {
                 />
 
                 <Route
-                    path="/file/:id"
+                    path="/file/:fileId"
                     element={<PublicFileView />}
                 />
 

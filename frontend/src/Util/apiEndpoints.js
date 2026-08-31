@@ -10,5 +10,6 @@ const BASE_URL = 'http://localhost:8080/api/v1.0';
     UPLOAD_FILES: `${BASE_URL}/files/upload`,
     CREATE_ORDER: `${BASE_URL}/payments/create-order`,
     VERIFY_PAYMENT: `${BASE_URL}/payments/verify-payment`,
-
+    FETCH_TRANSACTIONS: `${BASE_URL}/transactions`,
+    GET_PUBLIC_FILE: (id) => `${BASE_URL}/files/public/${id}`,
 }
