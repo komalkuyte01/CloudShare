@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
@@ -15,13 +15,14 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState('');
-    const [remainingUploads, setRemainingUploads] = useState(5);
+
     const { getToken } = useAuth();
     const { fetchUserCredits } = useCreditsContext();
 
     const MAX_FILES = 5;
+    const remainingUploads = MAX_FILES - uploadFiles.length;
 
-    const fetchRecentFiles = async () => {
+    const fetchRecentFiles = useCallback(async () => {
         try {
             setLoading(true);
             const token = await getToken();
@@ -31,35 +32,28 @@ const Dashboard = () => {
                 },
             });
             
-            // Sort by uploadedAt and take only the 5 most recent files
-            const sortedFiles = res.data.sort((a, b) =>
-                new Date(b.uploadedAt) - new Date(a.uploadedAt)
-            ).slice(0, 5);
-            
-            setFiles(sortedFiles);
+            if (res.data && Array.isArray(res.data)) {
+                // Sort by uploadedAt and take only the 5 most recent files
+                const sortedFiles = [...res.data].sort((a, b) =>
+                    new Date(b.uploadedAt) - new Date(a.uploadedAt)
+                ).slice(0, 5);
+                setFiles(sortedFiles);
+            } else {
+                setFiles([]);
+            }
         } catch (error) {
             console.error("Error fetching recent files:", error);
         } finally {
             setLoading(false);
         }
-    };
+    }, [getToken]);
 
     useEffect(() => {
         fetchRecentFiles();
         fetchUserCredits();
-    }, [getToken]);
+    }, [fetchRecentFiles, fetchUserCredits]);
 
-    useEffect(() => {
-        setRemainingUploads(MAX_FILES - uploadFiles.length);
-    }, [uploadFiles]);
 
-    useEffect(() => {
-        const displayToken = async () => {
-            const token = await getToken();
-            console.log(token);
-        };
-        displayToken();
-    }, []);
 
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files);

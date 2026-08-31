@@ -1,5 +1,5 @@
 import DashboardLayout from "../layout/DashboardLayout.jsx";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
 import ShareLinkModal from "../components/LinkShareModal.jsx";
 import {
@@ -63,10 +63,9 @@ const MyFiles = () => {
         return <FileIcon size={24} className="text-purple-500" />
     }
 
-    const fetchFiles = async () => {
+    const fetchFiles = useCallback(async () => {
         try {
             const token = await getToken();
-            console.log("JWT Token in MyFiles:", token);
 
             if (!token) {
                 console.error("No JWT token available");
@@ -89,7 +88,7 @@ const MyFiles = () => {
             console.log("Error fetching files:", error);
             toast.error("Failed to fetch files. Please try again later.");
         }
-    };
+    }, [getToken]);
 
     /* Toggles the public/private status of file */
     const togglePublic = async (fileToUpdate) => {
@@ -190,7 +189,7 @@ const MyFiles = () => {
         if (isLoaded) {
             fetchFiles();
         }
-    }, [isLoaded]);
+    }, [isLoaded, fetchFiles]);
 
     return (
         <DashboardLayout activeMenu="My Files">

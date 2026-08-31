@@ -1,6 +1,6 @@
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 import { useState, useEffect, useRef, useContext } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import { UserCreditsContext } from "../context/UserCreditsContext";
 import axios from "axios";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
@@ -35,12 +35,13 @@ const Subscription = () => {
         }
     ];
 
-    const [processingPayment, setProcessingPayment] = useState("");
+    const [processingPayment, setProcessingPayment] = useState(null);
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
     const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
     const { getToken } = useAuth();
+    const { user } = useUser();
     const razorpayScriptRef = useRef(null);
     const { credits, setCredits, fetchUserCredits } = useContext(UserCreditsContext);
 
@@ -91,7 +92,7 @@ const Subscription = () => {
         };
 
         fetchCredits();
-    }, [getToken]);
+    }, [getToken, setCredits]);
 
     const handlePurchase = async (plan) => {
         if (!razorpayLoaded) {
@@ -100,7 +101,14 @@ const Subscription = () => {
             return;
         }
 
-        setProcessingPayment(true);
+        if (!import.meta.env.VITE_RAZORPAY_KEY) {
+            setMessage("Payment gateway is not configured. Please contact support.");
+            setMessageType("error");
+            setProcessingPayment(null);
+            return;
+        }
+
+        setProcessingPayment(plan.id);
         setMessage('');
 
         try {
@@ -109,10 +117,7 @@ const Subscription = () => {
             const orderResponse = await axios.post(
                 apiEndpoints.CREATE_ORDER,
                 {
-                    planId: plan.id,
-                    amount: plan.price * 100,
-                    currency: "INR",
-                    credits: plan.credits
+                    planId: plan.id
                 },
                 {
                     headers: {
@@ -124,14 +129,14 @@ const Subscription = () => {
             if (!orderResponse.data.success) {
                 setMessage(orderResponse.data.message || "Failed to create order");
                 setMessageType("error");
-                setProcessingPayment(false);
+                setProcessingPayment(null);
                 return;
             }
 
             const orderId = orderResponse.data.orderId;
 
             const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_TW5VblElyln7TW",
+                key: import.meta.env.VITE_RAZORPAY_KEY,
                 amount: plan.price * 100,
                 currency: "INR",
                 name: "CloudShare",
@@ -175,18 +180,18 @@ const Subscription = () => {
                         setMessage("Payment verification failed. Please contact support.");
                         setMessageType("error");
                     }
-                    setProcessingPayment(false);
+                    setProcessingPayment(null);
                 },
                 prefill: {
-                    name: "User Name",
-                    email: "user@example.com"
+                    name: user?.fullName || "User Name",
+                    email: user?.primaryEmailAddress?.emailAddress || "user@example.com"
                 },
                 theme: {
                     color: "#3B82F6"
                 },
                 modal: {
                     ondismiss: function () {
-                        setProcessingPayment(false);
+                        setProcessingPayment(null);
                         setMessage("Payment cancelled.");
                         setMessageType("error");
                     }
@@ -204,7 +209,7 @@ const Subscription = () => {
             console.error("Payment error:", error);
             setMessage(error.response?.data?.message || "Something went wrong. Please try again.");
             setMessageType("error");
-            setProcessingPayment(false);
+            setProcessingPayment(null);
         }
     };
 
@@ -269,14 +274,14 @@ const Subscription = () => {
 
                             <button
                                 onClick={() => handlePurchase(plan)}
-                                disabled={processingPayment}
+                                disabled={processingPayment === plan.id}
                                 className={`w-full py-2 rounded-md font-medium transition-colors ${
                                     plan.recommended
                                         ? 'bg-purple-500 text-white hover:bg-purple-600'
                                         : 'bg-white border border-purple-500 text-purple-500 hover:bg-purple-50'
                                 } disabled:opacity-50 flex items-center justify-center gap-2`}
                             >
-                                {processingPayment ? (
+                                {processingPayment === plan.id ? (
                                     <>
                                         <Loader2 size={16} className="animate-spin" />
                                         <span>Processing...</span>

@@ -1,6 +1,7 @@
 package com.cloudshare.controller;
 
 import com.cloudshare.dto.ProfileDTO;
+import com.cloudshare.dto.TransactionResponseDTO;
 import com.cloudshare.entity.PaymentTransaction;
 import com.cloudshare.repository.PaymentTransactionRepository;
 import com.cloudshare.service.ProfileService;
@@ -26,15 +27,18 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PaymentTransaction>> getTransactions() {
+    public ResponseEntity<List<TransactionResponseDTO>> getTransactions() {
 
         ProfileDTO currentProfile = profileService.getCurrentProfile();
 
         String clerkId = currentProfile.getClerkId();
 
-        List<PaymentTransaction> transactions =
+        List<TransactionResponseDTO> transactions =
                 paymentTransactionRepository
-                        .findByClerkIdOrderByTransactionDateDesc(clerkId);
+                        .findByClerkIdOrderByTransactionDateDesc(clerkId)
+                        .stream()
+                        .map(TransactionResponseDTO::from)
+                        .toList();
 
         return ResponseEntity.ok(transactions);
     }

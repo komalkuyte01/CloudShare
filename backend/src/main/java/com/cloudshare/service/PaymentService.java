@@ -41,13 +41,31 @@ public class PaymentService {
         try {
             ProfileDTO currentProfile = profileService.getCurrentProfile();
             String clerkId = currentProfile.getClerkId();
+            
+            int serverAmount = 0;
+            int serverCredits = 0;
+            String currency = "INR";
+            String planId = paymentDTO.getPlanId() != null ? paymentDTO.getPlanId() : "basic";
+            
+            switch (planId.toLowerCase()) {
+                case "premium":
+                    serverAmount = 50000; // 500 INR in paise
+                    serverCredits = 500;
+                    break;
+                case "ultimate":
+                    serverAmount = 500000; // 5000 INR in paise
+                    serverCredits = 5000;
+                    break;
+                default:
+                    throw new RuntimeException("Invalid plan selected for order creation");
+            }
 
             RazorpayClient razorpayClient =
                     new RazorpayClient(razorpayKeyId, razorpayKeySecret);
 
             JSONObject orderRequest = new JSONObject();
-            orderRequest.put("amount", paymentDTO.getAmount());
-            orderRequest.put("currency", paymentDTO.getCurrency());
+            orderRequest.put("amount", serverAmount);
+            orderRequest.put("currency", currency);
             orderRequest.put("receipt", "order_" + System.currentTimeMillis());
 
             Order order = razorpayClient.orders.create(orderRequest);
@@ -57,10 +75,10 @@ public class PaymentService {
             PaymentTransaction transaction = PaymentTransaction.builder()
                     .clerkId(clerkId)
                     .orderId(orderId)
-                    .planId(paymentDTO.getPlanId())
-                    .amount(paymentDTO.getAmount())
-                    .currency(paymentDTO.getCurrency())
-                    .creditsAdded(paymentDTO.getCredits())
+                    .planId(planId)
+                    .amount(serverAmount / 100)
+                    .currency(currency)
+                    .creditsAdded(serverCredits)
                     .status("PENDING")
                     .transactionDate(LocalDateTime.now())
                     .userEmail(currentProfile.getEmail())
@@ -74,8 +92,9 @@ public class PaymentService {
 
             return PaymentDTO.builder()
                     .orderId(orderId)
-                    .amount(paymentDTO.getAmount())
-                    .currency(paymentDTO.getCurrency())
+                    .amount(serverAmount)
+                    .currency(currency)
+                    .credits(serverCredits)
                     .success(true)
                     .message("Order created successfully")
                     .build();
@@ -97,7 +116,7 @@ public class PaymentService {
             String signature = generateHmacSHA256Signature(data, razorpayKeySecret);
 
             if (!signature.equals(request.getRazorpay_signature())) {
-                updateTransactionStatus(request.getRazorpay_order_id(), "FAILED", request.getRazorpay_payment_id(), null);
+                updateTransactionStatus(request.getRazorpay_order_id(), "FAILED", request.getRazorpay_payment_id(), null, clerkId);
                 return PaymentDTO.builder()
                         .success(false)
                         .message("Payment verification failed: Invalid signature")
@@ -119,15 +138,18 @@ public class PaymentService {
             }
 
             if (creditsToAdd > 0) {
+                // updateTransactionStatus is transactional. It ensures the status was PENDING before we grant credits.
+                updateTransactionStatus(request.getRazorpay_order_id(), "SUCCESS", request.getRazorpay_payment_id(), creditsToAdd, clerkId);
+                // If it passes without Exception, we can safely grant credits
                 userCreditsService.addCredits(clerkId, creditsToAdd, plan);
-                updateTransactionStatus(request.getRazorpay_order_id(), "SUCCESS", request.getRazorpay_payment_id(), creditsToAdd);
+                
                 return PaymentDTO.builder()
                         .success(true)
                         .message("Payment verified and credits added successfully")
                         .credits(userCreditsService.getUserCredits(clerkId).getCredits())
                         .build();
             } else {
-                updateTransactionStatus(request.getRazorpay_order_id(), "FAILED", request.getRazorpay_payment_id(), null);
+                updateTransactionStatus(request.getRazorpay_order_id(), "FAILED", request.getRazorpay_payment_id(), null, clerkId);
                 return PaymentDTO.builder()
                         .success(false)
                         .message("Payment verification failed: Invalid plan selected")
@@ -135,7 +157,8 @@ public class PaymentService {
             }
         } catch (Exception e) {
             try {
-                updateTransactionStatus(request.getRazorpay_order_id(), "ERROR", request.getRazorpay_payment_id(), null);
+                // Do not pass clerkId here since it might be a general failure
+                updateTransactionStatus(request.getRazorpay_order_id(), "ERROR", request.getRazorpay_payment_id(), null, null);
             } catch (Exception ex) {
                 // Ignore or log error updating transaction status
             }
@@ -146,17 +169,27 @@ public class PaymentService {
         }
     }
 
-    private void updateTransactionStatus(String razorpay_order_Id, String status, String razorPaymentId, Integer creditsToAdd) {
-        paymentTransactionRepository.findByOrderId(razorpay_order_Id)
-                .map(transaction -> {
-                    transaction.setStatus(status);
-                    transaction.setPaymentId(razorPaymentId);
-                    if (creditsToAdd != null) {
-                        transaction.setCreditsAdded(creditsToAdd);
-                    }
-                    return paymentTransactionRepository.save(transaction);
-                })
+    @org.springframework.transaction.annotation.Transactional
+    private void updateTransactionStatus(String razorpay_order_Id, String status, String razorPaymentId, Integer creditsToAdd, String clerkId) {
+        PaymentTransaction transaction = paymentTransactionRepository.findByOrderId(razorpay_order_Id)
                 .orElseThrow(() -> new RuntimeException("Transaction not found for orderId: " + razorpay_order_Id));
+                
+        // Ensure atomic redemption (owner match and pending status)
+        if (creditsToAdd != null && status.equals("SUCCESS")) {
+            if (!transaction.getClerkId().equals(clerkId)) {
+                throw new RuntimeException("Transaction owner mismatch");
+            }
+            if (!"PENDING".equals(transaction.getStatus())) {
+                throw new RuntimeException("Transaction is no longer pending");
+            }
+        }
+        
+        transaction.setStatus(status);
+        transaction.setPaymentId(razorPaymentId);
+        if (creditsToAdd != null) {
+            transaction.setCreditsAdded(creditsToAdd);
+        }
+        paymentTransactionRepository.save(transaction);
     }
 
     private String generateHmacSHA256Signature(String data, String secret) {

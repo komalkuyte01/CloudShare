@@ -60,12 +60,13 @@ public class UserCreditsService {
         return userCreditsRepository.save(userCredits);
     }
 
+    @Transactional
     public UserCredits addCredits(String userId, Integer creditsToAdd, String plan) {
-        UserCredits userCredits = userCreditsRepository.findByCreditId(userId)
-                .orElseGet(() -> createInitialCredits(userId));
-        userCredits.setCredits(userCredits.getCredits() + creditsToAdd);
-        userCredits.setPlan(plan);
-        return userCreditsRepository.save(userCredits);
+        if (!userCreditsRepository.existsByCreditId(userId)) {
+            createInitialCredits(userId);
+        }
+        userCreditsRepository.addCreditsAtomically(userId, creditsToAdd, plan);
+        return userCreditsRepository.findByCreditId(userId).orElse(null);
 
     }
 }

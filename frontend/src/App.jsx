@@ -84,6 +84,7 @@ const App = () => {
         <UserCreditsProvider>
         <BrowserRouter>
            <Toaster/>
+           <UserSync />
 
             <Routes>
                 <Route

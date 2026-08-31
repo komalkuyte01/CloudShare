@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
-import { Download, File, Loader2, Share2, Copy, Info } from "lucide-react";
+import { Download, File, Share2, Copy, Info } from "lucide-react";
 import toast from "react-hot-toast";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
 import LinkShareModal from "../components/LinkShareModal.jsx";
