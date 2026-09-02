@@ -7,7 +7,7 @@ const RecentFiles = ({ files }) => {
         const type = fileType?.toLowerCase() || "";
 
         if (["jpg", "jpeg", "png", "gif", "svg", "webp"].includes(ext) || type.includes("image")) {
-            return <Image size={18} className="text-purple-500" />;
+            return <Image size={18} className="text-blue-500" />;
         }
         if (["mp4", "webm", "mov", "avi", "mkv"].includes(ext) || type.includes("video")) {
             return <Video size={18} className="text-rose-500" />;
@@ -42,14 +42,14 @@ const RecentFiles = ({ files }) => {
     };
 
     return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                <h3 className="font-bold text-gray-800 text-base">Recent Files ({files.length})</h3>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                <h3 className="font-bold text-gray-800 dark:text-white text-base">Recent Files ({files.length})</h3>
             </div>
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-gray-50 text-[10px] font-bold text-gray-400 uppercase border-b border-gray-200 tracking-wider">
+                        <tr className="bg-gray-50 dark:bg-gray-800/50 text-[10px] font-bold text-gray-400 uppercase border-b border-gray-200 dark:border-gray-800 tracking-wider">
                             <th className="px-4 py-3">Name</th>
                             <th className="px-4 py-3">Size</th>
                             <th className="px-4 py-3">Uploaded By</th>
@@ -57,10 +57,10 @@ const RecentFiles = ({ files }) => {
                             <th className="px-4 py-3">Sharing</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                         {files.map((file) => (
-                            <tr key={file.id} className="hover:bg-gray-50/50 transition-colors">
-                                <td className="px-4 py-3 font-medium text-gray-700 break-all max-w-[200px]">
+                            <tr key={file.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300 break-all max-w-[200px]">
                                     <div className="flex items-center gap-2">
                                         {getFileIcon(file.fileName, file.fileType)}
                                         <span className="truncate" title={file.fileName}>
@@ -68,13 +68,13 @@ const RecentFiles = ({ files }) => {
                                         </span>
                                     </div>
                                 </td>
-                                <td className="px-4 py-3 text-gray-500 text-xs">
+                                <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">
                                     {formatFileSize(file.fileSize)}
                                 </td>
-                                <td className="px-4 py-3 text-gray-500 text-xs">
+                                <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">
                                     You
                                 </td>
-                                <td className="px-4 py-3 text-gray-500 text-xs">
+                                <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">
                                     {formatDate(file.uploadedAt)}
                                 </td>
                                 <td className="px-4 py-3 text-xs">

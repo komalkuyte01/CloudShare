@@ -62,7 +62,7 @@ const UserSync = () => {
 
 const NotFound = () => (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-[#030712] text-gray-900 dark:text-gray-100">
-        <h1 className="text-6xl font-extrabold text-purple-600 dark:text-purple-400">
+        <h1 className="text-6xl font-extrabold text-blue-600 dark:text-blue-400">
             404
         </h1>
 
@@ -72,7 +72,7 @@ const NotFound = () => (
 
         <a
             href="/"
-            className="mt-6 px-6 py-3 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition-colors duration-200"
+            className="mt-6 px-6 py-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors duration-200"
         >
             Go Home
         </a>

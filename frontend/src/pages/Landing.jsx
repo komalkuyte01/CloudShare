@@ -22,7 +22,7 @@ const Landing = () => {
 
     return (
         <div className="landing-page selection:bg-fuchsia-500/30">
-            <ThemeToggle />
+            <ThemeToggle floating />
             {/*Hero section*/}
             <HeroSection openSignIn={openSignIn} openSignUp={openSignUp}/>
             {/*Features section*/}

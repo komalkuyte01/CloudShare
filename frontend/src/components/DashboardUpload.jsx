@@ -26,18 +26,18 @@ const DashboardUpload = ({
     };
 
     return (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <h3 className="font-bold text-gray-800 text-lg mb-4">Upload Files</h3>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
+            <h3 className="font-bold text-gray-800 dark:text-white text-lg mb-4">Upload Files</h3>
             
             {/* Drop Zone Box */}
             <div
                 onClick={handleClick}
-                className="border-2 border-dashed border-gray-300 hover:border-purple-500 bg-gray-50/50 hover:bg-purple-50/10 rounded-2xl p-8 text-center cursor-pointer transition-colors duration-200"
+                className="border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-blue-500 bg-gray-50/50 dark:bg-gray-800/50 hover:bg-blue-50/10 dark:hover:bg-blue-900/10 rounded-2xl p-8 text-center cursor-pointer transition-colors duration-200"
             >
                 <div className="flex justify-center mb-2">
-                    <UploadCloud className="text-purple-500" size={32} />
+                    <UploadCloud className="text-blue-500" size={32} />
                 </div>
-                <p className="text-sm font-semibold text-gray-700">Click or drag files here</p>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Click or drag files here</p>
                 <p className="text-xs text-gray-400 mt-1">Remaining uploads: {remainingUploads}</p>
                 
                 <input
@@ -56,17 +56,17 @@ const DashboardUpload = ({
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Selected ({files.length})</p>
                     <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
                         {files.map((file, idx) => (
-                            <div key={idx} className="flex items-center justify-between bg-gray-50 border border-gray-150 rounded-xl p-3">
+                            <div key={idx} className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 border border-gray-150 dark:border-gray-700 rounded-xl p-3">
                                 <div className="flex items-center gap-2 min-w-0">
-                                    <File size={16} className="text-purple-500 shrink-0" />
+                                    <File size={16} className="text-blue-500 shrink-0" />
                                     <div className="min-w-0">
-                                        <p className="text-xs font-semibold text-gray-800 truncate max-w-[160px]">{file.name}</p>
+                                        <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate max-w-[160px]">{file.name}</p>
                                         <p className="text-[10px] text-gray-400">{formatSize(file.size)}</p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => onRemoveFile(idx)}
-                                    className="p-1 hover:bg-gray-200 rounded-lg text-gray-450 hover:text-red-500 transition cursor-pointer"
+                                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-gray-450 hover:text-red-500 transition cursor-pointer"
                                 >
                                     <X size={14} />
                                 </button>
@@ -77,7 +77,7 @@ const DashboardUpload = ({
                     <button
                         onClick={onUpload}
                         disabled={uploading}
-                        className="w-full mt-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-semibold py-3 rounded-xl text-sm transition duration-200 shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                        className="w-full mt-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-xl text-sm transition duration-200 shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
                         {uploading ? (
                             <>

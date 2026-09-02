@@ -52,8 +52,8 @@ const FooterSection = () => {
         <footer className="relative bg-gray-100 dark:bg-gray-950 text-gray-700 dark:text-gray-300 overflow-hidden">
 
             {/* Top gradient glow */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/60 to-transparent" />
-            <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-purple-600/8 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/60 to-transparent" />
+            <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-blue-600/8 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pt-14 pb-8">
 
@@ -65,7 +65,7 @@ const FooterSection = () => {
 
                         {/* Logo */}
                         <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-violet-700 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/30">
                                 {/* Cloud with upload arrow — directly represents file sharing/cloud storage */}
                                 <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]">
                                     <polyline points="16 16 12 12 8 16" />
@@ -89,7 +89,7 @@ const FooterSection = () => {
                                     key={label}
                                     href={href}
                                     aria-label={label}
-                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200/80 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:border-purple-500/60 hover:bg-purple-500/10 transition-all duration-200"
+                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-200/80 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-500/60 hover:bg-blue-500/10 transition-all duration-200"
                                 >
                                     {icon}
                                 </a>

@@ -54,7 +54,6 @@ const Dashboard = () => {
     }, [fetchRecentFiles, fetchUserCredits]);
 
 
-
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
 
@@ -129,14 +128,14 @@ const Dashboard = () => {
     return (
         <DashboardLayout activeMenu="Dashboard">
             <div className="p-6">
-                <h1 className="text-2xl font-bold text-gray-900 mb-1">My Drive</h1>
-                <p className="text-gray-500 text-sm mb-6">Upload, manage, and share your files securely</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">My Drive</h1>
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Upload, manage, and share your files securely</p>
                 
                 {message && (
                     <div className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
-                        messageType === 'error' ? 'bg-red-50 text-red-700' :
-                        messageType === 'success' ? 'bg-green-50 text-green-700' :
-                        'bg-purple-50 text-purple-700'
+                        messageType === 'error' ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400' :
+                        messageType === 'success' ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400' :
+                        'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
                     }`}>
                         {message}
                     </div>
@@ -158,9 +157,9 @@ const Dashboard = () => {
                     {/* Right column */}
                     <div className="w-full md:w-[60%]">
                         {loading ? (
-                            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-12 flex flex-col items-center">
-                                <Loader2 size={40} className="text-purple-500 animate-spin mb-4" />
-                                <p className="text-gray-500 font-medium">Loading your files...</p>
+                            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm p-12 flex flex-col items-center">
+                                <Loader2 size={40} className="text-blue-500 animate-spin mb-4" />
+                                <p className="text-gray-500 dark:text-gray-400 font-medium">Loading your files...</p>
                             </div>
                         ) : (
                             <RecentFiles files={files} />

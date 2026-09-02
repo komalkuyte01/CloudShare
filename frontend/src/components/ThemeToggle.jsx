@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 
-const ThemeToggle = () => {
+/**
+ * Dark/Light mode toggle button.
+ *
+ * Props:
+ *   floating (boolean) — if true, shows as a fixed button in bottom-right corner (for Landing page).
+ *                         if false (default), shows as an inline button (for Navbar).
+ */
+const ThemeToggle = ({ floating = false }) => {
     const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
@@ -31,13 +38,27 @@ const ThemeToggle = () => {
         }
     };
 
+    // Floating style (fixed bottom-right) — used on Landing page
+    if (floating) {
+        return (
+            <button
+                onClick={toggleTheme}
+                className="fixed bottom-6 right-6 p-4 rounded-full shadow-lg border transition-all duration-300 z-50 bg-white border-gray-200 text-gray-800 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                aria-label="Toggle Theme"
+            >
+                {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+            </button>
+        );
+    }
+
+    // Inline style — used in Navbar
     return (
         <button
             onClick={toggleTheme}
-            className="fixed bottom-6 right-6 p-4 rounded-full shadow-lg border transition-all duration-300 z-50 bg-white border-gray-200 text-gray-800 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+            className="p-2 rounded-lg border transition-all duration-200 bg-gray-100 border-gray-200 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 cursor-pointer"
             aria-label="Toggle Theme"
         >
-            {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>
     );
 };

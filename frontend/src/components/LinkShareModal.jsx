@@ -56,7 +56,7 @@ const ShareLinkModal = ({ file, onClose }) => {
         if (
             ["jpg", "jpeg", "png", "gif", "svg", "webp"].includes(extension)
         ) {
-            return <Image size={22} className="text-purple-500" />;
+            return <Image size={22} className="text-blue-500" />;
         }
 
         if (
@@ -77,7 +77,7 @@ const ShareLinkModal = ({ file, onClose }) => {
             return <FileText size={22} className="text-amber-500" />;
         }
 
-        return <FileIcon size={22} className="text-purple-500" />;
+        return <FileIcon size={22} className="text-blue-500" />;
     };
 
     const formatFileSize = (bytes) => {
@@ -111,17 +111,17 @@ const ShareLinkModal = ({ file, onClose }) => {
                     animation:
                         "modalScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards"
                 }}
-                className="w-full max-w-md rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden mx-4"
+                className="w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden mx-4"
             >
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 pt-6 pb-2">
-                    <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
                         Share File
                     </h2>
 
                     <button
                         onClick={onClose}
-                        className="rounded-full p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all duration-200 cursor-pointer"
+                        className="rounded-full p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 cursor-pointer"
                         aria-label="Close modal"
                     >
                         <X size={20} />
@@ -132,16 +132,16 @@ const ShareLinkModal = ({ file, onClose }) => {
                 <div className="px-6 pb-6 space-y-5">
 
                     {/* File Preview Card */}
-                    <div className="flex items-center justify-between p-3.5 bg-purple-50/40 rounded-2xl border border-purple-100/30">
+                    <div className="flex items-center justify-between p-3.5 bg-blue-50/40 dark:bg-blue-900/20 rounded-2xl border border-blue-100/30 dark:border-blue-800/30">
                         <div className="flex items-center gap-3 overflow-hidden">
 
-                            <div className="flex items-center justify-center p-2.5 bg-white rounded-xl shadow-sm border border-purple-100/20">
+                            <div className="flex items-center justify-center p-2.5 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-blue-100/20 dark:border-blue-800/20">
                                 {getFileIcon(file)}
                             </div>
 
                             <div className="overflow-hidden">
                                 <h4
-                                    className="font-semibold text-gray-800 text-sm truncate max-w-[200px]"
+                                    className="font-semibold text-gray-800 dark:text-gray-200 text-sm truncate max-w-[200px]"
                                     title={file.fileName}
                                 >
                                     {file.fileName}
@@ -179,14 +179,14 @@ const ShareLinkModal = ({ file, onClose }) => {
                             Link sharing
                         </label>
 
-                        <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-xl p-1.5 focus-within:ring-2 focus-within:ring-purple-300 focus-within:border-purple-400 transition-all duration-200">
+                        <div className="relative flex items-center bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-1.5 focus-within:ring-2 focus-within:ring-blue-300 focus-within:border-blue-400 transition-all duration-200">
 
                             {/* Share Link */}
                             <input
                                 type="text"
                                 value={shareLink}
                                 readOnly
-                                className="flex-1 text-gray-700 bg-transparent px-3 text-sm outline-none font-medium truncate"
+                                className="flex-1 text-gray-700 dark:text-gray-300 bg-transparent px-3 text-sm outline-none font-medium truncate"
                                 onClick={(e) => e.target.select()}
                             />
 
@@ -196,7 +196,7 @@ const ShareLinkModal = ({ file, onClose }) => {
                                 className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 cursor-pointer shadow-sm active:scale-95 select-none ${
                                     copied
                                         ? "bg-green-600 text-white shadow-green-500/10"
-                                        : "bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/15"
+                                        : "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/15"
                                 }`}
                             >
                                 {copied ? (

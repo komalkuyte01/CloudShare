@@ -7,7 +7,7 @@ const FileCard = ({file, onDelete, onTogglePublic, onDownload, onShareLink}) => 
         const extension = file.fileName?.split('.').pop().toLowerCase() || "";
 
         if(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(extension)){
-            return <Image size={24} className="text-purple-500"/>
+            return <Image size={24} className="text-blue-500"/>
         }
 
         if(['mp4', 'webm', 'mov', 'avi', 'mkv'].includes(extension)){
@@ -22,7 +22,7 @@ const FileCard = ({file, onDelete, onTogglePublic, onDownload, onShareLink}) => 
             return <FileText size={24} className="text-amber-500"/>
         }
 
-        return <FileIcon size={24} className="text-purple-500"/>
+        return <FileIcon size={24} className="text-blue-500"/>
     }
 
     const formatFileSize = (bytes) => {
@@ -38,10 +38,10 @@ const FileCard = ({file, onDelete, onTogglePublic, onDownload, onShareLink}) => 
         <div
             onMouseEnter={() => setShowActions(true)}
             onMouseLeave={() => setShowActions(false)}
-            className="relative group overflow-hidden rounded-xl bg-white shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+            className="relative group overflow-hidden rounded-xl bg-white dark:bg-gray-900 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-800">
 
              {/*File preview area */}
-            <div className="h-32 bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center p-4">
+            <div className="h-32 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center p-4">
                 {getFileIcon(file)}
             </div>
 
@@ -60,10 +60,10 @@ const FileCard = ({file, onDelete, onTogglePublic, onDownload, onShareLink}) => 
             <div className="p-4">
                 <div className="flex justify-between items-start">
                     <div className="overflow-hidden">
-                        <h3 title={file.fileName} className="font-medium text-gray-900 truncate">
+                        <h3 title={file.fileName} className="font-medium text-gray-900 dark:text-white truncate">
                             {file.fileName}
                         </h3>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             {formatFileSize(file.fileSize)} . {formatDate(file.uploadedAt)}
                         </p>
                     </div>
@@ -76,7 +76,7 @@ const FileCard = ({file, onDelete, onTogglePublic, onDownload, onShareLink}) => 
                         <button
                             onClick={() => onShareLink(file)}
                             title="Share Link"
-                            className="p-2 cursor-pointer bg-white/90 rounded-full hover:bg-white transition-colors text-purple-500 hover:text-purple-600">
+                            className="p-2 cursor-pointer bg-white/90 rounded-full hover:bg-white transition-colors text-blue-500 hover:text-blue-600">
                             <Copy size={18}/>
                         </button>
                     )}
