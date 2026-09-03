@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
-import { Download, File, Share2, Copy, Info } from "lucide-react";
+import { Download, File, CloudUpload, Copy, Info } from "lucide-react";
 import toast from "react-hot-toast";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
 import LinkShareModal from "../components/LinkShareModal.jsx";
@@ -108,7 +108,7 @@ const PublicFileView = () => {
             <header className="p-4 border-b bg-white dark:bg-gray-900 dark:border-gray-800">
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <Share2 className="text-blue-600" />
+                        <CloudUpload size={32} strokeWidth={1.8} />
                         <span className="font-bold text-xl text-gray-800 dark:text-white">CloudShare</span>
                     </div>
                     <button

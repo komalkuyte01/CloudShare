@@ -45,11 +45,10 @@ const Navbar = ({ activeMenu, credits }) => {
                         to="/dashboard"
                         className="flex items-center gap-2"
                     >
-                        <Share2 className="text-blue-600" />
-
-                        <span className="text-xl font-semibold text-gray-900 dark:text-white">
-                            CloudShare
-                        </span>
+                        <div className="flex items-center gap-3 text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            <CloudUpload size={32} strokeWidth={1.8} />
+                            <span>CloudShare</span>
+                        </div>
                     </Link>
 
                 </div>
