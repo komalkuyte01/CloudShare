@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { User } from "lucide-react";
-import { SIDE_MENU_DATA } from "../assets/data";
+import { SIDE_MENU_DATA } from "../../assets/data";
 
 const SideMenu = ({activeMenu}) => {
     const navigate = useNavigate();

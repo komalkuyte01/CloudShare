@@ -5,7 +5,7 @@ import { SignedIn, UserButton } from "@clerk/clerk-react";
 import SideMenu from "./SideMenu";
 import CreditsDisplay from "./CreditsDisplay";
 import ThemeToggle from "./ThemeToggle";
-import useCreditsContext from "../context/UserCreditsContext.jsx";
+import useCreditsContext from "../../context/UserCreditsContext.jsx";
 
 const Navbar = ({ activeMenu, credits }) => {
     const [openSideMenu, setOpenSideMenu] = useState(false);

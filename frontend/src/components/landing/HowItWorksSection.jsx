@@ -33,7 +33,7 @@ const steps = [
 
 const HowItWorksSection = () => {
     return (
-        <section className="py-12 sm:py-16 lg:py-24 bg-transparent relative">
+        <section id="how-it-works" className="py-12 sm:py-16 lg:py-24 bg-transparent relative">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header */}
@@ -60,7 +60,7 @@ const HowItWorksSection = () => {
 
                                     {/* Icon circle */}
                                     <div className="relative flex items-center justify-center w-20 h-20 rounded-full bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-white/10 shadow-sm mb-6">
-                                        <Icon size={28} className="text-blue-600 dark:text-blue-400" /> 
+                                        <Icon size={28} className="text-blue-600 dark:text-blue-400" />
                                     </div>
 
                                     {/* Step label */}

@@ -5,7 +5,7 @@ import axios from "axios";
 import { Download, File, CloudUpload, Copy, Info } from "lucide-react";
 import toast from "react-hot-toast";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
-import LinkShareModal from "../components/LinkShareModal.jsx";
+import LinkShareModal from "../components/ui/LinkShareModal.jsx";
 
 const PublicFileView = () => {
     const { fileId } = useParams();

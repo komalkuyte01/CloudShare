@@ -1,7 +1,7 @@
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 import { useState, useEffect, useCallback } from "react";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
-import ShareLinkModal from "../components/LinkShareModal.jsx";
+import ShareLinkModal from "../components/ui/LinkShareModal.jsx";
 import {
     List,
     Grid,
@@ -22,8 +22,8 @@ import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import FileCard from "../components/FileCard.jsx";
-import ConfirmationDialog from "../components/ConfirmationDialog.jsx";
+import FileCard from "../components/ui/FileCard.jsx";
+import ConfirmationDialog from "../components/ui/ConfirmationDialog.jsx";
 
 const MyFiles = () => {
     const [files, setFiles] = useState([]);

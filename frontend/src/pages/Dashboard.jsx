@@ -5,8 +5,8 @@ import { Loader2 } from "lucide-react";
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
 import { useCreditsContext } from "../context/UserCreditsContext.jsx";
-import DashboardUpload from "../components/DashboardUpload.jsx";
-import RecentFiles from "../components/RecentFiles.jsx";
+import DashboardUpload from "../components/ui/DashboardUpload.jsx";
+import RecentFiles from "../components/ui/RecentFiles.jsx";
 
 const Dashboard = () => {
     const [files, setFiles] = useState([]);

@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar.jsx";
-import SideMenu from "../components/SideMenu.jsx";
+import Navbar from "../components/ui/Navbar.jsx";
+import SideMenu from "../components/ui/SideMenu.jsx";
 import { useUser } from "@clerk/clerk-react";
 import useCreditsContext from "../context/UserCreditsContext.jsx";
 

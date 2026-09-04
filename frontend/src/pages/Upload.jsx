@@ -4,7 +4,7 @@ import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 import { UserCreditsContext } from "../context/UserCreditsContext.jsx";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
-import UploadBox from "../components/UploadBox.jsx";
+import UploadBox from "../components/ui/UploadBox.jsx";
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 
 const Upload = () => {
