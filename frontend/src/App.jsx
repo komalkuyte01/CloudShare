@@ -26,11 +26,9 @@ import {
 } from "@clerk/clerk-react";
 import { UserCreditsProvider } from "./context/UserCreditsContext.jsx";
 
-const RAW_BACKEND_URL =
-    import.meta.env.VITE_BACKEND_URL ||
-    "http://localhost:8080/api/v1.0";
+import { getBackendBaseUrl } from "./Util/apiEndpoints.js";
 
-const BACKEND_URL = RAW_BACKEND_URL.replace(/\/+$/, "");
+const BACKEND_URL = getBackendBaseUrl();
 
 // Syncs the current Clerk user into the database
 const UserSync = () => {

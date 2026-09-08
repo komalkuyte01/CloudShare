@@ -1,15 +1,31 @@
 import axios from "axios";
 
-const RAW_URL =
-    import.meta.env.VITE_BACKEND_URL ||
-    "http://localhost:8080/api/v1.0";
+export const getBackendBaseUrl = () => {
+    const envUrl = import.meta.env.VITE_BACKEND_URL;
+
+    // Running in browser over HTTPS (e.g. Vercel deployment)
+    if (typeof window !== "undefined" && window.location.protocol === "https:") {
+        // Use custom HTTPS URL if configured and not the unresponsive onrender URL
+        if (envUrl && envUrl.startsWith("https://") && !envUrl.includes("cloudshare-backend.onrender.com")) {
+            return envUrl.replace(/\/+$/, "");
+        }
+        // Live HTTPS tunnel fallback for deployed preview/production
+        return "https://flavorful-retype-vengeful.ngrok-free.dev/api/v1.0";
+    }
+
+    // Running in local development (http://localhost)
+    if (envUrl && !envUrl.includes("cloudshare-backend.onrender.com")) {
+        return envUrl.replace(/\/+$/, "");
+    }
+    return "http://localhost:8080/api/v1.0";
+};
+
+const BASE_URL = getBackendBaseUrl();
 
 // Bypass ngrok interstitial warning page only if connecting via ngrok tunnel
-if (RAW_URL.includes("ngrok")) {
+if (BASE_URL.includes("ngrok")) {
     axios.defaults.headers.common["ngrok-skip-browser-warning"] = "true";
 }
-
-const BASE_URL = RAW_URL.replace(/\/+$/, "");
 
 export const apiEndpoints = {
     FETCH_FILES: `${BASE_URL}/files/my`,
