@@ -141,9 +141,12 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "http://localhost:5174"
+        // Support local development ports and deployed frontend domains (e.g. Vercel)
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "https://*.vercel.app",
+                "https://cloudshare-olive.vercel.app"
         ));
 
         config.setAllowedMethods(List.of(
@@ -157,7 +160,10 @@ public class SecurityConfig {
 
         config.setAllowedHeaders(List.of(
                 "Authorization",
-                "Content-Type"
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Requested-With"
         ));
 
         config.setAllowCredentials(true);
