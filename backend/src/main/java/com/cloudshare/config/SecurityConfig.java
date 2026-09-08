@@ -72,9 +72,10 @@ public class SecurityConfig {
                         // Clerk webhook does not use user JWT
                         .requestMatchers("/webhooks/**").permitAll()
 
-                        // Public file endpoints
+                        // Public file & contact endpoints
                         .requestMatchers("/files/public/**").permitAll()
                         .requestMatchers("/files/download/**").permitAll()
+                        .requestMatchers("/contact/**", "/contact").permitAll()
 
                         // Allow Spring Boot's error dispatch (internal forward on exceptions)
                         .requestMatchers("/error").permitAll()

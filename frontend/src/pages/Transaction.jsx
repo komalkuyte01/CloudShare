@@ -57,11 +57,11 @@ const Transaction = () => {
             <div className="p-6">
                 <div className="flex items-center gap-2 mb-6">
                     <Receipt className="text-blue-600" />
-                    <h1 className="text-2xl font-bold">Transaction History</h1>
+                    <h1 className="text-2xl font-bold dark:text-white">Transaction History</h1>
                 </div>
 
                 {error && (
-                    <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg flex items-center">
+                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg flex items-center">
                         <AlertCircle size={20} className="mr-2" />
                         <span>{error}</span>
                     </div>
@@ -73,69 +73,69 @@ const Transaction = () => {
                         <span>Loading transactions...</span>
                     </div>
                 ) : transactions.length === 0 ? (
-                    <div className="bg-gray-50 p-8 rounded-lg text-center">
+                    <div className="bg-gray-50 dark:bg-gray-900 p-8 rounded-lg text-center">
                         <Receipt size={48} className="mx-auto mb-4 text-gray-400" />
-                        <h3 className="text-lg font-medium text-gray-700 mb-2">
+                        <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
                             No Transactions Yet
                         </h3>
-                        <p className="text-gray-500">
+                        <p className="text-gray-500 dark:text-gray-400">
                             You haven't made any credit purchases yet. Visit the Subscription page to buy credits.
                         </p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white rounded-lg overflow-hidden shadow">
-                            <thead className="bg-gray-50">
+                        <table className="min-w-full bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow">
+                            <thead className="bg-gray-50 dark:bg-gray-800/50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Date
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Plan
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Amount
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Credits Added
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Payment ID
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200">
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                                 {transactions.map((transaction) => (
                                     <tr key={transaction.id}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                             {formatDate(transaction.transactionDate)}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                             {transaction.planId === "premium"
                                                 ? "Premium Plan"
                                                 : transaction.planId === "ultimate"
                                                     ? "Ultimate Plan"
                                                     : "Basic Plan"}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                             {formatAmount(transaction.amount)}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                             {transaction.creditsAdded}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                transaction.status === 'SUCCESS' ? 'bg-green-100 text-green-800' :
-                                                transaction.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-red-100 text-red-800'
+                                                transaction.status === 'SUCCESS' ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' :
+                                                transaction.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300' :
+                                                'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
                                             }`}>
                                                 {transaction.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-medium">
                                             {transaction.paymentId
                                                 ? transaction.paymentId.substring(0, 12) + "..."
                                                 : "N/A"}

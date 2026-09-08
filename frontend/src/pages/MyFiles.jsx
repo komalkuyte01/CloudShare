@@ -1,7 +1,7 @@
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 import { useState, useEffect, useCallback } from "react";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
-import ShareLinkModal from "../components/LinkShareModal.jsx";
+import ShareLinkModal from "../components/ui/LinkShareModal.jsx";
 import {
     List,
     Grid,
@@ -22,8 +22,8 @@ import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import FileCard from "../components/FileCard.jsx";
-import ConfirmationDialog from "../components/ConfirmationDialog.jsx";
+import FileCard from "../components/ui/FileCard.jsx";
+import ConfirmationDialog from "../components/ui/ConfirmationDialog.jsx";
 
 const MyFiles = () => {
     const [files, setFiles] = useState([]);
@@ -45,7 +45,7 @@ const MyFiles = () => {
         const extension = file.fileName?.split('.').pop().toLowerCase() || "";
 
         if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(extension)) {
-            return <Image size={24} className="text-purple-500" />
+            return <Image size={24} className="text-blue-500" />
         }
 
         if (['mp4', 'webm', 'mov', 'avi', 'mkv'].includes(extension)) {
@@ -60,7 +60,7 @@ const MyFiles = () => {
             return <FileText size={24} className="text-amber-500" />
         }
 
-        return <FileIcon size={24} className="text-purple-500" />
+        return <FileIcon size={24} className="text-blue-500" />
     }
 
     const fetchFiles = useCallback(async () => {
@@ -139,14 +139,14 @@ const MyFiles = () => {
     /* Closes the delete confirmation*/
     const closeDeleteConfirmation = () => {
         setDeleteConfirmation({
-            isOpen : false,
-            fileId : null
+            isOpen: false,
+            fileId: null
         })
     }
     /* Open the delete confirmation modal*/
     const openDeleteConfirmation = (fileId) => {
         setDeleteConfirmation({
-            isOpen : true,
+            isOpen: true,
             fileId
         })
     }
@@ -168,18 +168,18 @@ const MyFiles = () => {
     /* Delete a file*/
     const handleDelete = async () => {
         const fileId = deleteConfirmation.fileId;
-        if(!fileId) return;
+        if (!fileId) return;
 
-        try{
+        try {
             const token = await getToken();
-            const response = await axios.delete(apiEndpoints.DELETE_FILES(fileId), {headers: {Authorization: `Bearer ${token}`} });
-            if(response.status === 204){
-               setFiles(files.filter((file) => file.id !== fileId));
-               closeDeleteConfirmation();
-            }else{
+            const response = await axios.delete(apiEndpoints.DELETE_FILES(fileId), { headers: { Authorization: `Bearer ${token}` } });
+            if (response.status === 204) {
+                setFiles(files.filter((file) => file.id !== fileId));
+                closeDeleteConfirmation();
+            } else {
                 toast.error("Error deleting file");
             }
-        }catch(error){
+        } catch (error) {
             console.error("Error deleting file", error);
             toast.error(`Error deleting file: ${error.message || error}`);
         }
@@ -198,7 +198,7 @@ const MyFiles = () => {
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
 
-                    <h2 className="text-2xl font-bold">
+                    <h2 className="text-2xl font-bold dark:text-white">
                         My Files ({files?.length ?? 0})
                     </h2>
 
@@ -228,17 +228,17 @@ const MyFiles = () => {
                 {/* No Files */}
                 {files.length === 0 ? (
 
-                    <div className="bg-white rounded-lg shadow p-12 flex flex-col items-center justify-center">
+                    <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-12 flex flex-col items-center justify-center">
 
                         <File
                             size={60}
-                            className="text-purple-300 mb-4" />
+                            className="text-blue-400 mb-4" />
 
-                        <h3 className="text-xl font-medium text-gray-700 mb-2">
+                        <h3 className="text-xl font-medium text-gray-700 dark:text-gray-300 mb-2">
                             No files uploaded yet
                         </h3>
 
-                        <p className="text-gray-500 text-center max-w-md mb-6">
+                        <p className="text-gray-500 dark:text-gray-400 text-center max-w-md mb-6">
                             Start uploading your files to see them listed here.
                             You can upload documents, images, and other files
                             to share and manage them securely.
@@ -246,7 +246,7 @@ const MyFiles = () => {
 
                         <button
                             onClick={() => navigate("/upload")}
-                            className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors">
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                             Go to Upload
                         </button>
 
@@ -271,36 +271,36 @@ const MyFiles = () => {
 
                 ) : (
                     /* List View */
-                    <div className="overflow-x-auto bg-white rounded-lg shadow">
+                    <div className="overflow-x-auto bg-white dark:bg-gray-900 rounded-lg shadow">
 
                         <table className="min-w-full">
 
-                            <thead className="bg-gray-50 border-b border-gray-200">
+                            <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Name
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Size
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Uploaded At
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Sharing
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
 
-                            <tbody className="divide-y divide-gray-200">
+                            <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
                                 {files.map((file) => (
-                                    <tr key={file.id} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={file.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
 
                                         {/* Name */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
 
                                             <div className="flex items-center gap-2">
                                                 {getFileIcon(file)}
@@ -309,17 +309,17 @@ const MyFiles = () => {
                                         </td>
 
                                         {/* Size */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                             {(file.fileSize / 1024).toFixed(1)} KB
                                         </td>
 
                                         {/* Uploaded At */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                             {new Date(file.uploadedAt).toLocaleDateString()}
                                         </td>
 
                                         {/* Sharing */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
 
                                             <div className="flex items-center gap-4">
                                                 <button
@@ -385,7 +385,7 @@ const MyFiles = () => {
                                                 <div className="flex justify-start">
 
                                                     <button
-                                                        onClick = {() => openDeleteConfirmation(file.id)}
+                                                        onClick={() => openDeleteConfirmation(file.id)}
 
                                                         title="Delete"
                                                         className="text-gray-500 hover:text-red-600">
@@ -424,7 +424,7 @@ const MyFiles = () => {
                         </table>
                     </div>
                 )}
-             {/* Delete confirmation dialog */}
+                {/* Delete confirmation dialog */}
                 <ConfirmationDialog
                     isOpen={deleteConfirmation.isOpen}
                     onClose={closeDeleteConfirmation}

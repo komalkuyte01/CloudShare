@@ -8,6 +8,13 @@ import MyFiles from "./pages/MyFiles";
 import Subscription from "./pages/Subscription";
 import Transaction from "./pages/Transaction";
 import PublicFileView from "./pages/PublicFileView";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Support from "./pages/Support";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Cookies from "./pages/Cookies";
+import ScrollToTop from "./components/ui/ScrollToTop";
 import { Toaster } from "react-hot-toast";
 
 import {
@@ -17,8 +24,7 @@ import {
     useUser,
     useAuth,
 } from "@clerk/clerk-react";
-import {UserCreditsProvider} from "./context/UserCreditsContext.jsx";
-
+import { UserCreditsProvider } from "./context/UserCreditsContext.jsx";
 
 const BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL ||
@@ -39,11 +45,11 @@ const UserSync = () => {
                 await fetch(`${BACKEND_URL}/profiles/register`, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json", Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({
-                        email:
-                            user.primaryEmailAddress?.emailAddress || "",
+                        email: user.primaryEmailAddress?.emailAddress || "",
                         firstName: user.firstName || "",
                         lastName: user.lastName || "",
                         photoUrl: user.imageUrl || "",
@@ -62,7 +68,7 @@ const UserSync = () => {
 
 const NotFound = () => (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-[#030712] text-gray-900 dark:text-gray-100">
-        <h1 className="text-6xl font-extrabold text-purple-600 dark:text-purple-400">
+        <h1 className="text-6xl font-extrabold text-blue-600 dark:text-blue-400">
             404
         </h1>
 
@@ -72,7 +78,7 @@ const NotFound = () => (
 
         <a
             href="/"
-            className="mt-6 px-6 py-3 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition-colors duration-200"
+            className="mt-6 px-6 py-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors duration-200"
         >
             Go Home
         </a>
@@ -82,102 +88,95 @@ const NotFound = () => (
 const App = () => {
     return (
         <UserCreditsProvider>
-        <BrowserRouter>
-           <Toaster/>
-           <UserSync />
+            <BrowserRouter>
+                <ScrollToTop />
+                <Toaster />
+                <UserSync />
 
-            <Routes>
-                <Route
-                    path="/"
-                    element={<Landing />}
-                />
+                <Routes>
+                    <Route path="/" element={<Landing />} />
 
-                <Route
-                    path="/dashboard"
-                    element={
-                        <>
-                            <SignedIn>
-                                <Dashboard />
-                            </SignedIn>
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <>
+                                <SignedIn>
+                                    <Dashboard />
+                                </SignedIn>
+                                <SignedOut>
+                                    <RedirectToSignIn />
+                                </SignedOut>
+                            </>
+                        }
+                    />
 
-                            <SignedOut>
-                                <RedirectToSignIn />
-                            </SignedOut>
-                        </>
-                    }
-                />
+                    <Route
+                        path="/upload"
+                        element={
+                            <>
+                                <SignedIn>
+                                    <Upload />
+                                </SignedIn>
+                                <SignedOut>
+                                    <RedirectToSignIn />
+                                </SignedOut>
+                            </>
+                        }
+                    />
 
-                <Route
-                    path="/upload"
-                    element={
-                        <>
-                            <SignedIn>
-                                <Upload />
-                            </SignedIn>
+                    <Route
+                        path="/my-files"
+                        element={
+                            <>
+                                <SignedIn>
+                                    <MyFiles />
+                                </SignedIn>
+                                <SignedOut>
+                                    <RedirectToSignIn />
+                                </SignedOut>
+                            </>
+                        }
+                    />
 
-                            <SignedOut>
-                                <RedirectToSignIn />
-                            </SignedOut>
-                        </>
-                    }
-                />
+                    <Route
+                        path="/subscription"
+                        element={
+                            <>
+                                <SignedIn>
+                                    <Subscription />
+                                </SignedIn>
+                                <SignedOut>
+                                    <RedirectToSignIn />
+                                </SignedOut>
+                            </>
+                        }
+                    />
 
-                <Route
-                    path="/my-files"
-                    element={
-                        <>
-                            <SignedIn>
-                                <MyFiles />
-                            </SignedIn>
+                    <Route
+                        path="/transactions"
+                        element={
+                            <>
+                                <SignedIn>
+                                    <Transaction />
+                                </SignedIn>
+                                <SignedOut>
+                                    <RedirectToSignIn />
+                                </SignedOut>
+                            </>
+                        }
+                    />
 
-                            <SignedOut>
-                                <RedirectToSignIn />
-                            </SignedOut>
-                        </>
-                    }
-                />
+                    <Route path="/file/:fileId" element={<PublicFileView />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/support" element={<Support />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/cookies" element={<Cookies />} />
 
-                <Route
-                    path="/subscription"
-                    element={
-                        <>
-                            <SignedIn>
-                                <Subscription />
-                            </SignedIn>
-
-                            <SignedOut>
-                                <RedirectToSignIn />
-                            </SignedOut>
-                        </>
-                    }
-                />
-
-                <Route
-                    path="/transactions"
-                    element={
-                        <>
-                            <SignedIn>
-                                <Transaction />
-                            </SignedIn>
-
-                            <SignedOut>
-                                <RedirectToSignIn />
-                            </SignedOut>
-                        </>
-                    }
-                />
-
-                <Route
-                    path="/file/:fileId"
-                    element={<PublicFileView />}
-                />
-
-                <Route
-                    path="*"
-                    element={<NotFound />}
-                />
-            </Routes>
-        </BrowserRouter>
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </BrowserRouter>
         </UserCreditsProvider>
     );
 };

@@ -10,7 +10,7 @@ const UploadBox = ({ files, onFileChange, onUpload, uploading, onRemoveFile, rem
         const ext = fileName?.split(".").pop().toLowerCase() || "";
 
         if (["jpg", "jpeg", "png", "gif", "svg", "webp"].includes(ext)) {
-            return <Image size={20} className="text-purple-500" />;
+            return <Image size={20} className="text-blue-500" />;
         }
         if (["mp4", "webm", "mov", "avi", "mkv"].includes(ext)) {
             return <Video size={20} className="text-blue-500" />;
@@ -61,10 +61,10 @@ const UploadBox = ({ files, onFileChange, onUpload, uploading, onRemoveFile, rem
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
-                    <UploadCloud size={22} className="text-purple-600" />
-                    <h2 className="text-xl font-semibold text-gray-800">Upload Files</h2>
+                    <UploadCloud size={22} className="text-blue-600" />
+                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Upload Files</h2>
                 </div>
-                <span className="text-sm text-gray-500 font-medium">
+                <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                     {remainingCredits} credits remaining
                 </span>
             </div>
@@ -75,16 +75,16 @@ const UploadBox = ({ files, onFileChange, onUpload, uploading, onRemoveFile, rem
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`relative cursor-pointer border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center transition-all duration-300
+                className={`relative cursor-pointer border-2 border-dashed rounded-xl p-6 sm:p-10 flex flex-col items-center justify-center transition-all duration-300
                     ${isDragging
-                        ? "border-purple-500 bg-purple-50 scale-[1.01]"
-                        : "border-gray-300 bg-gray-50/50 hover:border-purple-400 hover:bg-purple-50/40"
+                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-[1.01]"
+                        : "border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 hover:border-blue-400 hover:bg-blue-50/40 dark:hover:bg-blue-900/10"
                     }`}
             >
-                <div className={`p-3 rounded-full mb-3 transition-colors duration-300 ${isDragging ? "bg-purple-200" : "bg-purple-100"}`}>
-                    <UploadCloud size={28} className={`transition-colors duration-300 ${isDragging ? "text-purple-700" : "text-purple-500"}`} />
+                <div className={`p-3 rounded-full mb-3 transition-colors duration-300 ${isDragging ? "bg-blue-200" : "bg-blue-100"}`}>
+                    <UploadCloud size={28} className={`transition-colors duration-300 ${isDragging ? "text-blue-700" : "text-blue-500"}`} />
                 </div>
-                <p className="text-gray-700 font-medium text-base">
+                <p className="text-gray-700 dark:text-gray-300 font-medium text-base">
                     Drag and drop files here
                 </p>
                 <p className="text-gray-400 text-sm mt-1">
@@ -104,7 +104,7 @@ const UploadBox = ({ files, onFileChange, onUpload, uploading, onRemoveFile, rem
             {/* Selected Files List */}
             {files.length > 0 && (
                 <div className="mt-6">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                         Selected Files ({files.length})
                     </h3>
 
@@ -112,12 +112,12 @@ const UploadBox = ({ files, onFileChange, onUpload, uploading, onRemoveFile, rem
                         {files.map((file, index) => (
                             <div
                                 key={index}
-                                className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 group hover:border-purple-200 hover:shadow-sm transition-all duration-200"
+                                className="flex items-center justify-between bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 group hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-sm transition-all duration-200"
                             >
                                 <div className="flex items-center gap-3 min-w-0">
                                     {getFileIcon(file.name)}
                                     <div className="min-w-0">
-                                        <p className="text-sm font-medium text-gray-800 truncate max-w-xs">
+                                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate max-w-xs">
                                             {file.name}
                                         </p>
                                         <p className="text-xs text-gray-400">
@@ -128,7 +128,7 @@ const UploadBox = ({ files, onFileChange, onUpload, uploading, onRemoveFile, rem
 
                                 <button
                                     onClick={() => onRemoveFile(index)}
-                                    className="p-1 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors duration-200 cursor-pointer"
+                                    className="p-1 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 cursor-pointer"
                                     title="Remove file"
                                 >
                                     <X size={18} />
@@ -144,7 +144,7 @@ const UploadBox = ({ files, onFileChange, onUpload, uploading, onRemoveFile, rem
                         className={`mt-5 w-full py-3 rounded-lg font-semibold text-white text-base flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer
                             ${isUploadDisable || uploading
                                 ? "bg-gray-300 cursor-not-allowed"
-                                : "bg-purple-600 hover:bg-purple-700 active:scale-[0.98] shadow-md hover:shadow-lg"
+                                : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98] shadow-md hover:shadow-lg"
                             }`}
                     >
                         {uploading ? (

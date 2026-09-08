@@ -1,10 +1,11 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Share2 } from "lucide-react";
+import { Menu, X, CloudUpload } from "lucide-react";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import SideMenu from "./SideMenu";
 import CreditsDisplay from "./CreditsDisplay";
-import useCreditsContext from "../context/UserCreditsContext.jsx";
+import ThemeToggle from "./ThemeToggle";
+import useCreditsContext from "../../context/UserCreditsContext.jsx";
 
 const Navbar = ({ activeMenu, credits }) => {
     const [openSideMenu, setOpenSideMenu] = useState(false);
@@ -17,7 +18,7 @@ const Navbar = ({ activeMenu, credits }) => {
     }, [fetchUserCredits]);
     return (
         <div>
-            <div className="flex items-center justify-between gap-5 bg-white border border-gray-200 px-6 py-4">
+            <div className="flex items-center justify-between gap-5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-6 py-4">
 
                 {/* Left side menu button & title bar */}
                 <div className="flex items-center gap-5">
@@ -31,7 +32,7 @@ const Navbar = ({ activeMenu, credits }) => {
                                 : "Open side menu"
                         }
                         aria-expanded={openSideMenu}
-                        className="block lg:hidden text-black hover:bg-gray-100 p-1 rounded transition-colors"
+                        className="block min-[1081px]:hidden text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 p-1.5 rounded-lg transition-colors cursor-pointer"
                     >
                         {openSideMenu ? (
                             <X className="text-2xl" />
@@ -44,22 +45,24 @@ const Navbar = ({ activeMenu, credits }) => {
                         to="/dashboard"
                         className="flex items-center gap-2"
                     >
-                        <Share2 className="text-blue-600" />
-
-                        <span className="text-xl font-semibold text-gray-900">
-                            CloudShare
-                        </span>
+                        <div className="flex items-center gap-3 text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            <CloudUpload size={28} strokeWidth={1.8} />
+                            <span>CloudShare</span>
+                        </div>
                     </Link>
 
                 </div>
 
+
                 {/* Right side - credits and user button */}
                 <SignedIn>
-                    <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-3 sm:gap-5">
 
                         <Link to="/subscription">
                             <CreditsDisplay credits={credits} />
                         </Link>
+
+                        <ThemeToggle />
 
                         <div className="relative">
                             <UserButton />
@@ -72,7 +75,7 @@ const Navbar = ({ activeMenu, credits }) => {
 
             {/* Mobile side menu */}
             {openSideMenu && (
-                <div className="fixed top-[73px] left-0 right-0 bg-white border-b border-gray-200 lg:hidden z-20">
+                <div className="fixed top-[73px] left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 min-[1081px]:hidden z-50 shadow-xl">
 
                     {/* Side menubar */}
                     <SideMenu activeMenu={activeMenu} />

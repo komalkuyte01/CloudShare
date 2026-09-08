@@ -2,11 +2,22 @@ import { createContext, useContext, useCallback, useState, useEffect } from "rea
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useAuth } from "@clerk/clerk-react";
-import {apiEndpoints} from "../Util/apiEndpoints.js";
+import { apiEndpoints } from "../Util/apiEndpoints.js";
 
-export const UserCreditsContext = createContext();
+const defaultContextValue = {
+    credits: 10,
+    setCredits: () => {},
+    loading: false,
+    fetchUserCredits: async () => {},
+    updateCredits: () => {}
+};
 
-export const useCreditsContext = () => useContext(UserCreditsContext);
+export const UserCreditsContext = createContext(defaultContextValue);
+
+export const useCreditsContext = () => {
+    const context = useContext(UserCreditsContext);
+    return context || defaultContextValue;
+};
 
 export const UserCreditsProvider = ({ children }) => {
     const [credits, setCredits] = useState(10);
@@ -33,9 +44,9 @@ export const UserCreditsProvider = ({ children }) => {
                     }
                 }
             );
-            if(response.status === 200){
-               setCredits(response.data.credits);
-            }else{
+            if (response.status === 200) {
+                setCredits(response.data.credits);
+            } else {
                 toast.error("Unable to get the credits.");
             }
 
@@ -47,7 +58,7 @@ export const UserCreditsProvider = ({ children }) => {
     }, [getToken, isSignedIn]);
 
     useEffect(() => {
-        if(isSignedIn)
+        if (isSignedIn)
             fetchUserCredits();
     }, [fetchUserCredits, isSignedIn]);
 

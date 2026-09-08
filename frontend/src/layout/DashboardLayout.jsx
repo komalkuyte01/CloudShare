@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar.jsx";
-import SideMenu from "../components/SideMenu.jsx";
+import Navbar from "../components/ui/Navbar.jsx";
+import SideMenu from "../components/ui/SideMenu.jsx";
 import { useUser } from "@clerk/clerk-react";
 import useCreditsContext from "../context/UserCreditsContext.jsx";
 
@@ -15,7 +15,7 @@ const DashboardLayout = ({ children, activeMenu }) => {
                     <div className="max-[1080px]:hidden">
                         <SideMenu activeMenu={activeMenu} />
                     </div>
-                    <div className="grow mx-5">{children}</div>
+                    <div className="grow px-2 sm:px-6 py-4 overflow-hidden">{children}</div>
                 </div>
             )}
         </div>
