@@ -4,9 +4,20 @@ import { toast } from "react-hot-toast";
 import { useAuth } from "@clerk/clerk-react";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
 
-export const UserCreditsContext = createContext();
+const defaultContextValue = {
+    credits: 10,
+    setCredits: () => {},
+    loading: false,
+    fetchUserCredits: async () => {},
+    updateCredits: () => {}
+};
 
-export const useCreditsContext = () => useContext(UserCreditsContext);
+export const UserCreditsContext = createContext(defaultContextValue);
+
+export const useCreditsContext = () => {
+    const context = useContext(UserCreditsContext);
+    return context || defaultContextValue;
+};
 
 export const UserCreditsProvider = ({ children }) => {
     const [credits, setCredits] = useState(10);

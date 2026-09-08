@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { AlertCircle } from "lucide-react";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
-import { UserCreditsContext } from "../context/UserCreditsContext.jsx";
+import { useCreditsContext } from "../context/UserCreditsContext.jsx";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
 import UploadBox from "../components/ui/UploadBox.jsx";
 import DashboardLayout from "../layout/DashboardLayout.jsx";
@@ -13,7 +13,7 @@ const Upload = () => {
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
     const { getToken } = useAuth();
-    const {credits, setCredits} = useContext(UserCreditsContext);
+    const { credits, setCredits } = useCreditsContext();
     const MAX_FILES = 10;
 
      const handleFileChange = (e) => {

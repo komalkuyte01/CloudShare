@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PublicNavbar from "../components/landing/PublicNavbar";
 import FooterSection from "../components/landing/FooterSection";
-import { Mail, MapPin, Clock, Send, CheckCircle2, Loader2 } from "lucide-react";
+import { Mail, MapPin, Clock, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
 
 const Contact = () => {
@@ -19,11 +19,15 @@ const Contact = () => {
 
         try {
             // 1. Save contact message to Spring Boot backend database
-            await fetch(apiEndpoints.SUBMIT_CONTACT, {
+            const backendRes = await fetch(apiEndpoints.SUBMIT_CONTACT, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
-            }).catch((err) => console.log("Backend save note:", err));
+            });
+
+            if (!backendRes.ok) {
+                throw new Error("Failed to save message to backend database.");
+            }
 
             // 2. Send via Formspree direct dispatch to cloudsharesupport@gmail.com
             await fetch("https://formspree.io/f/cloudsharesupport@gmail.com", {
@@ -38,28 +42,28 @@ const Contact = () => {
             }).catch((err) => console.log("Formspree note:", err));
 
             // 3. Also dispatch to Web3Forms service
-            await fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    access_key: "a2d1d0ec-f8cf-4a33-9fb4-9c4c1a525d88",
-                    name: formData.name,
-                    email: formData.email,
-                    subject: formData.subject || `CloudShare Inquiry from ${formData.name}`,
-                    message: formData.message,
-                    to_email: "cloudsharesupport@gmail.com",
-                }),
-            }).catch((err) => console.log("Web3Forms note:", err));
+            const web3Key = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+            if (web3Key) {
+                await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        access_key: web3Key,
+                        name: formData.name,
+                        email: formData.email,
+                        subject: formData.subject || `CloudShare Inquiry from ${formData.name}`,
+                        message: formData.message,
+                        to_email: "cloudsharesupport@gmail.com",
+                    }),
+                }).catch((err) => console.log("Web3Forms note:", err));
+            }
 
             setSubmitted(true);
             setFormData({ name: "", email: "", subject: "", message: "" });
-            // Display success message for 30 seconds as requested
             setTimeout(() => setSubmitted(false), 30000);
         } catch (err) {
             console.error("Submission handler:", err);
-            setSubmitted(true);
-            setFormData({ name: "", email: "", subject: "", message: "" });
-            setTimeout(() => setSubmitted(false), 30000);
+            setErrorMsg(err.message || "Failed to send message. Please try again later.");
         } finally {
             setLoading(false);
         }
@@ -193,6 +197,13 @@ const Contact = () => {
                             <div className="mb-6 p-4 rounded-xl bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 flex items-center gap-3">
                                 <CheckCircle2 size={20} className="flex-shrink-0" />
                                 <span className="text-sm font-medium">Thank you! Your message has been sent successfully. We will reply soon.</span>
+                            </div>
+                        )}
+
+                        {errorMsg && (
+                            <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 flex items-center gap-3">
+                                <AlertCircle size={20} className="flex-shrink-0" />
+                                <span className="text-sm font-medium">{errorMsg}</span>
                             </div>
                         )}
 

@@ -198,13 +198,15 @@ const PublicFileView = () => {
                 </div>
             </main>
 
-            <LinkShareModal
-                isOpen={shareModal.isOpen}
-                onClose={closeShareModal}
-                link={shareModal.link}
-                title="Share File"
-                file={file}
-            />
+            {shareModal.isOpen && (
+                <LinkShareModal
+                    isOpen={shareModal.isOpen}
+                    onClose={closeShareModal}
+                    link={shareModal.link}
+                    title="Share File"
+                    file={file}
+                />
+            )}
         </div>
     );
 };

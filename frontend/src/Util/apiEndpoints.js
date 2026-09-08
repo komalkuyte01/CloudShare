@@ -1,4 +1,6 @@
-const BASE_URL = 'http://localhost:8080/api/v1.0';
+const BASE_URL =
+    import.meta.env.VITE_BACKEND_URL ||
+    'http://localhost:8080/api/v1.0';
 
 export const apiEndpoints = {
     FETCH_FILES: `${BASE_URL}/files/my`,

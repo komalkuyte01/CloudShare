@@ -56,7 +56,7 @@ const DashboardUpload = ({
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Selected ({files.length})</p>
                     <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
                         {files.map((file, idx) => (
-                            <div key={idx} className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 border border-gray-150 dark:border-gray-700 rounded-xl p-3">
+                            <div key={idx} className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3">
                                 <div className="flex items-center gap-2 min-w-0">
                                     <File size={16} className="text-blue-500 shrink-0" />
                                     <div className="min-w-0">
@@ -66,7 +66,7 @@ const DashboardUpload = ({
                                 </div>
                                 <button
                                     onClick={() => onRemoveFile(idx)}
-                                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-gray-450 hover:text-red-500 transition cursor-pointer"
+                                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-gray-400 hover:text-red-500 transition cursor-pointer"
                                 >
                                     <X size={14} />
                                 </button>

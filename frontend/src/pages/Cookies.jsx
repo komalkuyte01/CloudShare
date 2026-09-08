@@ -94,6 +94,8 @@ const Cookies = () => {
                                 <button
                                     onClick={() => togglePreference(cat.key)}
                                     disabled={cat.required}
+                                    aria-label={cat.name}
+                                    aria-pressed={preferences[cat.key]}
                                     className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
                                         preferences[cat.key] ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-700"
                                     } ${cat.required ? "opacity-60 cursor-not-allowed" : ""}`}

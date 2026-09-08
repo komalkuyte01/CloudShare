@@ -1,7 +1,7 @@
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 import { useState, useEffect, useRef, useContext } from "react";
 import { useAuth, useUser } from "@clerk/clerk-react";
-import { UserCreditsContext } from "../context/UserCreditsContext";
+import { useCreditsContext } from "../context/UserCreditsContext.jsx";
 import axios from "axios";
 import { apiEndpoints } from "../Util/apiEndpoints.js";
 import { AlertCircle, Check, CreditCard, Loader2 } from "lucide-react";
@@ -43,7 +43,7 @@ const Subscription = () => {
     const { getToken } = useAuth();
     const { user } = useUser();
     const razorpayScriptRef = useRef(null);
-    const { credits, setCredits, fetchUserCredits } = useContext(UserCreditsContext);
+    const { credits, setCredits, fetchUserCredits } = useCreditsContext();
 
     // Load Razorpay script
     useEffect(() => {

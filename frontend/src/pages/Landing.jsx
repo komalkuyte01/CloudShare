@@ -4,7 +4,6 @@ import FeaturesSection from "../components/landing/FeaturesSection";
 import HowItWorksSection from "../components/landing/HowItWorksSection";
 import PricingSection from "../components/landing/PricingSection";
 import FooterSection from "../components/landing/FooterSection";
-import ThemeToggle from "../components/ui/ThemeToggle";
 import { features, pricingPlans } from "../assets/data";
 import { useClerk, useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";

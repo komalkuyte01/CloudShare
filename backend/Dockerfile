@@ -13,8 +13,13 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
+# Create unprivileged application user
+RUN groupadd --system cloudshare && useradd --system --gid cloudshare --create-home cloudshare
+
 # Copy the jar file from the builder stage
-COPY --from=builder /app/target/cloudshare-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=builder --chown=cloudshare:cloudshare /app/target/cloudshare-0.0.1-SNAPSHOT.jar app.jar
+
+USER cloudshare:cloudshare
 
 # Expose the backend port
 EXPOSE 8080
