@@ -32,7 +32,7 @@ const DashboardUpload = ({
             {/* Drop Zone Box */}
             <div
                 onClick={handleClick}
-                className="border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-blue-500 bg-gray-50/50 dark:bg-gray-800/50 hover:bg-blue-50/10 dark:hover:bg-blue-900/10 rounded-2xl p-8 text-center cursor-pointer transition-colors duration-200"
+                className="border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-blue-500 bg-gray-50/50 dark:bg-gray-800/50 hover:bg-blue-50/10 dark:hover:bg-blue-900/10 rounded-2xl p-5 sm:p-8 text-center cursor-pointer transition-colors duration-200"
             >
                 <div className="flex justify-center mb-2">
                     <UploadCloud className="text-blue-500" size={32} />

@@ -32,7 +32,7 @@ const Navbar = ({ activeMenu, credits }) => {
                                 : "Open side menu"
                         }
                         aria-expanded={openSideMenu}
-                        className="block lg:hidden text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 p-1 rounded transition-colors"
+                        className="block min-[1081px]:hidden text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 p-1.5 rounded-lg transition-colors cursor-pointer"
                     >
                         {openSideMenu ? (
                             <X className="text-2xl" />
@@ -45,8 +45,8 @@ const Navbar = ({ activeMenu, credits }) => {
                         to="/dashboard"
                         className="flex items-center gap-2"
                     >
-                        <div className="flex items-center gap-3 text-2xl font-bold text-blue-600 dark:text-blue-400">
-                            <CloudUpload size={32} strokeWidth={1.8} />
+                        <div className="flex items-center gap-3 text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            <CloudUpload size={28} strokeWidth={1.8} />
                             <span>CloudShare</span>
                         </div>
                     </Link>
@@ -56,7 +56,7 @@ const Navbar = ({ activeMenu, credits }) => {
 
                 {/* Right side - credits and user button */}
                 <SignedIn>
-                    <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-3 sm:gap-5">
 
                         <Link to="/subscription">
                             <CreditsDisplay credits={credits} />
@@ -75,7 +75,7 @@ const Navbar = ({ activeMenu, credits }) => {
 
             {/* Mobile side menu */}
             {openSideMenu && (
-                <div className="fixed top-[73px] left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 lg:hidden z-20">
+                <div className="fixed top-[73px] left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 min-[1081px]:hidden z-50 shadow-xl">
 
                     {/* Side menubar */}
                     <SideMenu activeMenu={activeMenu} />

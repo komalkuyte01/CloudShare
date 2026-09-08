@@ -47,7 +47,7 @@ const PublicFileView = () => {
             const token = await getToken();
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             const response = await axios.get(
-                `http://localhost:8080/api/v1.0/files/download/${fileId}`,
+                apiEndpoints.DOWNLOAD_FILES(fileId),
                 {
                     headers,
                     responseType: "blob",
@@ -146,10 +146,10 @@ const PublicFileView = () => {
                             </span>
                         </div>
 
-                        <div className="flex justify-center gap-4 my-8">
+                        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 my-8">
                             <button
                                 onClick={handleDownload}
-                                className="flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded cursor-pointer transition-colors"
+                                className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl cursor-pointer transition-colors shadow-sm"
                             >
                                 <Download size={18} />
                                 Download File

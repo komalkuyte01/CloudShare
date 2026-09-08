@@ -75,7 +75,7 @@ const UploadBox = ({ files, onFileChange, onUpload, uploading, onRemoveFile, rem
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`relative cursor-pointer border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center transition-all duration-300
+                className={`relative cursor-pointer border-2 border-dashed rounded-xl p-6 sm:p-10 flex flex-col items-center justify-center transition-all duration-300
                     ${isDragging
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-[1.01]"
                         : "border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 hover:border-blue-400 hover:bg-blue-50/40 dark:hover:bg-blue-900/10"
