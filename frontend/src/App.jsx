@@ -26,9 +26,11 @@ import {
 } from "@clerk/clerk-react";
 import { UserCreditsProvider } from "./context/UserCreditsContext.jsx";
 
-const BACKEND_URL =
+const RAW_BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL ||
-    "http://localhost:8080/api/v1.0";
+    "https://flavorful-retype-vengeful.ngrok-free.dev/api/v1.0";
+
+const BACKEND_URL = RAW_BACKEND_URL.replace(/\/+$/, "");
 
 // Syncs the current Clerk user into the database
 const UserSync = () => {
@@ -46,6 +48,7 @@ const UserSync = () => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        "ngrok-skip-browser-warning": "true",
                         Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify({

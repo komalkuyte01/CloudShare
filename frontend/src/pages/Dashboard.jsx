@@ -117,7 +117,8 @@ const Dashboard = () => {
             await fetchUserCredits();
         } catch (error) {
             console.error("Upload failed:", error);
-            setMessage('Upload failed. Please try again.');
+            const errMsg = error.response?.data?.message || error.message || 'Please try again.';
+            setMessage(`Upload failed: ${errMsg}`);
             setMessageType('error');
         } finally {
             setUploading(false);

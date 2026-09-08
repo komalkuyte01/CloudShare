@@ -141,13 +141,8 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        // Support local development ports and deployed frontend domains (e.g. Vercel)
-        config.setAllowedOriginPatterns(List.of(
-                "http://localhost:*",
-                "http://127.0.0.1:*",
-                "https://*.vercel.app",
-                "https://cloudshare-olive.vercel.app"
-        ));
+        // Support any origin pattern (localhost, Vercel preview/production, custom domains)
+        config.setAllowedOriginPatterns(List.of("*"));
 
         config.setAllowedMethods(List.of(
                 "GET",
