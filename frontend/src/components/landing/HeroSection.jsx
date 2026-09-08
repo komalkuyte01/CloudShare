@@ -1,72 +1,12 @@
 import { assets } from "../../assets/assets";
-import { CloudUpload } from "lucide-react";
 import { BackgroundRippleEffect } from "../ui/background-ripple-effect.tsx";
-
+import PublicNavbar from "./PublicNavbar";
 
 const HeroSection = ({ openSignIn, openSignUp }) => {
     return (
-
         <div className="landing-page-content relative min-h-screen overflow-hidden">
             <BackgroundRippleEffect />
-
-
-            <nav className="fixed top-0 left-0 z-50 w-full h-20 flex items-center px-4 sm:px-6 lg:px-8 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50">
-
-                {/* Logo */}
-                <div className="flex items-center gap-3 text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    <CloudUpload size={32} strokeWidth={1.8} />
-                    <span>CloudShare</span>
-                </div>
-
-                {/* Right Side */}
-                <div className="ml-auto flex items-center gap-10">
-
-                    {/* Navigation Links */}
-                    <div className="hidden md:flex items-center gap-8">
-
-                        <a
-                            href="#features"
-                            className="text-gray-800 dark:text-gray-300 font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                        >
-                            Features
-                        </a>
-
-                        <a
-                            href="#how-it-works"
-                            className="text-gray-800 dark:text-gray-300 font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                        >
-                            How it works
-                        </a>
-
-                        <a
-                            href="#pricing"
-                            className="text-gray-800 dark:text-gray-300 font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                        >
-                            Pricing
-                        </a>
-
-                    </div>
-
-                    {/* Auth Buttons */}
-                    <div className="flex items-center gap-7">
-
-                        <button
-                            onClick={() => openSignIn()}
-                            className="text-gray-800 dark:text-gray-300 font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                            Sign in
-                        </button>
-
-                        <button
-                            onClick={() => openSignUp()}
-                            className="px-5 py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-sm">
-                            Sign up
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </nav>
+            <PublicNavbar />
 
 
             <div className="max-w-7xl pt-32 lg:pt-40 mx-auto pb-6 lg:py-8 px-4 sm:px-6 lg:px-8  relative z-10 w-full">

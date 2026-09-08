@@ -1,7 +1,7 @@
 import { FileText, Image, Video, Music, Archive, File as FileIcon, Lock, Globe } from "lucide-react";
 
 const RecentFiles = ({ files }) => {
-    
+
     const getFileIcon = (fileName, fileType) => {
         const ext = fileName?.split(".").pop().toLowerCase() || "";
         const type = fileType?.toLowerCase() || "";

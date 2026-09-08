@@ -220,11 +220,10 @@ const Subscription = () => {
                 <p className="text-gray-600 dark:text-gray-400 mb-6">Choose a plan that works for you</p>
 
                 {message && (
-                    <div className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
-                        messageType === 'error' ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400' :
-                        messageType === 'success' ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400' :
-                        'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-                    }`}>
+                    <div className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${messageType === 'error' ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400' :
+                            messageType === 'success' ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400' :
+                                'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                        }`}>
                         {messageType === 'error' && <AlertCircle size={20} />}
                         {message}
                     </div>
@@ -246,11 +245,10 @@ const Subscription = () => {
                     {plans.map((plan) => (
                         <div
                             key={plan.id}
-                            className={`border rounded-xl p-6 ${
-                                plan.recommended
+                            className={`border rounded-xl p-6 ${plan.recommended
                                     ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 shadow-md'
                                     : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900'
-                            }`}
+                                }`}
                         >
                             {plan.recommended && (
                                 <div className="inline-block bg-blue-600 text-white text-xs font-semibold px-2.5 py-1 rounded mb-4">
@@ -275,11 +273,10 @@ const Subscription = () => {
                             <button
                                 onClick={() => handlePurchase(plan)}
                                 disabled={processingPayment === plan.id}
-                                className={`w-full py-2 rounded-md font-medium transition-colors ${
-                                    plan.recommended
+                                className={`w-full py-2 rounded-md font-medium transition-colors ${plan.recommended
                                         ? 'bg-blue-600 text-white hover:bg-blue-700'
                                         : 'bg-white border border-blue-600 text-blue-600 hover:bg-blue-50'
-                                } disabled:opacity-50 flex items-center justify-center gap-2`}
+                                    } disabled:opacity-50 flex items-center justify-center gap-2`}
                             >
                                 {processingPayment === plan.id ? (
                                     <>

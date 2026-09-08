@@ -1,28 +1,28 @@
-import {useState} from "react";
-import {Image, Video, Music, FileText, File as FileIcon, Globe, Lock, Copy, Eye, Download, Trash2} from "lucide-react";
+import { useState } from "react";
+import { Image, Video, Music, FileText, File as FileIcon, Globe, Lock, Copy, Eye, Download, Trash2 } from "lucide-react";
 
-const FileCard = ({file, onDelete, onTogglePublic, onDownload, onShareLink}) => {
+const FileCard = ({ file, onDelete, onTogglePublic, onDownload, onShareLink }) => {
     const [showActions, setShowActions] = useState(false);
     const getFileIcon = (file) => {
         const extension = file.fileName?.split('.').pop().toLowerCase() || "";
 
-        if(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(extension)){
-            return <Image size={24} className="text-blue-500"/>
+        if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(extension)) {
+            return <Image size={24} className="text-blue-500" />
         }
 
-        if(['mp4', 'webm', 'mov', 'avi', 'mkv'].includes(extension)){
-            return <Video size={24} className="text-blue-500"/>
+        if (['mp4', 'webm', 'mov', 'avi', 'mkv'].includes(extension)) {
+            return <Video size={24} className="text-blue-500" />
         }
 
-        if(['mp3', 'wav', 'ogg', 'flac', 'm4a'].includes(extension)){
-            return <Music size={24} className="text-green-500"/>
+        if (['mp3', 'wav', 'ogg', 'flac', 'm4a'].includes(extension)) {
+            return <Music size={24} className="text-green-500" />
         }
 
-        if(['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(extension)){
-            return <FileText size={24} className="text-amber-500"/>
+        if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(extension)) {
+            return <FileText size={24} className="text-amber-500" />
         }
 
-        return <FileIcon size={24} className="text-blue-500"/>
+        return <FileIcon size={24} className="text-blue-500" />
     }
 
     const formatFileSize = (bytes) => {
@@ -32,26 +32,26 @@ const FileCard = ({file, onDelete, onTogglePublic, onDownload, onShareLink}) => 
     }
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'});
+        return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
     }
-    return(
+    return (
         <div
             onMouseEnter={() => setShowActions(true)}
             onMouseLeave={() => setShowActions(false)}
             className="relative group overflow-hidden rounded-xl bg-white dark:bg-gray-900 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-800">
 
-             {/*File preview area */}
+            {/*File preview area */}
             <div className="h-32 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center p-4">
                 {getFileIcon(file)}
             </div>
 
             {/* Public/private badge*/}
             <div className="absolute top-2 right-2">
-                <div className={`rounded-full p-1.5 ${file.isPublic ? 'bg-green-100':'bg-gray-100'}`} title={file.isPublic ? "Public" : "Private"}>
+                <div className={`rounded-full p-1.5 ${file.isPublic ? 'bg-green-100' : 'bg-gray-100'}`} title={file.isPublic ? "Public" : "Private"}>
                     {file.isPublic ? (
-                        <Globe size={14} className="text-green-600"/>
+                        <Globe size={14} className="text-green-600" />
                     ) : (
-                        <Lock size={14} className="text-gray-600"/>
+                        <Lock size={14} className="text-gray-600" />
                     )}
                 </div>
             </div>
@@ -77,12 +77,12 @@ const FileCard = ({file, onDelete, onTogglePublic, onDownload, onShareLink}) => 
                             onClick={() => onShareLink(file)}
                             title="Share Link"
                             className="p-2 cursor-pointer bg-white/90 rounded-full hover:bg-white transition-colors text-blue-500 hover:text-blue-600">
-                            <Copy size={18}/>
+                            <Copy size={18} />
                         </button>
                     )}
                     {file.isPublic && (
                         <a href={`/file/${file.id}`} title="View File" target="_blank" rel="noreferrer" className="p-2 bg-white/90 rounded-full hover:bg-white transition-colors text-gray-700 hover:text-gray-900 eye-hover-bold">
-                            <Eye size={18}/>
+                            <Eye size={18} />
                         </a>
                     )}
                     <button
@@ -100,10 +100,10 @@ const FileCard = ({file, onDelete, onTogglePublic, onDownload, onShareLink}) => 
                     </button>
 
                     <button
-                        onClick={()=> onDelete(file.id)}
+                        onClick={() => onDelete(file.id)}
                         title="Delete"
                         className="p-2 bg-white/90 rounded-full hover:bg-white cursor-pointer transition-colors text-red-600 hover:text-red-700">
-                        <Trash2 size={18}/>
+                        <Trash2 size={18} />
                     </button>
 
                 </div>

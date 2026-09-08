@@ -155,18 +155,16 @@ const ShareLinkModal = ({ file, onClose }) => {
 
                         {/* Public / Private Badge */}
                         <div
-                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm select-none ${
-                                file.isPublic
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm select-none ${file.isPublic
                                     ? "bg-green-50 text-green-700 border border-green-200/50"
                                     : "bg-gray-50 text-gray-600 border border-gray-200"
-                            }`}
+                                }`}
                         >
                             <span
-                                className={`h-1.5 w-1.5 rounded-full ${
-                                    file.isPublic
+                                className={`h-1.5 w-1.5 rounded-full ${file.isPublic
                                         ? "bg-green-500 animate-pulse"
                                         : "bg-gray-400"
-                                }`}
+                                    }`}
                             />
 
                             {file.isPublic ? "Public" : "Private"}
@@ -193,11 +191,10 @@ const ShareLinkModal = ({ file, onClose }) => {
                             {/* Copy Button */}
                             <button
                                 onClick={handleCopy}
-                                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 cursor-pointer shadow-sm active:scale-95 select-none ${
-                                    copied
+                                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 cursor-pointer shadow-sm active:scale-95 select-none ${copied
                                         ? "bg-green-600 text-white shadow-green-500/10"
                                         : "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/15"
-                                }`}
+                                    }`}
                             >
                                 {copied ? (
                                     <>

@@ -28,7 +28,7 @@ const DashboardUpload = ({
     return (
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
             <h3 className="font-bold text-gray-800 dark:text-white text-lg mb-4">Upload Files</h3>
-            
+
             {/* Drop Zone Box */}
             <div
                 onClick={handleClick}
@@ -39,7 +39,7 @@ const DashboardUpload = ({
                 </div>
                 <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Click or drag files here</p>
                 <p className="text-xs text-gray-400 mt-1">Remaining uploads: {remainingUploads}</p>
-                
+
                 <input
                     type="file"
                     ref={fileInputRef}

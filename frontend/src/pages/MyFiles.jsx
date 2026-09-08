@@ -139,14 +139,14 @@ const MyFiles = () => {
     /* Closes the delete confirmation*/
     const closeDeleteConfirmation = () => {
         setDeleteConfirmation({
-            isOpen : false,
-            fileId : null
+            isOpen: false,
+            fileId: null
         })
     }
     /* Open the delete confirmation modal*/
     const openDeleteConfirmation = (fileId) => {
         setDeleteConfirmation({
-            isOpen : true,
+            isOpen: true,
             fileId
         })
     }
@@ -168,18 +168,18 @@ const MyFiles = () => {
     /* Delete a file*/
     const handleDelete = async () => {
         const fileId = deleteConfirmation.fileId;
-        if(!fileId) return;
+        if (!fileId) return;
 
-        try{
+        try {
             const token = await getToken();
-            const response = await axios.delete(apiEndpoints.DELETE_FILES(fileId), {headers: {Authorization: `Bearer ${token}`} });
-            if(response.status === 204){
-               setFiles(files.filter((file) => file.id !== fileId));
-               closeDeleteConfirmation();
-            }else{
+            const response = await axios.delete(apiEndpoints.DELETE_FILES(fileId), { headers: { Authorization: `Bearer ${token}` } });
+            if (response.status === 204) {
+                setFiles(files.filter((file) => file.id !== fileId));
+                closeDeleteConfirmation();
+            } else {
                 toast.error("Error deleting file");
             }
-        }catch(error){
+        } catch (error) {
             console.error("Error deleting file", error);
             toast.error(`Error deleting file: ${error.message || error}`);
         }
@@ -385,7 +385,7 @@ const MyFiles = () => {
                                                 <div className="flex justify-start">
 
                                                     <button
-                                                        onClick = {() => openDeleteConfirmation(file.id)}
+                                                        onClick={() => openDeleteConfirmation(file.id)}
 
                                                         title="Delete"
                                                         className="text-gray-500 hover:text-red-600">
@@ -424,7 +424,7 @@ const MyFiles = () => {
                         </table>
                     </div>
                 )}
-             {/* Delete confirmation dialog */}
+                {/* Delete confirmation dialog */}
                 <ConfirmationDialog
                     isOpen={deleteConfirmation.isOpen}
                     onClose={closeDeleteConfirmation}
