@@ -55,9 +55,11 @@ const Upload = () => {
 
         try{
             const token = await getToken();
-            const response = await axios.post(apiEndpoints.UPLOAD_FILES, formData, {headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'}});
+            const response = await axios.post(apiEndpoints.UPLOAD_FILES, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
 
             if(response.status === 200){
                 if(response.data && response.data.remainingCredits !== undefined){

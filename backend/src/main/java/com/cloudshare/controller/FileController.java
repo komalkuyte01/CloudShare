@@ -28,7 +28,12 @@ public class FileController {
     private final UserCreditsService userCreditsService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadFiles(@RequestParam("files") MultipartFile[] files) throws IOException {
+    public ResponseEntity<?> uploadFiles(
+            @RequestParam(value = "files", required = false) MultipartFile[] paramFiles,
+            @RequestPart(value = "files", required = false) MultipartFile[] partFiles) throws IOException {
+
+        MultipartFile[] files = (paramFiles != null && paramFiles.length > 0) ? paramFiles : partFiles;
+
         if (files == null || files.length == 0) {
             return ResponseEntity.badRequest().body(Map.of("message", "No files provided for upload"));
         }
