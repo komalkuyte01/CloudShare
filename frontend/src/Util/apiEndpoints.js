@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getBackendBaseUrl = () => {
-    const envUrl = import.meta.env.VITE_BACKEND_URL;
+    const envUrl = import.meta.env.BACKEND_URL || import.meta.env.VITE_BACKEND_URL;
 
     // Running in browser over HTTPS (e.g. Vercel deployment)
     if (typeof window !== "undefined" && window.location.protocol === "https:") {

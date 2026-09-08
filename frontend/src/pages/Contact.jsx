@@ -42,7 +42,7 @@ const Contact = () => {
             }).catch((err) => console.log("Formspree note:", err));
 
             // 3. Also dispatch to Web3Forms service
-            const web3Key = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+            const web3Key = import.meta.env.WEB3FORMS_ACCESS_KEY || import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
             if (web3Key) {
                 await fetch("https://api.web3forms.com/submit", {
                     method: "POST",
