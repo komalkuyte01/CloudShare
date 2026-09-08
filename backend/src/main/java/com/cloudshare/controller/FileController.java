@@ -28,7 +28,10 @@ public class FileController {
     private final UserCreditsService userCreditsService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadFiles(@RequestPart("files") MultipartFile[] files) throws IOException {
+    public ResponseEntity<?> uploadFiles(@RequestParam("files") MultipartFile[] files) throws IOException {
+        if (files == null || files.length == 0) {
+            return ResponseEntity.badRequest().body(Map.of("message", "No files provided for upload"));
+        }
         Map<String, Object> response = new HashMap<>();
         List<FileMetaDataDTO> list = fileMetaDataService.uploadFiles(files);
         UserCredits finalCredits = userCreditsService.getUserCreditsById();
