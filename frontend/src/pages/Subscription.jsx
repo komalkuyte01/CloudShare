@@ -101,7 +101,9 @@ const Subscription = () => {
             return;
         }
 
-        if (!import.meta.env.VITE_RAZORPAY_KEY) {
+        const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_TW5VblElyln7TW";
+
+        if (!razorpayKey) {
             setMessage("Payment gateway is not configured. Please contact support.");
             setMessageType("error");
             setProcessingPayment(null);
@@ -136,7 +138,7 @@ const Subscription = () => {
             const orderId = orderResponse.data.orderId;
 
             const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY,
+                key: razorpayKey,
                 amount: plan.price * 100,
                 currency: "INR",
                 name: "CloudShare",
