@@ -63,7 +63,7 @@ export const UserCreditsProvider = ({ children }) => {
     }, [fetchUserCredits, isSignedIn]);
 
     const updateCredits = useCallback(newCredits => {
-        console.log('Uploading te credits', newCredits);
+        console.log('Updating credits', newCredits);
         setCredits(newCredits);
     }, []);
 

@@ -24,9 +24,12 @@ public class ProfileService {
         // Find existing user by Clerk ID or create a new one
         User user = userRepository.findByClerkId(profileDTO.getClerkId())
                 .orElseGet(() -> {
+                    String email = (profileDTO.getEmail() != null && !profileDTO.getEmail().isBlank())
+                            ? profileDTO.getEmail()
+                            : profileDTO.getClerkId() + "@clerk.user";
                     User newUser = User.builder()
                             .clerkId(profileDTO.getClerkId())
-                            .email(profileDTO.getEmail())
+                            .email(email)
                             .build();
 
                     return userRepository.save(newUser);
@@ -127,6 +130,7 @@ public class ProfileService {
         userRepository.delete(user);
     }
 
+    @Transactional
     public ProfileDTO getCurrentProfile() {
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             throw new UsernameNotFoundException("User not authenticated");
@@ -137,9 +141,24 @@ public class ProfileService {
                 .getName();
 
         Profile profile = profileRepository.findByUserClerkId(clerkId)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        "Profile not found for clerkId: " + clerkId
-                ));
+                .orElseGet(() -> {
+                    User user = userRepository.findByClerkId(clerkId)
+                            .orElseGet(() -> userRepository.save(
+                                    User.builder()
+                                            .clerkId(clerkId)
+                                            .email(clerkId + "@clerk.user")
+                                            .build()
+                            ));
+
+                    Profile newProfile = Profile.builder()
+                            .firstName("User")
+                            .lastName("")
+                            .credits(10)
+                            .user(user)
+                            .build();
+
+                    return profileRepository.save(newProfile);
+                });
 
         User user = profile.getUser();
 

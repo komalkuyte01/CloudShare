@@ -76,6 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/files/public/**").permitAll()
                         .requestMatchers("/files/download/**").permitAll()
                         .requestMatchers("/contact/**", "/contact").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
 
                         // Allow Spring Boot's error dispatch (internal forward on exceptions)
                         .requestMatchers("/error").permitAll()
@@ -158,7 +159,15 @@ public class SecurityConfig {
                 "Content-Type",
                 "Accept",
                 "Origin",
-                "X-Requested-With"
+                "X-Requested-With",
+                "ngrok-skip-browser-warning",
+                "Access-Control-Request-Headers",
+                "Access-Control-Request-Method"
+        ));
+
+        config.setExposedHeaders(List.of(
+                "Content-Disposition",
+                "Authorization"
         ));
 
         config.setAllowCredentials(true);

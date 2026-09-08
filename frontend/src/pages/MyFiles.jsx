@@ -95,7 +95,7 @@ const MyFiles = () => {
         try {
             const newVisibility = !fileToUpdate.isPublic;
             const token = await getToken();
-            await axios.patch(apiEndpoints.TOGGLE_FILES(fileToUpdate.id), { isPublic: newVisibility }, { headers: { Authorization: `Bearer ${token}` }, responseType: 'blob' });
+            await axios.patch(apiEndpoints.TOGGLE_FILES(fileToUpdate.id), { isPublic: newVisibility }, { headers: { Authorization: `Bearer ${token}` } });
             setFiles(files.map(file => file.id === fileToUpdate.id ? { ...file, isPublic: !file.isPublic } : file));
         } catch (error) {
             console.error('Error toggling file status', error);

@@ -28,7 +28,7 @@ import { UserCreditsProvider } from "./context/UserCreditsContext.jsx";
 
 const RAW_BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL ||
-    "https://flavorful-retype-vengeful.ngrok-free.dev/api/v1.0";
+    "http://localhost:8080/api/v1.0";
 
 const BACKEND_URL = RAW_BACKEND_URL.replace(/\/+$/, "");
 
@@ -44,13 +44,18 @@ const UserSync = () => {
             try {
                 const token = await getToken();
 
+                const headers = {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                };
+
+                if (BACKEND_URL.includes("ngrok")) {
+                    headers["ngrok-skip-browser-warning"] = "true";
+                }
+
                 await fetch(`${BACKEND_URL}/profiles/register`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "ngrok-skip-browser-warning": "true",
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers,
                     body: JSON.stringify({
                         email: user.primaryEmailAddress?.emailAddress || "",
                         firstName: user.firstName || "",
