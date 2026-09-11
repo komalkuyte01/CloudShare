@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 
 /**
- * Dark/Light mode toggle button.
- *
- * Props:
- *   floating (boolean) — if true, shows as a fixed button in bottom-right corner (for Landing page).
- *                         if false (default), shows as an inline button (for Navbar).
+ * Custom hook to get and toggle the current theme.
+ * Reusable across any component (e.g., HeroSection, Navbar).
  */
-const ThemeToggle = ({ floating = false }) => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+export const useTheme = () => {
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        if (typeof document === "undefined") return false;
+        return document.documentElement.classList.contains("dark");
+    });
 
     useEffect(() => {
         // Check initial theme from localStorage or system preference
@@ -24,10 +24,17 @@ const ThemeToggle = ({ floating = false }) => {
             setIsDarkMode(true);
             document.documentElement.classList.add("dark");
         }
+
+        const handleThemeChange = () => {
+            setIsDarkMode(document.documentElement.classList.contains("dark"));
+        };
+
+        window.addEventListener("themechange", handleThemeChange);
+        return () => window.removeEventListener("themechange", handleThemeChange);
     }, []);
 
     const toggleTheme = () => {
-        if (isDarkMode) {
+        if (document.documentElement.classList.contains("dark")) {
             document.documentElement.classList.remove("dark");
             localStorage.setItem("theme", "light");
             setIsDarkMode(false);
@@ -36,7 +43,21 @@ const ThemeToggle = ({ floating = false }) => {
             localStorage.setItem("theme", "dark");
             setIsDarkMode(true);
         }
+        window.dispatchEvent(new Event("themechange"));
     };
+
+    return { isDarkMode, toggleTheme };
+};
+
+/**
+ * Dark/Light mode toggle button.
+ *
+ * Props:
+ *   floating (boolean) — if true, shows as a fixed button in bottom-right corner (for Landing page).
+ *                         if false (default), shows as an inline button (for Navbar).
+ */
+const ThemeToggle = ({ floating = false }) => {
+    const { isDarkMode, toggleTheme } = useTheme();
 
     // Floating style (fixed bottom-right) — used on Landing page
     if (floating) {

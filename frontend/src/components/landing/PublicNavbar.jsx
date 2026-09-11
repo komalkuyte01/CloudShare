@@ -25,12 +25,9 @@ const PublicNavbar = () => {
             <div className="max-w-7xl w-full mx-auto flex items-center justify-between">
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-3 text-2xl font-bold text-blue-600 dark:text-blue-400 group">
-                    <div className="p-1.5 rounded-xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors">
-                        <CloudUpload size={28} strokeWidth={2} />
-                    </div>
+                    <CloudUpload size={28} strokeWidth={2} />
                     <span>CloudShare</span>
                 </Link>
-
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-8">
                     <Link
