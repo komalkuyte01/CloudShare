@@ -5,14 +5,16 @@ export const getBackendBaseUrl = () => {
 
     // Running in browser over HTTPS (e.g. Vercel deployment)
     if (typeof window !== "undefined" && window.location.protocol === "https:") {
-        if (envUrl && envUrl.startsWith("https://") && !envUrl.includes("cloudshare-backend.onrender.com")) {
+        if (envUrl && envUrl.startsWith("https://")) {
             return envUrl.replace(/\/+$/, "");
         }
-        return "https://flavorful-retype-vengeful.ngrok-free.dev/api/v1.0";
+        // Fallback: No VITE_BACKEND_URL set — this will fail, set it on Vercel!
+        console.error("VITE_BACKEND_URL is not set! API calls will fail.");
+        return "https://YOUR-AWS-BACKEND-URL/api/v1.0";
     }
 
     // Running in local development (http://localhost:5173)
-    if (envUrl && !envUrl.includes("cloudshare-backend.onrender.com")) {
+    if (envUrl) {
         return envUrl.replace(/\/+$/, "");
     }
     return "http://localhost:8080/api/v1.0";
@@ -20,7 +22,7 @@ export const getBackendBaseUrl = () => {
 
 export const BASE_URL = getBackendBaseUrl();
 
-// Bypass ngrok interstitial warning page only if connecting via ngrok tunnel
+// Bypass ngrok interstitial warning page only if connecting via ngrok tunnel (local dev)
 if (BASE_URL.includes("ngrok")) {
     axios.defaults.headers.common["ngrok-skip-browser-warning"] = "true";
 }

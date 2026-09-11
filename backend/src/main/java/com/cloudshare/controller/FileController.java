@@ -3,18 +3,20 @@ package com.cloudshare.controller;
 import com.cloudshare.dto.FileMetaDataDTO;
 import com.cloudshare.entity.UserCredits;
 import com.cloudshare.service.FileMetaDataService;
+import com.cloudshare.service.S3Service;
 import com.cloudshare.service.UserCreditsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ public class FileController {
 
     private final FileMetaDataService fileMetaDataService;
     private final UserCreditsService userCreditsService;
+    private final S3Service s3Service;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFiles(
@@ -60,17 +63,20 @@ public class FileController {
         try {
             FileMetaDataDTO downloadableFile = fileMetaDataService.getDownloadableFile(id);
 
-            Path path = com.cloudshare.util.StorageUtils.getUploadsPath()
-                    .resolve(downloadableFile.getStorageKey());
+            ResponseInputStream<GetObjectResponse> s3Stream =
+                    s3Service.downloadFile(downloadableFile.getStorageKey());
 
-            Resource resource = new UrlResource(path.toUri());
+            InputStreamResource resource = new InputStreamResource(s3Stream);
 
-            if (!resource.exists()) {
-                return ResponseEntity.notFound().build();
+            MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+            if (downloadableFile.getFileType() != null) {
+                try {
+                    mediaType = MediaType.parseMediaType(downloadableFile.getFileType());
+                } catch (Exception ignored) {}
             }
 
             return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentType(mediaType)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloadableFile.getFileName() + "\"")
                     .body(resource);
         } catch (Exception e) {

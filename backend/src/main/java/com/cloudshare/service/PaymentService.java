@@ -170,7 +170,7 @@ public class PaymentService {
     }
 
     @org.springframework.transaction.annotation.Transactional
-    private void updateTransactionStatus(String razorpay_order_Id, String status, String razorPaymentId, Integer creditsToAdd, String clerkId) {
+    protected void updateTransactionStatus(String razorpay_order_Id, String status, String razorPaymentId, Integer creditsToAdd, String clerkId) {
         PaymentTransaction transaction = paymentTransactionRepository.findByOrderId(razorpay_order_Id)
                 .orElseThrow(() -> new RuntimeException("Transaction not found for orderId: " + razorpay_order_Id));
                 

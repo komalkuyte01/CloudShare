@@ -101,7 +101,7 @@ const Subscription = () => {
             return;
         }
 
-        const razorpayKey = import.meta.env.RAZORPAY_KEY || import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_TW5VblElyln7TW";
+        const razorpayKey = import.meta.env.RAZORPAY_KEY || import.meta.env.VITE_RAZORPAY_KEY;
 
         if (!razorpayKey) {
             setMessage("Payment gateway is not configured. Please contact support.");

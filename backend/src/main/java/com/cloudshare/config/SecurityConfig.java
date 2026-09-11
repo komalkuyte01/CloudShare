@@ -28,6 +28,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    @org.springframework.beans.factory.annotation.Value("${cors.allowed-origins:http://localhost:5173,https://cloudshare-olive.vercel.app}")
+    private String allowedOrigins;
+
     private final ClerkJwtAuthFilter clerkJwtAuthFilter;
 
     @Bean
@@ -71,6 +74,9 @@ public class SecurityConfig {
 
                         // Clerk webhook does not use user JWT
                         .requestMatchers("/webhooks/**").permitAll()
+
+                        // Health check endpoints for AWS ALB / Target Group
+                        .requestMatchers("/actuator/**").permitAll()
 
                         // Public file & contact endpoints
                         .requestMatchers("/files/public/**").permitAll()
@@ -142,8 +148,13 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        // Support any origin pattern (localhost, Vercel preview/production, custom domains)
-        config.setAllowedOriginPatterns(List.of("*"));
+        // Support configured origins (e.g. Vercel, localhost)
+        List<String> origins = java.util.Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+
+        config.setAllowedOrigins(origins);
 
         config.setAllowedMethods(List.of(
                 "GET",

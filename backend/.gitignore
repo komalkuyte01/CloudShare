@@ -1,9 +1,13 @@
 HELP.md
-application.properties
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+### Application Secrets ###
+src/main/resources/application.properties
+src/main/resources/application.yml
+!src/main/resources/application.properties.example
 
 ### STS ###
 .apt_generated

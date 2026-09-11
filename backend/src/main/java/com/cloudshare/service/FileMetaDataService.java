@@ -16,9 +16,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +28,7 @@ public class FileMetaDataService {
     private final FileMetadataRepository fileMetadataRepository;
     private final ProfileService profileService;
     private final UserRepository userRepository;
+    private final S3Service s3Service;
 
     public List<FileMetaDataDTO> uploadFiles(MultipartFile[] files) throws IOException {
         List<FileMetaDataDTO> fileMetaDataList = new ArrayList<>();
@@ -48,32 +46,18 @@ public class FileMetaDataService {
                         "User not found for clerkId: " + currentProfile.getClerkId()
                 ));
 
-        // Create uploads directory
-        Path uploadPath = com.cloudshare.util.StorageUtils.getUploadsPath();
-
-        Files.createDirectories(uploadPath);
-
-        // Upload each file
+        // Upload each file to S3
         for (MultipartFile file : files) {
 
             String rawExtension = StringUtils.getFilenameExtension(
                     file.getOriginalFilename()
             );
-            
+
             // Sanitize extension to ensure it only contains alphanumeric characters
             String extension = rawExtension != null ? rawExtension.replaceAll("[^a-zA-Z0-9]", "") : null;
 
-            String fileName = UUID.randomUUID()
+            String storageKey = UUID.randomUUID()
                     + (extension != null && !extension.isEmpty() ? "." + extension : "");
-
-            Path targetLocation = uploadPath.resolve(fileName);
-
-            // Save actual file
-            Files.copy(
-                    file.getInputStream(),
-                    targetLocation,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
 
             // Get file type safely
             String fileType = file.getContentType();
@@ -81,6 +65,14 @@ public class FileMetaDataService {
             if (fileType == null) {
                 fileType = "application/octet-stream";
             }
+
+            // Save actual file to AWS S3
+            s3Service.uploadFile(
+                    storageKey,
+                    file.getInputStream(),
+                    file.getSize(),
+                    fileType
+            );
 
             // Create metadata
             FileMetadata fileMetadata = FileMetadata.builder()
@@ -91,8 +83,8 @@ public class FileMetaDataService {
                     .fileSize(file.getSize())
                     .isPublic(false)
 
-                    // Generated filename used for physical storage
-                    .storageKey(fileName)
+                    // Generated filename/key used for S3 object storage
+                    .storageKey(storageKey)
 
                     .user(user)
                     .build();
@@ -221,14 +213,12 @@ public class FileMetaDataService {
         fileMetadataRepository.delete(file);
         fileMetadataRepository.flush();
 
-        // Delete actual file from uploads folder after DB delete succeeds
+        // Delete actual file from AWS S3 after DB delete succeeds
         try {
-            Path filePath = com.cloudshare.util.StorageUtils.getUploadsPath()
-                    .resolve(file.getStorageKey());
-            Files.deleteIfExists(filePath);
-        } catch (IOException e) {
+            s3Service.deleteFile(file.getStorageKey());
+        } catch (Exception e) {
             // Log but don't fail — DB record is already deleted
-            System.err.println("Warning: Could not delete physical file: " + e.getMessage());
+            System.err.println("Warning: Could not delete file from S3: " + e.getMessage());
         }
     }
 

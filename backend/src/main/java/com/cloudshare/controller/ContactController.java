@@ -15,7 +15,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/contact")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 @Slf4j
 public class ContactController {
 

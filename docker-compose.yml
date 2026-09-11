@@ -8,11 +8,28 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Override the database URL to point to the host machine's PostgreSQL instead of localhost
+      # Database — point to host machine's PostgreSQL
       - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/cloudshare
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-komal15}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+      # Clerk Authentication
+      - CLERK_ISSUER=${CLERK_ISSUER}
+      - CLERK_JWKS_URL=${CLERK_JWKS_URL}
+      - CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
+      - CLERK_WEBHOOK_SECRET=${CLERK_WEBHOOK_SECRET}
+      - CLERK_WEBHOOK_VERIFY=${CLERK_WEBHOOK_VERIFY:-true}
+
+      # Razorpay
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+
+      # JPA
+      - SPRING_JPA_DDL_AUTO=${SPRING_JPA_DDL_AUTO:-update}
     volumes:
       # Map the local uploads folder to the container so files aren't lost when Docker restarts
       - ./uploads:/app/uploads
     restart: unless-stopped
+
+
