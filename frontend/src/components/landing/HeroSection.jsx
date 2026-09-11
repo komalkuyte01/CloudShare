@@ -1,8 +1,11 @@
-import { assets } from "../../assets/assets";
 import { BackgroundRippleEffect } from "../ui/background-ripple-effect.tsx";
+import { useTheme } from "../ui/ThemeToggle";
+import { assets } from "../../assets/assets";
 import PublicNavbar from "./PublicNavbar";
 
 const HeroSection = ({ openSignIn, openSignUp }) => {
+    const { isDarkMode } = useTheme();
+
     return (
         <div className="landing-page-content relative min-h-screen overflow-hidden">
             <BackgroundRippleEffect />
@@ -54,11 +57,19 @@ const HeroSection = ({ openSignIn, openSignUp }) => {
 
                         <div className="rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gray-200 dark:border-white/10 overflow-hidden w-full max-w-5xl backdrop-blur-sm transform hover:scale-[1.01] transition-transform duration-500">
 
-                            <img
-                                src={assets.Dashboard}
-                                alt="cloudshare dashboard"
-                                className="w-full object-cover"
-                            />
+                            {isDarkMode ? (
+                                <img
+                                    src={assets.DashboardDark}
+                                    alt="CloudShare Dark Dashboard"
+                                    className="w-full object-cover"
+                                />
+                            ) : (
+                                <img
+                                    src={assets.DashboardLight}
+                                    alt="CloudShare Light Dashboard"
+                                    className="w-full object-cover"
+                                />
+                            )}
 
                         </div>
 
