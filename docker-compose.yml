@@ -8,8 +8,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Database — point to host machine's PostgreSQL
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/cloudshare
+      # Database — AWS RDS PostgreSQL
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://cloudshare-db.cxwgw2soqlco.ap-south-1.rds.amazonaws.com:5432/cloudshare
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - DB_PASSWORD=${DB_PASSWORD}
