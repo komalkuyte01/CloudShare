@@ -1,23 +1,7 @@
 import axios from "axios";
 
 export const getBackendBaseUrl = () => {
-    const envUrl = import.meta.env.BACKEND_URL || import.meta.env.VITE_BACKEND_URL;
-
-    // Running in browser over HTTPS (e.g. Vercel deployment)
-    if (typeof window !== "undefined" && window.location.protocol === "https:") {
-        if (envUrl && envUrl.startsWith("https://")) {
-            return envUrl.replace(/\/+$/, "");
-        }
-        // Fallback: No VITE_BACKEND_URL set — this will fail, set it on Vercel!
-        console.error("VITE_BACKEND_URL is not set! API calls will fail.");
-        return "https://YOUR-AWS-BACKEND-URL/api/v1.0";
-    }
-
-    // Running in local development (http://localhost:5173)
-    if (envUrl) {
-        return envUrl.replace(/\/+$/, "");
-    }
-    return "http://localhost:8080/api/v1.0";
+    return (import.meta.env.VITE_BACKEND_URL || "").replace(/\/+$/, "");
 };
 
 export const BASE_URL = getBackendBaseUrl();
