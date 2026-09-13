@@ -28,7 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @org.springframework.beans.factory.annotation.Value("${cors.allowed-origins:http://localhost:5173,https://cloudshare-olive.vercel.app}")
+    @org.springframework.beans.factory.annotation.Value("${cors.allowed-origins:http://localhost:5173,https://cloudshare-olive.vercel.app,https://cloudshare-4k10j0xjs-komalkuyte01s-projects.vercel.app}")
     private String allowedOrigins;
 
     private final ClerkJwtAuthFilter clerkJwtAuthFilter;
