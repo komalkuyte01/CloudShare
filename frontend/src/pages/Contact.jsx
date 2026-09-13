@@ -41,19 +41,19 @@ const Contact = () => {
                 }),
             }).catch((err) => console.log("Formspree note:", err));
 
-            // 3. Also dispatch to Web3Forms service
-            const web3Key = import.meta.env.WEB3FORMS_ACCESS_KEY || import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+            // 3. Also dispatch to Web3Forms service (delivers directly to cloudsharesupport@gmail.com)
+            const web3Key = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || import.meta.env.WEB3FORMS_ACCESS_KEY || "ab744dd5-6fa6-477a-b2d2-84ccbddcf152";
             if (web3Key) {
                 await fetch("https://api.web3forms.com/submit", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "application/json", Accept: "application/json" },
                     body: JSON.stringify({
                         access_key: web3Key,
+                        from_name: "CloudShare Contact Form",
                         name: formData.name,
                         email: formData.email,
                         subject: formData.subject || `CloudShare Inquiry from ${formData.name}`,
                         message: formData.message,
-                        to_email: "cloudsharesupport@gmail.com",
                     }),
                 }).catch((err) => console.log("Web3Forms note:", err));
             }
