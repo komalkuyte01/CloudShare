@@ -116,3 +116,25 @@ button {
     stroke-width: 3.5 px !important;
     color: #374151;
 }
+
+/* ==============================================================================
+   Hide Clerk Development Mode Badge & Watermarks
+   ============================================================================== */
+.cl-footer,
+.cl-footerAction,
+.cl-internal-1dauvpw,
+.cl-internal-b3fm6y,
+[class*="cl-footer"],
+[class*="developmentBadge"],
+[class*="DevelopmentMode"],
+[class*="cl-internal-"][class*="badge"],
+[class*="cl-internal-"][class*="footer"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    pointer-events: none !important;
+}

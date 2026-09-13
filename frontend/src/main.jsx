@@ -155,7 +155,15 @@ createRoot(document.getElementById("root")).render(
             <SetupNotice />
         ) : (
             <ErrorBoundary>
-                <ClerkProvider publishableKey={clerkPublishableKey}>
+                <ClerkProvider
+                    publishableKey={clerkPublishableKey}
+                    appearance={{
+                        elements: {
+                            footer: { display: "none" },
+                            footerAction: { display: "none" },
+                        }
+                    }}
+                >
                     <App />
                 </ClerkProvider>
             </ErrorBoundary>
