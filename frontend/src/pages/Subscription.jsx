@@ -101,7 +101,7 @@ const Subscription = () => {
             return;
         }
 
-        const razorpayKey = import.meta.env.RAZORPAY_KEY || import.meta.env.VITE_RAZORPAY_KEY;
+        const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || import.meta.env.RAZORPAY_KEY || import.meta.env.VITE_RAZORPAY_KEY;
 
         if (!razorpayKey) {
             setMessage("Payment gateway is not configured. Please contact support.");
@@ -202,6 +202,11 @@ const Subscription = () => {
 
             if (window.Razorpay) {
                 const razorpay = new window.Razorpay(options);
+                razorpay.on('payment.failed', function (response) {
+                    setProcessingPayment(null);
+                    setMessage(response.error?.description || "Payment failed. Please try again.");
+                    setMessageType("error");
+                });
                 razorpay.open();
             } else {
                 throw new Error('Razorpay SDK not loaded');

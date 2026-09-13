@@ -4,7 +4,6 @@ import com.cloudshare.dto.PaymentDTO;
 import com.cloudshare.dto.PaymentVerificationDTO;
 import com.cloudshare.dto.ProfileDTO;
 import com.cloudshare.entity.PaymentTransaction;
-import com.cloudshare.entity.Profile;
 import com.cloudshare.repository.PaymentTransactionRepository;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
@@ -60,6 +59,13 @@ public class PaymentService {
                     throw new RuntimeException("Invalid plan selected for order creation");
             }
 
+            if (serverAmount < 100) {
+                return PaymentDTO.builder()
+                        .success(false)
+                        .message("Minimum order amount is 100 paise")
+                        .build();
+            }
+
             RazorpayClient razorpayClient =
                     new RazorpayClient(razorpayKeyId, razorpayKeySecret);
 
@@ -109,6 +115,16 @@ public class PaymentService {
 
     public PaymentDTO verifyPayment(PaymentVerificationDTO request) {
         try {
+            if (request == null
+                    || request.getRazorpay_order_id() == null || request.getRazorpay_order_id().isBlank()
+                    || request.getRazorpay_payment_id() == null || request.getRazorpay_payment_id().isBlank()
+                    || request.getRazorpay_signature() == null || request.getRazorpay_signature().isBlank()) {
+                return PaymentDTO.builder()
+                        .success(false)
+                        .message("Missing required payment verification fields")
+                        .build();
+            }
+
             ProfileDTO currentProfile = profileService.getCurrentProfile();
             String clerkId = currentProfile.getClerkId();
 
