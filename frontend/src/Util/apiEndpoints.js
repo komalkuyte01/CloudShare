@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getBackendBaseUrl = () => {
-    let url = (import.meta.env.VITE_BACKEND_URL || "").replace(/\/+$/, "");
+    let url = (import.meta.env.VITE_BACKEND_URL || "").trim().replace(/\/+$/, "");
     if (url && !url.endsWith("/api/v1.0")) {
         url = `${url}/api/v1.0`;
     }
