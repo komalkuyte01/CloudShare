@@ -2,7 +2,6 @@ package com.cloudshare.controller;
 
 import com.cloudshare.dto.ProfileDTO;
 import com.cloudshare.dto.TransactionResponseDTO;
-import com.cloudshare.entity.PaymentTransaction;
 import com.cloudshare.repository.PaymentTransactionRepository;
 import com.cloudshare.service.ProfileService;
 import org.springframework.http.ResponseEntity;
