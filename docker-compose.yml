@@ -27,6 +27,7 @@ services:
 
       # JPA
       - SPRING_JPA_DDL_AUTO=${SPRING_JPA_DDL_AUTO:-update}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=${SPRING_JPA_HIBERNATE_DDL_AUTO:-update}
     volumes:
       # Map the local uploads folder to the container so files aren't lost when Docker restarts
       - ./uploads:/app/uploads
