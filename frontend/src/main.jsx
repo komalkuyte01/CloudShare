@@ -161,6 +161,7 @@ createRoot(document.getElementById("root")).render(
                         elements: {
                             footer: { display: "none" },
                             footerAction: { display: "none" },
+                            userButtonPopoverFooter: { display: "none" },
                         }
                     }}
                 >

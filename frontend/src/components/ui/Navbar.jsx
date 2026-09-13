@@ -65,7 +65,14 @@ const Navbar = ({ activeMenu, credits }) => {
                         <ThemeToggle />
 
                         <div className="relative">
-                            <UserButton />
+                            <UserButton
+                                appearance={{
+                                    elements: {
+                                        userButtonPopoverFooter: { display: "none" },
+                                        footer: { display: "none" },
+                                    }
+                                }}
+                            />
                         </div>
 
                     </div>
